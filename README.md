@@ -19,7 +19,7 @@ Note: I created the project with: "vue create .". I believe the project should j
 
 ## IMPORTANT, BEFORE PUSHING:
 
-Run the "npm run build" command to make a new build, which will be automatically outputted to a new 'docs' folder. This is the folder where the vue website is deployed from in github
+Run the "npm run build" command to make a new build, which will be automatically outputted to a new 'docs' folder. This is the folder where the vue website is deployed from in github.
 
 The following text was automatically inputted after the vue project creation, they are not my own notes.
 
