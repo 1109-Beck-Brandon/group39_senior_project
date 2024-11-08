@@ -17,9 +17,9 @@ Notes for setup:
 
 Note: I created the project with: "vue create .". I believe the project should just already exist if you are pulling the project from main. 
 
-## IMPORTANT, BEFORE PUSHING ANY EDITS:
+## IMPORTANT, BEFORE PUSHING:
 
-Run the "npm run build" command to make a new "dist" folder. Delete the current "docs" folder, and rename the newly created "dist" folder to "docs". Currently the repository's deployment source is pointing to the "docs" folder for the webpage. 
+Run the "npm run build" command to make a new build, which will be automatically outputted to a new 'docs' folder. This is the folder where the vue website is deployed from in github
 
 The following text was automatically inputted after the vue project creation, they are not my own notes.
 
