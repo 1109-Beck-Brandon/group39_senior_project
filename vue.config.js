@@ -1,9 +1,9 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
-
-  publicPath: process.env.NODE_ENV === 'production' ? '/group39_senior_project/front-end/' : '/',
-  outputDir: 'docs',
+  
+  publicPath: '/group39_senior_project/',
+  outputDir: '../docs',
 
   pluginOptions: {
     vuetify: {
