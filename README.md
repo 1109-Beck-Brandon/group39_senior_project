@@ -19,7 +19,7 @@ Note: I created the project with: "vue create .". I believe the project should j
 
 ## IMPORTANT, BEFORE PUSHING ANY EDITS:
 
-Run the "npm run build" command to make a new "dist" folder. Delete the current "docs" folder, and rename the newly created "dist" folder to "docs". Currently the repository's deployment source is pointing to the "docs" folder for the webpage. 
+Run the "npm run build" command to make a new build folder called "docs". This is the folder the repository sources from to deploy the website. 
 
 The following text was automatically inputted after the vue project creation, they are not my own notes.
 
