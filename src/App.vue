@@ -1,12 +1,38 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> | 
-    <router-link to="/login">Login</router-link> | 
-    <router-link to="/createProfile">Create Profile</router-link>
-  </nav>
-  <router-view/>
+  <div id="app">
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> | 
+      <router-link to="/login">Login</router-link> | 
+      <router-link to="/createProfile">Create Profile</router-link>
+    </nav>
+    <h1>{{ message }}</h1>
+    <button @click="fetchData">Fetch Data</button>
+    <router-view/>
+  </div>
 </template>
+
+<script>
+import api from './services/api';
+
+export default {
+  data() {
+    return {
+      message: ''
+    };
+  },
+  methods: {
+    async fetchData() {
+      try {
+        const response = await api.getData();
+        this.message = response.data.message;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  }
+};
+</script>
 
 <style>
 #app {
