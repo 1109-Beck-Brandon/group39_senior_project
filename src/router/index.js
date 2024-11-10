@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import UserLogin from '../views/UserLogin.vue'; // Import Login Page
+import ProfileCreate from '../views/ProfileCreate.vue'; //Import Profile Creation Page
 
 const routes = [
   {
@@ -19,7 +20,11 @@ const routes = [
   //Added login page
   { path: '/login',
     component: UserLogin 
-  }, 
+  },
+  //Added Profile Creation
+  { path: '/createProfile',
+    component: ProfileCreate
+  },
 ]
 
 const router = createRouter({

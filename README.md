@@ -14,12 +14,13 @@ Notes for setup:
 4. Install Vue CLI<br />
     &emsp;4a. sudo npm install -g @vue/cli<br />
     &emsp;4b. vue --version<br />
+5. Pip install axios
 
 Note: I created the project with: "vue create .". I believe the project should just already exist if you are pulling the project from main. 
 
 ## IMPORTANT, BEFORE PUSHING ANY EDITS:
 
-Run the "npm run build" command to make a new "dist" folder. Delete the current "docs" folder, and rename the newly created "dist" folder to "docs". Currently the repository's deployment source is pointing to the "docs" folder for the webpage. 
+Run the "npm run build" command to make a new build folder called "docs". This is the folder the repository sources from to deploy the website. 
 
 The following text was automatically inputted after the vue project creation, they are not my own notes.
 
