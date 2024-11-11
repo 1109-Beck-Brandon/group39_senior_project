@@ -14,7 +14,7 @@ Notes for setup:
 4. Install Vue CLI<br />
     &emsp;4a. sudo npm install -g @vue/cli<br />
     &emsp;4b. vue --version<br />
-5. Pip install axios
+5. Run the command: npm install axios
 
 Note: I created the project with: "vue create .". I believe the project should just already exist if you are pulling the project from main. 
 

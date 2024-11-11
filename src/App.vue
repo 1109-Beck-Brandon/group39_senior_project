@@ -7,7 +7,7 @@
       <router-link to="/createProfile">Create Profile</router-link>
     </nav>
     <h1>{{ message }}</h1>
-    <button @click="fetchData">Fetch Data</button>
+    <!-- <button @click="fetchData">Fetch Data</button> -->
     <router-view/>
   </div>
 </template>
