@@ -32,3 +32,23 @@ def register():
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"message": "User registered successfully!"}), 201
+
+@auth.route('/createProfile', methods=['POST'])
+def create_profile():
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+    role = data.get('role', 'user')  # Default role is 'user'
+
+    # Check if the user already exists
+    if User.query.filter((User.username == username) | (User.email == email)).first():
+        return jsonify({'message': 'User already exists'}), 409
+
+    # Create a new user
+    new_user = User(username=username, email=email, role=role)
+    new_user.set_password(password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'Profile created successfully'}), 201
