@@ -44,6 +44,9 @@
 </template>
 
 <script>
+
+import api from '@/services/api';
+
 export default {
     data() {
         return {
@@ -57,9 +60,20 @@ export default {
         };
     },
     methods: {
-        handleSubmit() {
-            //Placeholder until database and flask is set up
-            console.log('Form Data:', this.formData);
+        async handleSubmit() {
+            try {
+                const response = await api.createProfile(this.formData);
+                this.message = response.data.message;
+                console.log('Profile Created:', response.data);
+                this.$router.push('/login');
+            } catch (error) {
+                if (error.response && error.response.status === 409) {
+                    console.error('Username or Email already exists:', error);
+                } else {
+                    console.error('Error creating profile:', error);
+                }
+                console.error('Error creating profile:', error);
+            }
         },
     },
 };
