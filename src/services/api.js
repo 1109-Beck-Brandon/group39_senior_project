@@ -16,5 +16,9 @@ export default {
   },
   login(credentials) {
     return apiClient.post('/login', credentials);
+  },
+  // Add this method
+  createProfile(profileData) {
+    return apiClient.post('/auth/createProfile', profileData);
   }
 };
