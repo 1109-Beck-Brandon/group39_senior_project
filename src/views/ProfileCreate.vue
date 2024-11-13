@@ -1,5 +1,5 @@
 <template>
-    <v-container class="pa-5">
+    <v-container class="pa-5 black-background">
         
         <h2>Create a Profile</h2>
         
@@ -68,5 +68,9 @@ export default {
 <style scoped>
 .pa-5 {
     padding:40px;
+}
+.black-background {
+    background-color: #000;
+    color: #fff;
 }
 </style>
