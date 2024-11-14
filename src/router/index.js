@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import UserLogin from '../views/UserLogin.vue'; // Import Login Page
 import ProfileCreate from '../views/ProfileCreate.vue'; //Import Profile Creation Page
+import CourseSelect from '../views/CourseSelect.vue'; //Import Course Selection Page
 
 const routes = [
   {
@@ -25,6 +26,18 @@ const routes = [
   { path: '/createProfile',
     component: ProfileCreate
   },
+  //Added Course Selection
+  { path: '/courseSelect',
+    component: CourseSelect
+  },
+  //Add Course Page
+  {
+    path: '/course/:courseName',
+    name: 'CoursePage',
+    component: () => import('../views/CoursePage.vue'),
+    props: true
+  }
+  
 ]
 
 const router = createRouter({
