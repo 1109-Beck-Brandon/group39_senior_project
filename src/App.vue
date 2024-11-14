@@ -4,7 +4,8 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> | 
       <router-link to="/login">Login</router-link> | 
-      <router-link to="/createProfile">Create Profile</router-link>
+      <router-link to="/createProfile">Create Profile</router-link> |
+      <router-link to="/courseSelect">Select Course</router-link>
     </nav>
     <h1>{{ message }}</h1>
     <!-- <button @click="fetchData">Fetch Data</button> -->
