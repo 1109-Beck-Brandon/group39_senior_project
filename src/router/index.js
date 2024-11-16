@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import UserLogin from '../views/UserLogin.vue'; // Import Login Page
 import ProfileCreate from '../views/ProfileCreate.vue'; //Import Profile Creation Page
 import CourseSelect from '../views/CourseSelect.vue'; //Import Course Selection Page
+import TeacherView from '../views/TeacherView.vue'; //Import Teacher View Page
 import ReviewPage from '../views/ReviewPage.vue';
 
 const routes = [
@@ -38,11 +39,15 @@ const routes = [
     component: () => import('../views/CoursePage.vue'),
     props: true
   },
-
+  //Add Teacher View
+  {
+    path: '/teacherView',
+    component: TeacherView
+  },
   { path: '/reviewPage', 
     name: 'ReviewPage', 
     component: ReviewPage 
-  } 
+  }
 ]
 
 const router = createRouter({
