@@ -6,7 +6,8 @@
       <router-link to="/login">Login</router-link> | 
       <router-link to="/createProfile">Create Profile</router-link> |
       <router-link to="/courseSelect">Select Course</router-link> |
-      <router-link to="/teacherView">Teacher View</router-link>
+      <router-link to="/teacherView">Teacher View</router-link> |
+      <router-link to="/reviewPage">Reviews</router-link>
     </nav>
     <h1>{{ message }}</h1>
     <!-- <button @click="fetchData">Fetch Data</button> -->
