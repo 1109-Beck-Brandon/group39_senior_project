@@ -1,6 +1,6 @@
 <template>
 <div class="login">
-    <h1>Test Login</h1>
+    <h1>Login</h1>
     <form @submit.prevent="handleLogin">
       <div>
         <label for="username">Username: </label>
@@ -13,6 +13,12 @@
       <button type="submit">Login</button>
     </form>
     <p v-if="error" class="error">{{ error }}</p>
+
+    <!-- Add the new user link -->
+    <p class="new-user">
+      <router-link to="/createProfile">New user?  Create a profile</router-link>
+    </p>
+
   </div>
   <v-layout class="rounded rounded-md">
     <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
@@ -57,4 +63,20 @@ export default {
 .error {
   color: red;
 }
+
+.new-user {
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.new-user a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.new-user a:hover {
+  text-decoration: underline;
+}
+
 </style>
