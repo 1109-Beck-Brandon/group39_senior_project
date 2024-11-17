@@ -6,11 +6,11 @@
       <router-link to="/login">Login</router-link> | 
       <router-link to="/createProfile">Create Profile</router-link> |
       <router-link to="/courseSelect">Select Course</router-link> |
+      <router-link to="/profileView">View Profile</router-link> |
       <router-link to="/teacherView">Teacher View</router-link> |
-      <router-link to="/reviewPage">Reviews</router-link>
+      <router-link to="/reviewPage">Reviews</router-link> |
+      <router-link to="/passwordReset">Reset Password</router-link>
     </nav>
-    <h1>{{ message }}</h1>
-    <!-- <button @click="fetchData">Fetch Data</button> -->
     <router-view/>
   </div>
 </template>
@@ -47,7 +47,7 @@ export default {
 }
 
 nav {
-  padding: 70px;
+  padding: 70px 0 10px 0;
 }
 
 nav a {
