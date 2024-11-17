@@ -1,4 +1,7 @@
 <template>
+  <v-layout class="rounded rounded-md">
+    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
+  </v-layout>
   <div class="reviewPage">
     <h1>Review Page</h1>
 
@@ -30,7 +33,7 @@ export default {
   data() {
     return {
       reviews: [
-        "Yooooooooo I finaly can hacck thanks guys. Anyone plays poker?"
+        "Yooooooooo I finaly can hacck thanks guys."
       ], // Store reviews here
       newReview: '', // Store new review input here
       imageSrc: squirrelImage, // Image source for the page

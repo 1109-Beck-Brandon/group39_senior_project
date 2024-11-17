@@ -18,6 +18,10 @@
     <p class="new-user">
       <router-link to="/createProfile">New user?  Create a profile</router-link>
     </p>
+    <!-- Add Forgot Password Link-->
+    <p class="forgot-password">
+      <router-link to="/passwordReset">Forgot Password? </router-link>
+    </p>
 
   </div>
   <v-layout class="rounded rounded-md">

@@ -5,6 +5,8 @@ import ProfileCreate from '../views/ProfileCreate.vue'; //Import Profile Creatio
 import CourseSelect from '../views/CourseSelect.vue'; //Import Course Selection Page
 import TeacherView from '../views/TeacherView.vue'; //Import Teacher View Page
 import ReviewPage from '../views/ReviewPage.vue'; //Import Review Page
+import ProfileView from '../views/UserProfile.vue'; //Import Profile View Page
+import PasswordReset from '../views/PasswordReset.vue'; //Import Password Reset Page
 
 const routes = [
   {
@@ -48,6 +50,16 @@ const routes = [
   { path: '/reviewPage', 
     name: 'ReviewPage', 
     component: ReviewPage 
+  },
+  //Add Profile View Page
+  {
+    path: '/profileView',
+    component: ProfileView
+  },
+  //Add Password Reset Page
+  {
+    path: '/passwordReset',
+    component: PasswordReset
   }
 ]
 
