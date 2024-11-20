@@ -1,22 +1,16 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from .extensions import db
+from .auth import auth as auth_blueprint
+from .routes import main as main_blueprint
 from .config import Config  # Use relative import
-
-db = SQLAlchemy()
-migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
-    
+    app.config.from_object(Config)  # Use the Config class directly
+
     db.init_app(app)
-    migrate.init_app(app, db)
 
-    from .routes import main
-    app.register_blueprint(main, url_prefix='/')  # Adjust url_prefix as needed
-
-    from .auth import auth
-    app.register_blueprint(auth, url_prefix='/auth')  # Example prefix
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    app.register_blueprint(main_blueprint)
 
     return app

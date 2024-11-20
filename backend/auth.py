@@ -52,3 +52,23 @@ def create_profile():
     db.session.commit()
 
     return jsonify({'message': 'Profile created successfully'}), 201
+
+@auth.route('/resetPassword', methods=['POST'])
+def reset_password():
+    data = request.get_json()
+    email = data.get('email')
+    new_password = data.get('newPassword')
+    confirm_password = data.get('confirmPassword')
+
+    if new_password != confirm_password:
+        return jsonify({'message': 'Passwords do not match'}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    user.set_password(new_password)
+    db.session.commit()
+
+    return jsonify({'message': 'Password reset successfully'}), 200
