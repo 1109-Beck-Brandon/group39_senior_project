@@ -51,6 +51,13 @@ export default {
 </script>
 
 <style scoped>
+
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: black;
+}
 .reviewPage {
   padding: 20px;
 }

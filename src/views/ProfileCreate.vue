@@ -1,7 +1,7 @@
 <template>
     <v-container class="pa-5">
-        
-        <h2>Create a Profile</h2>
+        <!--Gradient text-->
+        <h2 class="neon-text">Create a Profile</h2>
         
         <!-- Temporary Form Submission Until Database is Ready -->
         <v-form @submit.prevent="handleSubmit">
@@ -86,5 +86,25 @@ export default {
 <style scoped>
 .pa-5 {
     padding:40px;
+}
+
+.neon-text{
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-transform: none;
+    text-align: center;
+    background: linear-gradient(45deg, #9b4dca, #ff6ac1, #2ad7ff);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}   
+
+@keyframes neon-animation{
+    0%{
+        background-position: 0%;
+    }
+    100%{
+        background-position: 100%;
+    }
 }
 </style>
