@@ -8,6 +8,11 @@ import ReviewPage from '../views/ReviewPage.vue'; //Import Review Page
 import ProfileView from '../views/UserProfile.vue'; //Import Profile View Page
 import PasswordReset from '../views/PasswordReset.vue'; //Import Password Reset Page
 
+//These will be an import section for course pages
+import CourseIntroToCybersecurity from '../views/CoursePages/1-IntroToCybersecurity/IntroductionToCybersecurityCoursePage.vue'
+import CourseSample202 from '../views/CoursePages/2-SampleCourse202/SampleCourse2.vue'
+import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse3.vue'
+
 const routes = [
   {
     path: '/',
@@ -60,7 +65,12 @@ const routes = [
   {
     path: '/passwordReset',
     component: PasswordReset
-  }
+  },
+  //These will be all of the course pages
+  { path: "/course/intro-to-cybersecurity", name: "IntroToCybersecurity", component: CourseIntroToCybersecurity },
+  { path: "/course/sample-202", name: "Sample202", component: CourseSample202 },
+  { path: "/course/sample-303", name: "Sample303", component: CourseSample303 },
+  // Add more course routes here
 ]
 
 const router = createRouter({
