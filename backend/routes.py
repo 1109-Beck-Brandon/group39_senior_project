@@ -24,7 +24,6 @@ def add_user():
 
 @main.route('/api/data', methods=['GET'])
 def get_data():
-    # Example data
     data = {"message": "Hello from Flask!"}
     return jsonify(data)
 
