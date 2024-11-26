@@ -12,6 +12,7 @@ __pycache__/
 venv/
 env/
 .env/
+myenv/
 
 # Logs
 logs/
@@ -60,6 +61,7 @@ bower_components/
 dist/
 build/
 out/
+build/
 
 # Test directories
 coverage/
@@ -77,3 +79,31 @@ temp/
 *.swo
 *.bak
 *.orig
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Flask specific
+instance/
+.webassets-cache
+
+# Pytest
+.cache

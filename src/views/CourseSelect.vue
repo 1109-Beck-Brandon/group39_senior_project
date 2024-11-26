@@ -1,4 +1,9 @@
 <template>
+    <!--Appplication  Bar-->
+    <v-layout class="rounded rounded-md">
+      <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
+    </v-layout>
+    
     <v-container fluid>
       <h2 class="page-title">Select a Course</h2>
       <div class="course-scroll">
@@ -29,9 +34,6 @@
         </v-row>
       </div>
     </v-container>
-    <v-layout class="rounded rounded-md">
-      <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-    </v-layout>
 </template>
   
 <script>
@@ -40,18 +42,29 @@
       return {
         courses: [
           { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
+          { name: "Introduction to Theory", description: "This is the introduction course to theory, more to come soon.", progress: 0},
           { name: "Sample Course 202", description: "This is a sample course to test the slide bar", progress: 0 },
           { name: "Sample Course 303", description: "This is a sample course to test the slide bar", progress: 0 },
-          { name: "Sample Course 404", description: "This is a sample course to test the slide bar", progress: 0 },
-          { name: "Sample Course 505", description: "This is a sample course to test the slide bar", progress: 0 },
-          { name: "Sample Course 606", description: "This is a sample course to test the slide bar", progress: 0 },
           // Add more courses as needed
         ],
       };
     },
     methods: {
       goToCoursePage(courseName) {
-        this.$router.push({ name: "CoursePage", params: { courseName } });
+        const courseRoutes = {
+          "Introduction to Cybersecurity": "/course/intro-to-cybersecurity",
+          "Introduction to Theory": "/course/intro-to-theory",
+          "Sample Course 202": "/course/sample-202",
+          "Sample Course 303": "/course/sample-303",
+          // More course routings
+        };
+
+        const route = courseRoutes[courseName];
+        if (route) {
+          this.$router.push(route);
+        } else {
+          console.error("No route defined for this course:", courseName);
+        }
       },
     },
   };
