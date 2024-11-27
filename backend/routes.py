@@ -1,8 +1,17 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_from_directory
 from .models import User, Course, Module, Resource, Review, Classroom, Student
 from . import db
+import os
 
 main = Blueprint('main', __name__)
+
+@main.route('/', defaults={'path': ''})
+@main.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists("docs/" + path):
+        return send_from_directory('docs', path)
+    else:
+        return send_from_directory('docs', 'index.html')
 
 @main.route('/', methods=['GET'])
 def index():
