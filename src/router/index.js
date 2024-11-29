@@ -9,13 +9,7 @@ import ProfileView from '../views/UserProfile.vue'; //Import Profile View Page
 import PasswordReset from '../views/PasswordReset.vue'; //Import Password Reset Page
 
 //These will be an import section for course pages
-//Course 1 Content
 import CourseIntroToCybersecurity from '../views/CoursePages/1-IntroToCybersecurity/IntroductionToCybersecurityCoursePage.vue'
-import Course1ModuleOne from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/Module1.vue'
-import Course1ModuleSE from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/SocialEngineeringModule.vue'
-import Course1LabModule from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule1.vue'
-import Course1LabModule2 from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule2.vue'
-
 import CourseSample202 from '../views/CoursePages/2-SampleCourse202/SampleCourse2.vue'
 import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse3.vue'
 
@@ -77,12 +71,6 @@ const routes = [
   { path: "/course/sample-202", name: "Sample202", component: CourseSample202 },
   { path: "/course/sample-303", name: "Sample303", component: CourseSample303 },
   // Add more course routes here
-
-  //Course 1 Module Components
-  { path: "/course/intro-to-cybersecurity/moduleOne", component: Course1ModuleOne}, //Course 1 Module 1
-  { path: "/course/intro-to-cybersecurity/SEmodule", component: Course1ModuleSE}, //Course 1 Social Engineering Module
-  { path: "/course/intro-to-cybersecurity/labModule", component: Course1LabModule}, //Course 1 Lab Module 1
-  { path: "/course/intro-to-cybersecurity/labModule2", component: Course1LabModule2}, //Course 1 Lab Module 2
 ]
 
 const router = createRouter({
