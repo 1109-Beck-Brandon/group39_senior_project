@@ -46,14 +46,14 @@ export default {
   data() {
     return {
       activeTab: 0,
-      modules: ["Module 1", "Module 2", "Module 3", "Module 4"],
+      modules: ["Module 1", "Module 2"/*, "Module 3", "Module 4"*/],
       moduleContent: [
         "Module 1: The CIA Triad",
         "Module 2: Intro to Social Engineering",
-        "Module 3: Basic Unix Commands Lab",
-        "Module 4: Unix Commands Lab Continued",
+        //"Module 3: Basic Unix Commands Lab",
+        //"Module 4: Unix Commands Lab Continued",
       ],
-      moduleRoutes: ["/course/intro-to-cybersecurity/moduleOne", "/course/intro-to-cybersecurity/SEmodule", "/course/intro-to-cybersecurity/labModule", "/course/intro-to-cybersecurity/labModule2"],
+      moduleRoutes: ["/course/intro-to-cybersecurity/moduleOne", "/course/intro-to-cybersecurity/SEmodule"/*, "/course/intro-to-cybersecurity/labModule", "/course/intro-to-cybersecurity/labModule2"*/],
     };
   },
   methods: {
