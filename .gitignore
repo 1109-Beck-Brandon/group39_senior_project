@@ -107,5 +107,3 @@ instance/
 
 # Pytest
 .cache
-
-docs/
