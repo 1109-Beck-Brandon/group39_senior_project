@@ -1,7 +1,9 @@
 <template>
     <v-container class="pa-5">
         
-        <h2>Create a Profile</h2>
+        <h2>For the new Create a Profile, I replaced it with a button and floating UI on the homepage, Which
+            takes you to the /onboarding
+        </h2>
         
         <!-- Temporary Form Submission Until Database is Ready -->
         <v-form @submit.prevent="handleSubmit">
