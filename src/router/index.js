@@ -19,6 +19,13 @@ import Course1LabModule2 from '../views/CoursePages/1-IntroToCybersecurity/Cours
 import CourseSample202 from '../views/CoursePages/2-SampleCourse202/SampleCourse2.vue'
 import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse3.vue'
 
+//new pages, making a new profile redirects you to diff onboarding page before your profile page
+import TeacherOnboarding from "@/views/OnboardingPages/TeacherOnboarding.vue";
+import StudentOnboarding from "@/views/OnboardingPages/StudentOnboarding.vue";
+import UserOnboarding from "@/views/OnboardingPages/UserOnboarding.vue";
+//new gradebook page for teachers
+import GradeBook from "@/views/GradeBook.vue";
+
 const routes = [
   {
     path: '/',
@@ -83,6 +90,33 @@ const routes = [
   { path: "/course/intro-to-cybersecurity/SEmodule", component: Course1ModuleSE}, //Course 1 Social Engineering Module
   { path: "/course/intro-to-cybersecurity/labModule", component: Course1LabModule}, //Course 1 Lab Module 1
   { path: "/course/intro-to-cybersecurity/labModule2", component: Course1LabModule2}, //Course 1 Lab Module 2
+
+  //new path to teacher's Onboarding Page
+  {
+    path: '/teacherOnboarding',
+    name: 'TeacherOnboarding', //changed the name property
+    component: TeacherOnboarding
+  }, 
+
+  //new path to student's Onboarding Page
+  {
+    path: '/studentOnboarding',
+    name: 'StudentOnboarding', 
+    component: StudentOnboarding
+  },
+  //new path to normal User's Onboarding Page
+  {
+    path: '/userOnboarding',
+    name: 'UserOnboarding', 
+    component: UserOnboarding
+  },
+  //new path to teacher's gradebook page
+  {
+    path: '/gradebook',
+    name: 'GradeBook', 
+    component: GradeBook
+  }
+
 ]
 
 const router = createRouter({
