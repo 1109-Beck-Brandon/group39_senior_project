@@ -10,6 +10,7 @@
       <router-link to="/teacherView">Teacher View</router-link> |
       <router-link to="/reviewPage">Reviews</router-link> |
       <router-link to="/passwordReset">Reset Password</router-link>
+
     </nav>
     <router-view/>
   </div>
