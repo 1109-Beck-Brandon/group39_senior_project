@@ -17,6 +17,8 @@ import Course1ModuleSE from '../views/CoursePages/1-IntroToCybersecurity/CourseM
 import Course1OSIModel from  '../views/CoursePages/1-IntroToCybersecurity/CourseModules/ModuleOSI.vue'
 import Course1LabModule from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule1.vue'
 import Course1LabModule2 from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule2.vue'
+import Course1QuizLab from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/QuizLab.vue'
+import Course1Jobs from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/JobsAtCyber.vue'
 
 import CourseSample202 from '../views/CoursePages/2-SampleCourse202/SampleCourse2.vue'
 import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse3.vue'
@@ -94,6 +96,8 @@ const routes = [
   { path: "/course/intro-to-cybersecurity/OSImodule", component: Course1OSIModel}, //Course 1 OSI Model Module
   { path: "/course/intro-to-cybersecurity/labModule", component: Course1LabModule}, //Course 1 Lab Module 1
   { path: "/course/intro-to-cybersecurity/labModule2", component: Course1LabModule2}, //Course 1 Lab Module 2
+  { path: "/course/intro-to-cybersecurity/quizLab", component: Course1QuizLab}, //Course 1 Lab Module 3
+  { path: "/course/intro-to-cybersecurity/Jobsmodule", component: Course1Jobs}, //Course 1 Jobs Module
 
   //new path to teacher's Onboarding Page
   {
