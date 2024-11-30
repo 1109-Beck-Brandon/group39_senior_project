@@ -15,7 +15,7 @@ def serve(path):
 
 @main.route('/', methods=['GET'])
 def index():
-    return jsonify({"message": "Welcome to the Flask API"})
+    return jsonify({"message": "Welcome to the Flask backend"})
 
 @main.route('/users', methods=['GET'])
 def get_users():
