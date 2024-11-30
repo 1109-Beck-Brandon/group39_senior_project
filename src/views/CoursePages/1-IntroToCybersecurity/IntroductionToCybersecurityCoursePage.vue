@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       activeTab: 0,
-      modules: ["Module 1", "Module 2", "Module 3", "Module 4", "Module 5", "Module 6"],
+      modules: ["Module 1", "Module 2", "Module 3", "Module 4", "Module 5", "Module 6", "Module 7"],
       moduleContent: [
         "Module 1: The CIA Triad",
         "Module 2: Intro to Attacks and Defenses",
@@ -54,8 +54,9 @@ export default {
         "Moudle 4: Intro to the OSI Model",
         "Module 5: Basic Unix Commands Lab",
         "Module 6: Unix Commands Lab Continued",
+        "Module 7: Jobs in Cybersecurity",
       ],
-      moduleRoutes: ["/course/intro-to-cybersecurity/moduleOne", "/course/intro-to-cybersecurity/AttacksDefensemodule", "/course/intro-to-cybersecurity/SEmodule", "/course/intro-to-cybersecurity/OSImodule", "/course/intro-to-cybersecurity/labModule", "/course/intro-to-cybersecurity/labModule2"],
+      moduleRoutes: ["/course/intro-to-cybersecurity/moduleOne", "/course/intro-to-cybersecurity/AttacksDefensemodule", "/course/intro-to-cybersecurity/SEmodule", "/course/intro-to-cybersecurity/OSImodule", "/course/intro-to-cybersecurity/labModule", "/course/intro-to-cybersecurity/labModule2", "/course/intro-to-cybersecurity/Jobsmodule"],
     };
   },
   methods: {
