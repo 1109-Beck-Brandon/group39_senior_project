@@ -5,6 +5,8 @@ services:
     plan: free
     buildCommand: |
       pip install -r backend/requirements.txt
+      npm install
+      npm run build
       flask db upgrade
     startCommand: gunicorn run:app
     envVars:
