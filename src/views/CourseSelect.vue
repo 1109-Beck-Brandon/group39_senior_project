@@ -42,7 +42,6 @@
       return {
         courses: [
           { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
-          { name: "Introduction to Theory", description: "This is the introduction course to theory, more to come soon.", progress: 0},
           { name: "Sample Course 202", description: "This is a sample course to test the slide bar", progress: 0 },
           { name: "Sample Course 303", description: "This is a sample course to test the slide bar", progress: 0 },
           // Add more courses as needed
