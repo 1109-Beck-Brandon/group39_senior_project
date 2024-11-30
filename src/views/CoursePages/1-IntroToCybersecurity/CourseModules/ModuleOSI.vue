@@ -29,11 +29,11 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(lab, index) in labs" :key="index">
-                  <td>{{ lab.number }}</td>
-                  <td>{{ lab.layer }}</td>
-                  <td>{{ lab.description }}</td>
-                  <td>{{ lab.tcp }}</td>
+                <tr v-for="(layer, index) in layers2" :key="index">
+                  <td>{{ layer.number }}</td>
+                  <td>{{ layer.layer }}</td>
+                  <td>{{ layer.description }}</td>
+                  <td>{{ layer.tcp }}</td>
                 </tr>
               </tbody>
             </v-table>
@@ -203,13 +203,13 @@ body,
 
 .table-theme {
   font-size: 1.8em;
-  color: #ffffff;
+  color: #000000;
   margin-bottom: 20px;
 }
 
 .table-description {
   font-size: 1.2em;
-  color: #ffffff;
+  color: #000000;
   margin-bottom: 20px;
 }
 
@@ -222,12 +222,12 @@ table {
 th,
 td {
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #000000;
   text-align: left;
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: #ffffff;
   font-weight: bold;
 }
 
@@ -241,7 +241,7 @@ tr:hover {
 
 .text-below {
   font-size: 1em;
-  color: #ffffff;
+  color: #000000;
   text-align: left;
   list-style: none;
   margin-top: 20px;
@@ -253,7 +253,7 @@ tr:hover {
   margin-left: 20px;
   text-align: left;
   list-style: none;
-  color: #ffffff; 
+  color: #000000; 
   font-size: 1em;
   line-height: 1.6;
 }

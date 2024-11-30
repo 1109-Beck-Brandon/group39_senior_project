@@ -7,13 +7,14 @@ import TeacherView from '../views/TeacherView.vue'; //Import Teacher View Page
 import ReviewPage from '../views/ReviewPage.vue'; //Import Review Page
 import ProfileView from '../views/UserProfile.vue'; //Import Profile View Page
 import PasswordReset from '../views/PasswordReset.vue'; //Import Password Reset Page
-import AttacksDefence from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/AttacksDefence.vue';
 
 //These will be an import section for course pages
 //Course 1 Content
 import CourseIntroToCybersecurity from '../views/CoursePages/1-IntroToCybersecurity/IntroductionToCybersecurityCoursePage.vue'
 import Course1ModuleOne from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/Module1.vue'
+import Course1AttacksDefence from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/AttacksDefence.vue';
 import Course1ModuleSE from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/SocialEngineeringModule.vue'
+import Course1OSIModel from  '../views/CoursePages/1-IntroToCybersecurity/CourseModules/ModuleOSI.vue'
 import Course1LabModule from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule1.vue'
 import Course1LabModule2 from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule2.vue'
 
@@ -82,14 +83,15 @@ const routes = [
   },
   //These will be all of the course pages
   { path: "/course/intro-to-cybersecurity", name: "IntroToCybersecurity", component: CourseIntroToCybersecurity },
-  { path: '/moduleAttack', name: 'AttacksDefence', component: AttacksDefence },
   { path: "/course/sample-202", name: "Sample202", component: CourseSample202 },
   { path: "/course/sample-303", name: "Sample303", component: CourseSample303 },
   // Add more course routes here
 
   //Course 1 Module Components
   { path: "/course/intro-to-cybersecurity/moduleOne", component: Course1ModuleOne}, //Course 1 Module 1
+  { path: "/course/intro-to-cybersecurity/AttacksDefensemodule", component: Course1AttacksDefence}, //Course 1 Attacks/Defenses Module
   { path: "/course/intro-to-cybersecurity/SEmodule", component: Course1ModuleSE}, //Course 1 Social Engineering Module
+  { path: "/course/intro-to-cybersecurity/OSImodule", component: Course1OSIModel}, //Course 1 OSI Model Module
   { path: "/course/intro-to-cybersecurity/labModule", component: Course1LabModule}, //Course 1 Lab Module 1
   { path: "/course/intro-to-cybersecurity/labModule2", component: Course1LabModule2}, //Course 1 Lab Module 2
 
