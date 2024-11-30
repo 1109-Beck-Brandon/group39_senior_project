@@ -9,9 +9,24 @@ import ProfileView from '../views/UserProfile.vue'; //Import Profile View Page
 import PasswordReset from '../views/PasswordReset.vue'; //Import Password Reset Page
 
 //These will be an import section for course pages
+//Course 1 Content
 import CourseIntroToCybersecurity from '../views/CoursePages/1-IntroToCybersecurity/IntroductionToCybersecurityCoursePage.vue'
+import Course1ModuleOne from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/Module1.vue'
+import Course1AttacksDefence from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/AttacksDefence.vue';
+import Course1ModuleSE from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/SocialEngineeringModule.vue'
+import Course1OSIModel from  '../views/CoursePages/1-IntroToCybersecurity/CourseModules/ModuleOSI.vue'
+import Course1LabModule from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule1.vue'
+import Course1LabModule2 from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule2.vue'
+
 import CourseSample202 from '../views/CoursePages/2-SampleCourse202/SampleCourse2.vue'
 import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse3.vue'
+
+//new pages, making a new profile redirects you to diff onboarding page before your profile page
+import TeacherOnboarding from "@/views/OnboardingPages/TeacherOnboarding.vue";
+import StudentOnboarding from "@/views/OnboardingPages/StudentOnboarding.vue";
+import UserOnboarding from "@/views/OnboardingPages/UserOnboarding.vue";
+//new gradebook page for teachers
+import GradeBook from "@/views/GradeBook.vue";
 
 const routes = [
   {
@@ -71,6 +86,41 @@ const routes = [
   { path: "/course/sample-202", name: "Sample202", component: CourseSample202 },
   { path: "/course/sample-303", name: "Sample303", component: CourseSample303 },
   // Add more course routes here
+
+  //Course 1 Module Components
+  { path: "/course/intro-to-cybersecurity/moduleOne", component: Course1ModuleOne}, //Course 1 Module 1
+  { path: "/course/intro-to-cybersecurity/AttacksDefensemodule", component: Course1AttacksDefence}, //Course 1 Attacks/Defenses Module
+  { path: "/course/intro-to-cybersecurity/SEmodule", component: Course1ModuleSE}, //Course 1 Social Engineering Module
+  { path: "/course/intro-to-cybersecurity/OSImodule", component: Course1OSIModel}, //Course 1 OSI Model Module
+  { path: "/course/intro-to-cybersecurity/labModule", component: Course1LabModule}, //Course 1 Lab Module 1
+  { path: "/course/intro-to-cybersecurity/labModule2", component: Course1LabModule2}, //Course 1 Lab Module 2
+
+  //new path to teacher's Onboarding Page
+  {
+    path: '/teacherOnboarding',
+    name: 'TeacherOnboarding', //changed the name property
+    component: TeacherOnboarding
+  }, 
+
+  //new path to student's Onboarding Page
+  {
+    path: '/studentOnboarding',
+    name: 'StudentOnboarding', 
+    component: StudentOnboarding
+  },
+  //new path to normal User's Onboarding Page
+  {
+    path: '/userOnboarding',
+    name: 'UserOnboarding', 
+    component: UserOnboarding
+  },
+  //new path to teacher's gradebook page
+  {
+    path: '/gradebook',
+    name: 'GradeBook', 
+    component: GradeBook
+  }
+
 ]
 
 const router = createRouter({
