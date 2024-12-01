@@ -116,15 +116,47 @@
         </v-card>
       </v-dialog>
 
-      <!-- Teacher Actions Section, still a work in progress, only the 'Gradebook' button works for now -->
-      <v-col cols="3">
-        <v-card class="pa-3">
-          <h3>Actions</h3>
-          <v-btn block class="mb-2" @click="navigateToGradeBook">Gradebook </v-btn>
-          <v-btn block class="mb-2">Message Student</v-btn>
-          <v-btn block>View Student Progress</v-btn>
-        </v-card>
-      </v-col>
+        <!-- Teacher Actions Section -->
+        <v-col cols="3">
+          <v-card class="pa-3">
+            <h3>Actions</h3>
+            <v-btn block class="mb-2" @click="openInboxDialog">
+              <v-icon left>mdi-email</v-icon> Inbox
+            </v-btn>
+            <v-btn block class="mb-2" @click="navigateToGradeBook">Gradebook</v-btn>
+          </v-card>
+        </v-col>
+        <!-- Modal dialog popup for Inbox -->
+        <v-dialog v-model="showInboxDialog" max-width="600px">
+          <v-card>
+            <v-card-title class="headline">Inbox</v-card-title>
+            <v-card-text>
+              <!-- Display messages or empty state -->
+              <div v-if="messages.length === 0" class="empty-inbox">
+                <v-icon large color="primary" class="empty-icon">mdi-email-outline</v-icon>
+                <p>No new messages!</p>
+              </div>
+              <v-list v-else>
+                <v-list-item v-for="(message, index) in messages" :key="index" class="message-item">
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      From: {{ message.from }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      {{ message.content }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-icon @click="deleteMessage(index)">
+                    <v-icon color="error">mdi-delete</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="secondary" text @click="closeInboxDialog">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
     </v-row>
   </v-container>
 
@@ -188,9 +220,8 @@ export default {
       selectedStudentProfilePicture: "",
       selectedStudentProgress: [], //their progress in each course, static for now until backend is complete
       showAddStudentsModal: false,
-      classrooms: [
-        { name: "Classroom 1" }, //teachers will later be able to add more
-      ],
+      showInboxDialog: false,
+      messages: [], //from the inbox
       selectedClassroomStudents: [],
       selectedStudent: null,
     };
@@ -201,9 +232,11 @@ export default {
     this.classroom.id = userData.classId || "No ID Available";
     this.teacher.firstName = userData.firstName || "No first name";
     this.teacher.lastName = userData.lastName || "No last name";
-    //fetch saved students from local storage if they exist
+    //fetch saved students and messages from local storage if they exist
     const savedStudents = JSON.parse(localStorage.getItem("students")) || [];
     this.students = savedStudents;
+    const savedMessages = JSON.parse(localStorage.getItem("messages")) || [];
+    this.messages = savedMessages;
   },
   computed: {
     classroomStudents() {
@@ -221,8 +254,7 @@ export default {
     },
     openStudentProfileDialog(student) {
       this.selectedStudent = student;
-      this.selectedStudentProfilePicture =
-        "https://robohash.org/example24?set=set1"; // Static placeholder
+      this.selectedStudentProfilePicture = "https://robohash.org/example24?set=set1"; // Static placeholder
       this.selectedStudentProgress = student.progress || []; // Use student's progress
       this.showStudentProfileModal = true;
     },
@@ -257,6 +289,16 @@ export default {
     navigateToGradeBook() {
       this.$router.push({ path: "/gradebook" });
     },
+    openInboxDialog() {
+      this.showInboxDialog = true;
+    },
+    closeInboxDialog() {
+      this.showInboxDialog = false;
+    },
+    deleteMessage(index) {
+      this.messages.splice(index, 1); // Remove the message
+      localStorage.setItem("messages", JSON.stringify(this.messages)); // Update local storage
+    },
   },
 };
 </script>
@@ -268,6 +310,11 @@ export default {
 }
 .v-icon {
   margin-right: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.v-icon:hover {
+  transform: scale(1.2);
 }
 .student-item {
   cursor: pointer;
@@ -322,5 +369,18 @@ h4 {
 .v-divider {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+.empty-inbox {
+  text-align: center;
+  opacity: 0.5;
+  margin-top: 20px;
+}
+.empty-icon {
+  font-size: 48px;
+}
+.message-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
