@@ -11,6 +11,6 @@ services:
     startCommand: gunicorn run:app
     envVars:
       - key: DATABASE_URL
-        value: postgresql://cyberlpdb_user:n7OkVwnHb61CNVISiDr8X6ucMbmxkgTo@dpg-csl75sggph6c73em22m0-a.oregon-postgres.render.com:5432/cyberlpdb
+        value: postgresql://cyberlpdb_user:n7OkVwnHb61CNVISiDr8X6ucMbmxkgTo@dpg-csl75sggph6c73em22m0-a/cyberlpdb
       - key: SECRET_KEY
         value: cyber
