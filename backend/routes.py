@@ -13,12 +13,12 @@ def serve(path):
     else:
         return send_from_directory('docs', 'index.html')
 
-@main.route('/users', methods=['GET'])
+@main.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.all()
     return jsonify([{"user_id": user.user_id, "username": user.username, "email": user.email} for user in users])
 
-@main.route('/add_user', methods=['POST'])
+@main.route('/api/add_user', methods=['POST'])
 def add_user():
     data = request.get_json()
     new_user = User(username=data['username'], email=data['email'], role=data.get('role'))
@@ -32,7 +32,7 @@ def get_data():
     data = {"message": "Hello from Flask!"}
     return jsonify(data)
 
-@main.route('/course/<int:course_id>', methods=['GET'])
+@main.route('/api/course/<int:course_id>', methods=['GET'])
 def get_course(course_id):
     course = Course.query.get_or_404(course_id)
     return jsonify({
@@ -43,7 +43,7 @@ def get_course(course_id):
         "date_created": course.date_created
     })
 
-@main.route('/course/<int:course_id>/modules', methods=['GET'])
+@main.route('/api/course/<int:course_id>/modules', methods=['GET'])
 def get_course_modules(course_id):
     modules = Module.query.filter_by(course_id=course_id).order_by(Module.order).all()
     return jsonify([{
@@ -53,7 +53,7 @@ def get_course_modules(course_id):
         "order": module.order
     } for module in modules])
 
-@main.route('/courses', methods=['GET'])
+@main.route('/api/courses', methods=['GET'])
 def get_courses():
     courses = Course.query.all()
     return jsonify([{
@@ -63,7 +63,7 @@ def get_courses():
         "progress": 0  # Assuming progress is not stored in the database
     } for course in courses])
 
-@main.route('/resources', methods=['GET'])
+@main.route('/api/resources', methods=['GET'])
 def get_resources():
     resources = Resource.query.all()
     return jsonify([{
@@ -73,7 +73,7 @@ def get_resources():
         "url": resource.url
     } for resource in resources])
 
-@main.route('/reviews', methods=['GET'])
+@main.route('/api/reviews', methods=['GET'])
 def get_reviews():
     reviews = Review.query.all()
     return jsonify([{

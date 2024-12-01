@@ -2,11 +2,11 @@ from flask import Flask
 from .extensions import db, migrate, cors
 from .auth import auth as auth_blueprint
 from .routes import main as main_blueprint
-from .config import Config  # Use relative import
+from .config import Config
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)  # Use the Config class directly
+    app.config.from_object(Config)
 
     db.init_app(app)
     migrate.init_app(app, db)
