@@ -13,10 +13,6 @@ def serve(path):
     else:
         return send_from_directory('docs', 'index.html')
 
-@main.route('/', methods=['GET'])
-def index():
-    return jsonify({"message": "Welcome to the Flask backend"})
-
 @main.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()

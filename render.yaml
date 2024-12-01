@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: |
-      pip install -r backend/requirements.txt
+      pip install -r requirements.txt
       npm install
       npm run build
       flask db upgrade
