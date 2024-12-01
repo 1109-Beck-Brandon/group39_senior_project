@@ -5,14 +5,6 @@ import os
 
 main = Blueprint('main', __name__)
 
-@main.route('/', defaults={'path': ''})
-@main.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists("docs/" + path):
-        return send_from_directory('docs', path)
-    else:
-        return send_from_directory('docs', 'index.html')
-
 @main.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.all()
@@ -83,42 +75,10 @@ def get_reviews():
         "timestamp": review.timestamp
     } for review in reviews])
 
-@main.route('/reviews', methods=['POST'])
-def add_review():
-    data = request.get_json()
-    new_review = Review(content=data['content'], user_id=data['user_id'])
-    db.session.add(new_review)
-    db.session.commit()
-    return jsonify({"message": "Review added successfully!"}), 201
-
-@main.route('/classrooms', methods=['GET'])
-def get_classrooms():
-    classrooms = Classroom.query.all()
-    return jsonify([{
-        "classroom_id": classroom.classroom_id,
-        "name": classroom.name
-    } for classroom in classrooms])
-
-@main.route('/classrooms/<int:classroom_id>/students', methods=['GET'])
-def get_students(classroom_id):
-    students = Student.query.filter_by(classroom_id=classroom_id).all()
-    return jsonify([{
-        "student_id": student.student_id,
-        "first_name": student.first_name,
-        "last_name": student.last_name,
-        "classroom_id": student.classroom_id
-    } for student in students])
-
-@main.route('/user/<int:user_id>', methods=['GET'])
-def get_user_profile(user_id):
-    user = User.query.get_or_404(user_id)
-    return jsonify({
-        "user_id": user.user_id,
-        "username": user.username,
-        "email": user.email,
-        "fullName": f"{user.first_name} {user.last_name}",
-        "membershipDuration": user.date_created.strftime('%Y-%m-%d'),
-        "role": user.role,
-        "profilePicture": user.profile_picture,  # Assuming you have this field
-        "class": user.classroom.name if user.role == 'Student' else None
-    })
+@main.route('/', defaults={'path': ''})
+@main.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists("docs/" + path):
+        return send_from_directory('docs', path)
+    else:
+        return send_from_directory('docs', 'index.html')
