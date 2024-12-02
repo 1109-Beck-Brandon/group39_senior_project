@@ -1,4 +1,15 @@
 <template>
+
+  <!-- Application Bar -->
+  <v-layout class="rounded rounded-md">
+    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
+  </v-layout>
+
+  <!-- Back Button -->
+  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray;" @click="goBack">
+      <v-icon>mdi-arrow-left</v-icon>
+  </v-btn>
+  
     <v-container fluid>
       <!-- Full Page Content -->
       <v-row justify="center" align="center" style="min-height: 100vh;">
@@ -14,6 +25,8 @@
           <p class="section-description">
             Cybersecurity is one of the fastest-growing and most essential fields in the modern world. With the increasing
             reliance on technology, the demand for skilled professionals to protect sensitive data has never been higher.
+            While this module won't cover the entirety of jobs availible that are cybersecurity related, here are some key
+            roles you may commonly hear about:
           </p>
         </v-col>
   
@@ -57,13 +70,21 @@
           <!-- Job Images -->
           <div>
             <img :src="images.securityAnalyst" alt="Security Analyst" class="job-image" />
+            <br>
             CyberSecurity Analyst
+            <br>
             <img :src="images.penetrationTester" alt="Penetration Tester" class="job-image" />
+            <br>
             Penetration Tester
+            <br>
             <img :src="images.incidentResponder" alt="Incident Responder" class="job-image" />
+            <br>
             incidentResponder
+            <br>
             <img :src="images.consultant" alt="Cybersecurity Consultant" class="job-image" />
+            <br>
             Cybersecurity Consultant
+            <br>
           </div>
         </v-col>
   
@@ -162,6 +183,12 @@
       };
     },
     methods: {
+
+      //Back Button
+      goBack() {
+      this.$router.go(-1); 
+      },
+
       submitQuiz() {
         this.feedback = this.quizQuestions.map((question, index) => {
           const userAnswer = this.userAnswers[index];
