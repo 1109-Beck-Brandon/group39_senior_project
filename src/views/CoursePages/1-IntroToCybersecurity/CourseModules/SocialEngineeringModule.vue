@@ -4,6 +4,11 @@
       <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
     </v-layout>
 
+    <!-- Back Button -->
+    <v-btn icon class="position-absolute" style="left: 16px; background-color: gray;" @click="goBack">
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-btn>
+
     <v-container fluid>
       <!-- Top Section: Course Content -->
       <v-row>
@@ -19,14 +24,14 @@
             </p>
             
             <h2>Why does Social Engineering work?</h2>
-            <p>
+            <p class="formatted-description">
                 - Cialdini's Social Influence Theory: Attackers trick victims through six fundamental principles of influence: Reciprocity, Consistency and Commitment, Social Proof, Liking, Authority, and Scarcity. 
                 <br>
                 - Truth Default Theory: Assume that communication is honest unless proven otherwise. 
                 <br><br>
             </p>
             <h2>Defenses</h2>
-            <p>
+            <p class="formatted-description">
                 - Awareness and Training: Learn about the different types of Social Engineering attacks, so that you can learn to detect them as they happen
                 <br>
                 - For impersonation-related social engineering attacks, it would be best to have a system in place where an employee ID badge needs to be presented if they are not personally known
@@ -35,47 +40,34 @@
                 <br><br>
             </p>
             <h2>Types of Social Engineering Attacks</h2>
-            <p class="SE-Types-Description">
-                Familiarizing yourself with the different kinds of Social Engineering attacks can help you identify when one is occurring to you or someone in your workplace.
-                <br><br>
-                Phishing: This attack involves the attacker attempting to obtain sensitive information from a user, through means such impersonating a trusted entity in order to obtain information such as usernames, passwords, credit card information, or similar sensitive data. This attack is more often done via email.
-                <br><br>
-                Smishing: This is a version of phishing in which the attacker uses SMS (text message) on a cell phone to conduct the attack
-                <br><br>
-                Vishing: This is another version of phishing that uses voice communication (a phone call). This version of phishing is normally more successful due to the trust people put in the telephone network. 
-                <br><br>
-                Spam: Unsolicited emails sent in bulk. Spam is not generally considered a social engineering issue, but it can be considered a security issue due to some spam emails containing links to malicious websites.
-                <br><br>
-                Spim: Spam that is sent over SMS text messaging instead of email. Stands for Spam over Internet Messaging.
-                <br><br>
-                Spear Phishing: A phishing attack that is targeted at a group of people or businesses with something in common. Due to a specific group being targeted, the average number of successful attacks (people respond to the phishing message) usually increases in comparison to randomly sent emails.
-                <br><br>
-                Whaling: An attack that targets a high-value person such as a CEO or CFO, and is custom-built to increase the odds of success.
-                <br><br>
-                Pharming: This attack involves misdirecting users to fake websites that look like legitimate ones. 
-                <br><br>
-                Dumpster Diving: As the name sounds, the attacker goes through the victim's trash in hopes of finding valuable information that can later be used to aid a phishing attack or get into personal accounts. The best way to defend against this is to shred documents that may contain sensitive information before they are thrown in the trash.
-                <br><br>
-                Shoulder Surfing: The attacker simply looks over the victim's shoulder while they are entering sensitive information such as a PIN number or gate code. The best way to defend against this is to ensure no one is directly behind you, or shield with your hand the device you are inputting information to. 
-                <br><br>
-                Tailgating/Piggybacking: The attacker gains access to a room or building they are not allowed in by closely following behind a person who uses their own credentials to get into the room or building. 
-                <br><br>
-                Eliciting Information: The attacker assumes a role such as a help desk worker, and convinces the victim to allow them access to certain information to "fix" it or similar reasoning.
-                <br><br>
-                Prepending: In the context of social engineering, the attacker gains the victim's trust by supplying information that will be acted upon frequently before it is actually asked for in an attempt to try to legitimize the attacker's actual request that will come later on.
-                <br><br>
-                Identity Fraud: The attacker uses fake credentials to pose as the role of someone they are not, whether it is used for infiltration or gaining access to confidential information.
-                <br><br>
-                Invoice Scam: The attacker sends a fake invoice to a company in order to trick them into paying for something they did not order. 
-                <br><br>
-                Reverse Social Engineering: In this scenario the attacker gets the victim to be the one to initiate contact. This can be done by posing as a helpful resource that happens to be nearby when the victim needs it. This method is often successful because due to the victim initiating contact, there is usually no question of the attacker's authenticity.
-                <br><br>
-                Reconnaissance: Similar to the way this word is used in the military, the attacker will examine the systems they are wanting to attack to learn how they work. 
-                <br><br>
-                Typo Squatting: The attacker takes advantage of common typos that occur when users enter in a website address. Normally when entering in the incorrect address, the page results in a 404 "Not Found" error, however if the attacker registers a website with the typo included the user will be sent to the attacker's website. 
-                <br><br>
-
-            </p>
+            <v-container>
+              <v-row>
+                <v-col>
+                  <v-carousel show-arrows>
+                    <v-carousel-item
+                      v-for="(attack, index) in socialEngineeringTypes"
+                      :key="index"
+                    >
+                      <v-row>
+                        <v-col cols="4">
+                          <v-img
+                            :src="attack.image"
+                            :alt="attack.name"
+                            class="rounded"
+                            style="height: 400px; width: 100%; object-fit: cover; margin-left: 80px"
+                          ></v-img>
+                        </v-col>
+                        <v-col cols="6" style="margin-left: 80px;">
+                          <br>
+                          <h3>{{ attack.name }}</h3>
+                          <p>{{ attack.description }}</p>
+                        </v-col>
+                      </v-row>
+                    </v-carousel-item>
+                  </v-carousel>
+                </v-col>
+              </v-row>
+            </v-container>
 
             <h2>Phishing IQ Activity</h2>
             <p>
@@ -145,11 +137,127 @@
 </template>
   
 <script>
+
+  import PhishingIMG from "@/assets/Course1SEimages/Phishing.jpg"
+  import SmishingIMG from "@/assets/Course1SEimages/Smishing.jpg"
+  import VishingIMG from "@/assets/Course1SEimages/Vishing.jpg"
+  import SpamIMG from "@/assets/Course1SEimages/Spam.jpeg"
+  import SpimIMG from "@/assets/Course1SEimages/SPIM.jpg"
+  import SpearPhishingIMG from "@/assets/Course1SEimages/Spear-Phishing.jpeg"
+  import WhalingIMG from "@/assets/Course1SEimages/Whaling.png"
+  import PharmingIMG from "@/assets/Course1SEimages/Pharming.jpg"
+  import DumpsterDivingIMG from "@/assets/Course1SEimages/Dumpster-Diving.jpg"
+  import ShoulderSurfingIMG from "@/assets/Course1SEimages/Shoulder-Surfing.jpg"
+  import TailgatingIMG from "@/assets/Course1SEimages/Tailgating-Piggybacking.jpg"
+  import ElicitInfoIMG from "@/assets/Course1SEimages/ElicitInformation.jpg"
+  import PrependingIMG from "@/assets/Course1SEimages/Prepending.jpg"
+  import IdentityFraudIMG from "@/assets/Course1SEimages/IdentityFraud.jpg"
+  import InvoiceScamIMG from "@/assets/Course1SEimages/InvoiceScam.jpg"
+  import ReverseSEIMG from "@/assets/Course1SEimages/ReverseSocialEngineering.jpg"
+  import ReconnaissanceIMG from "@/assets/Course1SEimages/Reconnaissance.jpg"
+  import TypoSquattingIMG from "@/assets/Course1SEimages/TypoSquatting.jpg"
+
   export default {
     name: "CourseWithQuizPage",
     data() {
       return {
+        //Title
         courseTitle: "Intro to Social Engineering",
+
+        //Social Engineering Types
+        socialEngineeringTypes: [
+        {
+          name: "Phishing",
+          description: "This attack involves the attacker attempting to obtain sensitive information from a user, through means such impersonating a trusted entity in order to obtain information such as usernames, passwords, credit card information, or similar sensitive data. This attack is more often done via email.",
+          image: PhishingIMG,
+        },
+        {
+          name: "Smishing",
+          description: "This is a version of phishing in which the attacker uses SMS (text message) on a cell phone to conduct the attack.",
+          image: SmishingIMG,
+        },
+        {
+          name: "Vishing",
+          description: "This is another version of phishing that uses voice communication (a phone call). This version of phishing is normally more successful due to the trust people put in the telephone network.",
+          image: VishingIMG,
+        },
+        {
+          name: "Spam",
+          description: "Unsolicited emails sent in bulk. Spam is not generally considered a social engineering issue, but it can be considered a security issue due to some spam emails containing links to malicious websites.",
+          image: SpamIMG,
+        },
+        {
+          name: "Spim",
+          description: "Spam that is sent over SMS text messaging instead of email. Stands for Spam over Internet Messaging.",
+          image: SpimIMG,
+        },
+        {
+          name: "Spear Phishing",
+          description: "A phishing attack that is targeted at a group of people or businesses with something in common. Due to a specific group being targeted, the average number of successful attacks (people respond to the phishing message) usually increases in comparison to randomly sent emails.",
+          image: SpearPhishingIMG,
+        },
+        {
+          name: "Whaling",
+          description: "An attack that targets a high-value person such as a CEO or CFO, and is custom-built to increase the odds of success.",
+          image: WhalingIMG,
+        },
+        {
+          name: "Pharming",
+          description: "This attack involves misdirecting users to fake websites that look like legitimate ones.",
+          image: PharmingIMG,
+        },
+        {
+          name: "Dumpster Diving",
+          description: "As the name sounds, the attacker goes through the victim's trash in hopes of finding valuable information that can later be used to aid a phishing attack or get into personal accounts. The best way to defend against this is to shred documents that may contain sensitive information before they are thrown in the trash.",
+          image: DumpsterDivingIMG,
+        },
+        {
+          name: "Shoulder Surfing",
+          description: "The attacker simply looks over the victim's shoulder while they are entering sensitive information such as a PIN number or gate code. The best way to defend against this is to ensure no one is directly behind you, or shield with your hand the device you are inputting information to.",
+          image: ShoulderSurfingIMG,
+        },
+        {
+          name: "Tailgating/Piggybacking",
+          description: "The attacker gains access to a room or building they are not allowed in by closely following behind a person who uses their own credentials to get into the room or building.",
+          image: TailgatingIMG,
+        },
+        {
+          name: "Eliciting Information",
+          description: "The attacker assumes a role such as a help desk worker, and convinces the victim to allow them access to certain information to 'fix' it or similar reasoning.",
+          image: ElicitInfoIMG,
+        },
+        {
+          name: "Prepending",
+          description: "In the context of social engineering, the attacker gains the victim's trust by supplying information that will be acted upon frequently before it is actually asked for in an attempt to try to legitimize the attacker's actual request that will come later on.",
+          image: PrependingIMG,
+        },
+        {
+          name: "Identity Fraud",
+          description: "The attacker uses fake credentials to pose as the role of someone they are not, whether it is used for infiltration or gaining access to confidential information.",
+          image: IdentityFraudIMG,
+        },
+        {
+          name: "Invoice Scams",
+          description: "The attacker sends a fake invoice to a company in order to trick them into paying for something they did not order.",
+          image: InvoiceScamIMG,
+        },
+        {
+          name: "Reverse Social Engineering",
+          description: "In this scenario the attacker gets the victim to be the one to initiate contact. This can be done by posing as a helpful resource that happens to be nearby when the victim needs it. This method is often successful because due to the victim initiating contact, there is usually no question of the attacker's authenticity.",
+          image: ReverseSEIMG,
+        },
+        {
+          name: "Reconnaissance",
+          description: "Similar to the way this word is used in the military, the attacker will examine the systems they are wanting to attack to learn how they work.",
+          image: ReconnaissanceIMG,
+        },
+        {
+          name: "Typo Squatting",
+          description: "The attacker takes advantage of common typos that occur when users enter in a website address. Normally when entering in the incorrect address, the page results in a 404 'Not Found' error, however if the attacker registers a website with the typo included the user will be sent to the attacker's website.",
+          image: TypoSquattingIMG,
+        },
+        ],
+
         //Add quiz questions to this
         quizQuestions: [
           {
@@ -179,7 +287,15 @@
         feedback: {}, // Stores feedback for each question
       };
     },
+
+    
     methods: {
+
+      //Back Button
+      goBack() {
+      this.$router.go(-1); 
+      },
+      
       submitQuiz() {
         this.feedback = {}; // Reset feedback
   
@@ -221,8 +337,21 @@
     margin-bottom: 30px;
   }
 
+  .formatted-description {
+    text-align: left;
+    margin-left: 200px;
+    margin-right: 200px;
+  }
+
   .SE-Types-Description {
     text-align: left;
+  }
+
+  v-img {
+    border-radius: 8px;
+  }
+  h3 {
+    margin-top: 0;
   }
   
   .quiz-title {
