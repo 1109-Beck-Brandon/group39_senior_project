@@ -1,4 +1,15 @@
 <template>
+
+  <!-- Application Bar -->
+  <v-layout class="rounded rounded-md">
+    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
+  </v-layout>
+
+  <!-- Back Button -->
+  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray;" @click="goBack">
+    <v-icon>mdi-arrow-left</v-icon>
+  </v-btn>
+
   <v-container fluid>
     <!-- Full Page Content -->
     <v-row justify="center" align="center" style="min-height: 100vh;">
@@ -6,11 +17,11 @@
       <v-col cols="12" md="8" class="text-center">
         <h2 class="table-theme">The OSI Model</h2>
         <p class="table-description">
-          The overview of the work of the internet has always been practiced by understanding the theory behind it. Today, we are going to talk about
+          The overview of the work of the internet has always been practiced by understanding the theory behind it. Today, we are going to talk about the
           OSI Model and why it is important. 
-          To start, let's understand what OSI is. OSI stand for Open System Interconnection model. This is a conceptual framework used for understanfing 
-          how the communication system works. The networking process, which is the main process in OSI model, is divided in several layers, and each
-          layer shows hat path the data travels across the networking system and how it is transformed during each step.
+          To start, let's understand what OSI is. OSI stands for Open System Interconnection model. This is a conceptual framework used for understanding 
+          how communication systems works. The networking process, which is the main process in the OSI model, is divided in several layers, and each
+          layer shows the path the data travels across the networking system and how it is transformed during each step.
         </p>
       </v-col>
 
@@ -156,6 +167,12 @@ export default {
     };
   },
   methods: {
+
+    //Back Button
+    goBack() {
+      this.$router.go(-1); 
+    },
+
     submitQuiz() {
       this.feedback = this.quizQuestions.map((question, index) => {
         const userAnswer = this.userAnswers[index];

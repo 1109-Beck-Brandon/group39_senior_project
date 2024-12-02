@@ -1,4 +1,15 @@
 <template>
+
+  <!-- Application Bar -->
+  <v-layout class="rounded rounded-md">
+    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
+  </v-layout>
+
+  <!-- Back Button -->
+  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray;" @click="goBack">
+      <v-icon>mdi-arrow-left</v-icon>
+  </v-btn>
+
     <v-container fluid>
       <!-- Full Page Content -->
       <v-row justify="center" align="center" style="min-height: 100vh;">
@@ -150,6 +161,12 @@
       };
     },
     methods: {
+
+      //Back Button
+      goBack() {
+      this.$router.go(-1); 
+      },
+      
       submitQuiz() {
         this.feedback = this.quizQuestions.map((question, index) => {
           const userAnswer = this.userAnswers[index];
