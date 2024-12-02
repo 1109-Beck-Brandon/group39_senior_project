@@ -224,8 +224,8 @@
   }
    
   .welcome-panel {
-    background: #1e293b;
-    color: white;
+    background: #e4e4e4; 
+    color: rgb(0, 0, 0);
     border-radius: 12px;
     padding: 20px;
     display: flex;
