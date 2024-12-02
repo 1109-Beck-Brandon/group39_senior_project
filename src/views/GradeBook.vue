@@ -116,38 +116,31 @@ export default {
   name: 'GradeBook',
   data() {
     return {
-      students: [
-        {
-          firstName: 'John',
-          lastName: 'Doe',
-          classroomId: 'Cybersecurity 101',
-          grade: 85, // Placeholder for student grade
-        },
-        {
-          firstName: 'Jane',
-          lastName: 'Smith',
-          classroomId: 'Intro to Cybersecurity',
-          grade: 92, // Placeholder for student grade
-        },
-      ],
+      students: [],
       selectedStudent: null,
       showStudentDetailsModal: false,
-      assignments: [
-        { title: 'Intro to Cybersecurity', description: 'First assignment in Cybersecurity basics' },
-      ],
+      assignments: [],
       studentAssignments: [],
-      classGrade: 0, // Placeholder class grade
+      classGrade: 0,
     };
   },
   created() {
-    // Retrieve students from localStorage
-    const savedStudents = JSON.parse(localStorage.getItem("students")) || [];
-    this.students = savedStudents;
+    this.fetchStudents();
   },
   methods: {
+    fetchStudents() {
+      fetch('/students')
+        .then(response => response.json())
+        .then(data => {
+          this.students = data;
+        })
+        .catch(error => {
+          console.error('Error fetching students:', error);
+        });
+    },
     openStudentDetails(student) {
       this.selectedStudent = student;
-      this.studentAssignments = this.assignments; // Link the assignments to the selected student
+      this.studentAssignments = this.assignments;
       this.showStudentDetailsModal = true;
     },
     navigateToTeacherView() {

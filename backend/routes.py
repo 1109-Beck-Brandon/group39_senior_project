@@ -24,36 +24,20 @@ def get_data():
     data = {"message": "Hello from Flask!"}
     return jsonify(data)
 
-@main.route('/course/<int:course_id>', methods=['GET'])
+@main.route('/courses/<int:course_id>', methods=['GET'])
 def get_course(course_id):
     course = Course.query.get_or_404(course_id)
-    return jsonify({
-        "course_id": course.course_id,
-        "title": course.title,
-        "description": course.description,
-        "instructor_id": course.instructor_id,
-        "date_created": course.date_created
-    })
+    return jsonify(course.to_dict())
 
-@main.route('/course/<int:course_id>/modules', methods=['GET'])
+@main.route('/courses/<int:course_id>/modules', methods=['GET'])
 def get_course_modules(course_id):
-    modules = Module.query.filter_by(course_id=course_id).order_by(Module.order).all()
-    return jsonify([{
-        "module_id": module.module_id,
-        "title": module.title,
-        "content": module.content,
-        "order": module.order
-    } for module in modules])
+    modules = Module.query.filter_by(course_id=course_id).all()
+    return jsonify([module.to_dict() for module in modules])
 
 @main.route('/courses', methods=['GET'])
 def get_courses():
     courses = Course.query.all()
-    return jsonify([{
-        "course_id": course.course_id,
-        "name": course.title,
-        "description": course.description,
-        "progress": 0  # Assuming progress is not stored in the database
-    } for course in courses])
+    return jsonify([course.to_dict() for course in courses])
 
 @main.route('/resources', methods=['GET'])
 def get_resources():
@@ -74,6 +58,45 @@ def get_reviews():
         "user_id": review.user_id,
         "timestamp": review.timestamp
     } for review in reviews])
+
+@main.route('/students', methods=['GET'])
+def get_students():
+    students = Student.query.all()
+    students_data = [
+        {
+            'id': student.id,
+            'firstName': student.first_name,
+            'lastName': student.last_name,
+            'classroomId': student.classroom_id,
+            'grade': student.grade
+        } for student in students
+    ]
+    return jsonify(students_data)
+
+@main.route('/students/<int:student_id>', methods=['GET'])
+def get_student(student_id):
+    student = Student.query.get_or_404(student_id)
+    student_data = {
+        'id': student.id,
+        'firstName': student.first_name,
+        'lastName': student.last_name,
+        'classroomId': student.classroom_id,
+        'grade': student.grade
+    }
+    return jsonify(student_data)
+
+@main.route('/students', methods=['POST'])
+def add_student():
+    data = request.get_json()
+    new_student = Student(
+        first_name=data['firstName'],
+        last_name=data['lastName'],
+        classroom_id=data['classroomId'],
+        grade=data.get('grade', 0)
+    )
+    db.session.add(new_student)
+    db.session.commit()
+    return jsonify({'message': 'Student added successfully'}), 201
 
 @main.route('/', defaults={'path': ''})
 @main.route('/<path:path>')
