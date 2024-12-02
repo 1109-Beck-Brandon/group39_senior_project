@@ -19,6 +19,7 @@ import Course1LabModule from '../views/CoursePages/1-IntroToCybersecurity/Course
 import Course1LabModule2 from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/labModule2.vue'
 import Course1QuizLab from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/QuizLab.vue'
 import Course1Jobs from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/JobsAtCyber.vue'
+import Course1FinalQuiz from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/FinalExam.vue'
 
 import CourseSample202 from '../views/CoursePages/2-SampleCourse202/SampleCourse2.vue'
 import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse3.vue'
@@ -99,6 +100,7 @@ const routes = [
   { path: "/course/intro-to-cybersecurity/labModule2", component: Course1LabModule2}, //Course 1 Lab Module 2
   { path: "/course/intro-to-cybersecurity/quizLab", component: Course1QuizLab}, //Course 1 Lab Module 3
   { path: "/course/intro-to-cybersecurity/Jobsmodule", component: Course1Jobs}, //Course 1 Jobs Module
+  { path: "/course/intro-to-cybersecurity/FinalQuiz", component: Course1FinalQuiz}, //Final Quiz for Intro to Cybersecurity
 
   //new path to teacher's Onboarding Page
   {
