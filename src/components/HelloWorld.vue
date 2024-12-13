@@ -23,11 +23,6 @@
     <v-divider class="gradient-line mt-5"></v-divider>
 
     <v-row class="text-center mt-5">
-      <v-col class="mb-4">
-        <h2 class="headline font-weight-bold mb-5 gradient-text space-grotesk">
-          Visited by famous people!
-        </h2>
-      </v-col>
 
       <!-- Sliding Photos Section -->
       <v-col cols="12">
@@ -158,9 +153,9 @@ export default {
       },
     ],
     photos: [
-      { src: require('../assets/MV5BNTE1ODU3NTM1N15BMl5BanBnXkFtZTcwNTk0NDM4Nw__._V1_-removebg-preview.png'), alt: 'Mr. Diddy' },
-      { src: require('../assets/Mrbeast-logo-removebg-preview.png'), alt: 'Mr. Feast' },
-      { src: require('../assets/h.png'), alt: 'Frederick' },
+      { src: require('../assets/trojan-horse-black-background-vector-illustration-trojan-horse-black-background-vector-illustration-isolated-backgound-127316684.webp'), alt: 'Secure' },
+      { src: require('../assets/HD-wallpaper-sound-skull-bones-crossbones-pirate-skull-sound-removebg-preview.png'), alt: 'Innovate' },
+      { src: require('../assets/pngtree-vector-globe-icon-png-image_855070.jpg'), alt: 'Empower' },
     ],
   }),
 
@@ -271,6 +266,14 @@ export default {
   font-size: 18px;
   text-transform: none;
   padding: 10px 20px;
+}
+
+.photo-name {
+  font-size: 42px; 
+  font-weight: bold; 
+  color: white; 
+  text-transform: uppercase;
+  margin-top: 20px;
 }
 
 </style>

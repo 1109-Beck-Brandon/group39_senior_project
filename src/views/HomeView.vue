@@ -23,7 +23,11 @@
       </v-navigation-drawer> -->
     </v-layout>
 
-
+    <div class="join-button-container">
+      <v-btn color="primary" class="join-button" @click="showModal = true">
+        Create an Account for Free
+      </v-btn>
+    </div>  
 
     <!-- Use the HelloWorld component -->
     <div class="hello-world-section">
