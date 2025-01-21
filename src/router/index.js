@@ -28,8 +28,9 @@ import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse
 import TeacherOnboarding from "@/views/OnboardingPages/TeacherOnboarding.vue";
 import StudentOnboarding from "@/views/OnboardingPages/StudentOnboarding.vue";
 import UserOnboarding from "@/views/OnboardingPages/UserOnboarding.vue";
-//new gradebook page for teachers
+//new gradebook page for teachers and classroom page for students
 import GradeBook from "@/views/GradeBook.vue";
+import StudentClassroom from "@/views/ClassroomPages/StudentClassroom.vue";
 
 const routes = [
   {
@@ -125,6 +126,12 @@ const routes = [
     path: '/gradebook',
     name: 'GradeBook', 
     component: GradeBook
+  },
+  //new path to student's classroom page
+  {
+    path: '/studentClassroom',
+    name: 'StudentClassroom', 
+    component: StudentClassroom
   }
 
 ]

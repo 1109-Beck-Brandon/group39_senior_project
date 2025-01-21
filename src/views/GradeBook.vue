@@ -136,7 +136,7 @@ export default {
         { title: 'Intro to Cybersecurity', description: 'First assignment in Cybersecurity basics' },
       ],
       studentAssignments: [],
-      classGrade: 75, // Placeholder class grade
+      classGrade: 0, // Placeholder class grade
     };
   },
   created() {

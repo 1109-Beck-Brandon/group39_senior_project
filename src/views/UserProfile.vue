@@ -118,7 +118,7 @@
           <p><strong>Member Since:</strong> {{ user.membershipDuration }}</p>
         </v-card>
 
-        <!-- ONLY For student role users, a button for navigating to Classroom, but for now it goes to Teacherview as a placeholder -->
+        <!-- ONLY For student role users, a button for navigating to Classroom -->
         <v-card v-if="user.role === 'Student'" class="pa-3">
           <v-btn
             color="success"
@@ -129,7 +129,24 @@
           </v-btn>
         </v-card>
       </v-col>
-      
+        <!-- pop up for student to enter classroom ID, if they haven't from onboarding, (to navigate to Classroom) -->
+        <v-dialog v-model="showJoinClassroomModal" persistent max-width="400px">
+          <v-card>
+            <v-card-title class="headline">Join Classroom</v-card-title>
+            <v-card-text>
+              <p>Join your classroom by entering the classroom ID below:</p>
+              <v-text-field
+                v-model="newClassroomId"
+                label="Classroom ID"
+                outlined
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="secondary" text @click="showJoinClassroomModal = false">Cancel</v-btn>
+              <v-btn color="primary" @click="submitClassroomId">Submit</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
       <!-- Right Panel: Main Content -->
       <v-col cols="9">
@@ -195,7 +212,6 @@
   </v-container>
 </template>
 
-
 <script>
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
@@ -223,8 +239,10 @@ export default {
       coursesList: ["Intro to Cybersecurity"], //updated later
       courses: [],
       achievements: [],
-      showEditPictureDialog: false,
+      showEditPictureDialog: false, //these are visibility flags 
       showEditProfileDialog: false,
+      showJoinClassroomModal: false,
+      newClassroomId: "", //for the user to input their classroom id if they haven't done so from onboarding
       fetchedPictures: [],  
       defaultProfilePicture: "https://robohash.org/example4?set=set1", // Default avatar placeholder, changeable
       loadingPictures: false,
@@ -242,17 +260,12 @@ export default {
   },
   methods: {
     updateCoursesProgress() {
-      const userProgress = [75]; // Example progress, later replace with backend data
+      const userProgress = [0]; // Example progress, later replace with backend data
       this.courses = this.coursesList.map((course, index) => ({
         name: course,
         progress: userProgress[index] || 0,
       }));
 
-      // Update user object in localStorage
-      //const userData = JSON.parse(localStorage.getItem("newUser")) || {};
-      //userData.courses = this.courses;
-      //localStorage.setItem("newUser", JSON.stringify(userData));
-      
     },
     createChart() {
       const ctx = document.getElementById("progressChart").getContext("2d");
@@ -281,7 +294,22 @@ export default {
       });
     },
     redirectToClassroom() {
-      this.$router.push("/teacherView"); // Placeholder for classroom page
+      const userData = JSON.parse(localStorage.getItem("newUser")) || {};
+      if (userData.classroomId) {
+        this.$router.push("/studentClassroom");
+      } else {
+          this.showJoinClassroomModal = true; //prompts user to put a classroom id, in order to access the /studentClassroom page
+      }
+    },
+    submitClassroomId() {
+      if (this.newClassroomId.trim() === "") {
+        return;
+      }
+      const userData = JSON.parse(localStorage.getItem("newUser")) || {};
+      userData.classroomId = this.newClassroomId.trim();
+      localStorage.setItem("newUser", JSON.stringify(userData)); // Save to local storage
+      this.showJoinClassroomModal = false; // Close the modal
+      this.$router.push("/studentClassroom"); // Redirect to classroom
     },
     fetchProfilePictures() {
       this.loadingPictures = true;
