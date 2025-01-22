@@ -3,7 +3,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   
   publicPath: '/group39_senior_project/',
-  outputDir: '/docs',
+  outputDir: '../docs',
 
   pluginOptions: {
     vuetify: {

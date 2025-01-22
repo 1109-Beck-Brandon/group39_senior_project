@@ -42,13 +42,6 @@ class Course(db.Model):
     def __repr__(self):
         return f'<Course {self.title}>'
 
-    def to_dict(self):
-        return {
-            'id': self.course_id,
-            'title': self.title,
-            'description': self.description
-        } 
-
 class Module(db.Model):
     __tablename__ = 'modules'
     module_id = db.Column(db.Integer, primary_key=True)
@@ -61,14 +54,6 @@ class Module(db.Model):
 
     def __repr__(self):
         return f'<Module {self.title}>'
-
-    def to_dict(self):
-        return {
-            'id': self.module_id,
-            'course_id': self.course_id,
-            'title': self.title,
-            'content': self.content
-        }
 
 class Assessment(db.Model):
     __tablename__ = 'assessments'
@@ -142,8 +127,7 @@ class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
-    classroom_id = db.Column(db.String(100), nullable=False)
-    grade = db.Column(db.Float, nullable=False)
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.classroom_id'), nullable=False)
 
     def __repr__(self):
         return f'<Student {self.first_name} {self.last_name}>'
