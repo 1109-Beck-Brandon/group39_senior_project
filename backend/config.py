@@ -13,5 +13,6 @@ class Config:
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your_jwt_secret_key'
     JWT_ACCESS_TOKEN_EXPIRES = int(os.environ.get('JWT_ACCESS_TOKEN_EXPIRES', 3600))  # Default to 1 hour
 
-print(f"SQLALCHEMY_DATABASE_URI: {Config.SQLALCHEMY_DATABASE_URI}")
-print(f"Loaded .env file: {os.getenv('DATABASE_URL') is not None}")
+if os.environ.get('FLASK_ENV') == 'development':
+    print(f"SQLALCHEMY_DATABASE_URI: {Config.SQLALCHEMY_DATABASE_URI}")
+    print(f"Loaded .env file: {os.getenv('DATABASE_URL') is not None}")

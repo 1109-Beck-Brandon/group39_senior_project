@@ -25,11 +25,22 @@ def get_users():
 @main.route('/add_user', methods=['POST'])
 def add_user():
     data = request.get_json()
-    new_user = User(username=data['username'], email=data['email'], role=data.get('role'))
-    new_user.set_password(data['password'])
+    if not data or not data.get('username') or not data.get('email') or not data.get('password'):
+        return jsonify({'message': 'Invalid credentials'}), 400
+
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
+        return jsonify({'message': 'Username or email already exists'}), 409
+    
+    new_user = User(username=username, email=email)
+    new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"message": "User added successfully!"}), 201
+
+    return jsonify({'message': 'User created successfully'}), 201
 
 @main.route('/api/data', methods=['GET'])
 def get_data():
