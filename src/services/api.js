@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL || 'http://localhost:5000/api',
+  baseURL: process.env.VUE_APP_API_BASE_URL || 'https://cybersecurity-learning-platform.onrender.com/api',
   withCredentials: false,
   headers: {
     'Accept': 'application/json',
@@ -24,13 +24,13 @@ export default {
     return apiClient.get('/courses');
   },
   getCourse(courseId) {
-    return apiClient.get(`/course/${courseId}`);
+    return apiClient.get(`/courses/${courseId}`);
   },
   getCourseModules(courseId) {
-    return apiClient.get(`/course/${courseId}/modules`);
+    return apiClient.get(`/courses/${courseId}/modules`);
   },
   getUserProfile(userId) {
-    return apiClient.get(`/user/${userId}`);
+    return apiClient.get(`/users/${userId}`);
   },
   getClassrooms() {
     return apiClient.get('/classrooms');

@@ -10,7 +10,7 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
-    cors.init_app(app, resources={r"/api/*": {"origins": "https://cybersecurity-learning-platform.onrender.com/"}})
+    cors.init_app(app, resources={r"/api/*": {"origins": "https://1109-beck-brandon.github.io"}})
 
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     app.register_blueprint(main_blueprint)
