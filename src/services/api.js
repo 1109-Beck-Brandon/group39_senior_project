@@ -40,6 +40,27 @@ apiClient.interceptors.response.use(
   }
 );
 
+export const createProfile = async (profileData) => {
+  try {
+      const response = await fetch('https://cybersecurity-learning-platform.onrender.com/api/auth/createProfile', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(profileData),
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+  } catch (error) {
+      console.error('Error creating profile:', error);
+      throw error;
+  }
+};
+
 export default {
   // Auth endpoints
   login(credentials) {
