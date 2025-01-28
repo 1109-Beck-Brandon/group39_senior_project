@@ -1,5 +1,5 @@
 <template>
-<div class="login">
+  <div class="login">
     <h1>Login</h1>
     <form @submit.prevent="handleLogin">
       <div>
@@ -23,11 +23,10 @@
       <router-link to="/passwordReset">Forgot Password? </router-link>
     </p>
 
+    <v-layout class="rounded rounded-md">
+      <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
+    </v-layout>
   </div>
-  <v-layout class="rounded rounded-md">
-    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-
-  </v-layout>
 </template>
 
 <script>

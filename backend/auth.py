@@ -13,6 +13,9 @@ def login():
     if not data or not data.get('username') or not data.get('password'):
         return jsonify({'message': 'Invalid credentials'}), 400
 
+    username = data.get('username')
+    password = data.get('password')
+
     user = User.query.filter_by(username=username).first()
 
     if user and user.check_password(password):
