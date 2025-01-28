@@ -116,7 +116,7 @@ export default {
       localStorage.setItem("newUser", JSON.stringify(fakeUser));
 
       if (fakeUser.role === "Teacher") {
-        this.$router.push({ name: "TeacherOnboarding" });
+        this.$router.push({ name: "NewTeacherOnboarding" });
       } else if (fakeUser.role === "Student") {
         this.$router.push({ name: "StudentOnboarding" });
       } else {
