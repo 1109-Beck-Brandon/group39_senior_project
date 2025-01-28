@@ -8,9 +8,11 @@ services:
       npm install
       npm run build
       flask db upgrade
-    startCommand: gunicorn run:app
+    startCommand: gunicorn "backend:create_app()"
     envVars:
       - key: DATABASE_URL
         value: postgresql://cyberlpdb_user:n7OkVwnHb61CNVISiDr8X6ucMbmxkgTo@dpg-csl75sggph6c73em22m0-a.oregon-postgres.render.com:5432/cyberlpdb
       - key: SECRET_KEY
         value: cyber
+      - key: FLASK_ENV 
+        value: production
