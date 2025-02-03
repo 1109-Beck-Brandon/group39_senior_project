@@ -5,19 +5,59 @@
     </v-layout>
 
   <div class="about">
-    <h1>About the Platform</h1>
+    <h1>CS 426 Senior Project in Computer Science, Spring 2025, at UNR, CSE Department: Cybersecurity Learning Platform</h1>
+    <h2>Team 39: Josh Alanguilan, Brandon Beck, Vanessa Quijano, Dmitrii Sukhotin</h2>
+    <br>
+    <h3>Instructors: David Feil-Seifer, Sara Davis, Vinh Le, Levi Scully</h3>
+    <h3>External Advisors: Igor Remizov</h3>
+    <br>
+    <h2>About the Platform</h2>
     <p class="aboutDescription">
       Our senior project, a Cybersecurity Education website, aims to bridge the accessibility gap in cybersecurity education for high school students, ages 14 to 18, planning to graduate with an interest in cybersecurity. Working with Vue.js as the core front-end framework and with Flask for back-end, our project will provide a structured and educational interactive pathway into cybersecurity for young learners. Through a combination of interactive hands-on learning, educational learning modules and challenges, our project will teach students introductory skills in cybersecurity fundamentals, online safety and digital forensics while simultaneously challenging them with practical applications like Wireshark, Nmap and Metasploit. This platform also aims to support teachers and classroom curriculum by aligning with national cybersecurity education standards. 
     </p>
-  </div>
-
-  <div class="roadmap">
-    <h1>Roadmap</h1>
-    <h2>This will be a checklist of items that will:</h2>
-    <p class="roadmapContent">
-      <br>- List future features for the website
-      <br>- List future lessons to be added
-      <br>- List announcements by the development team
+    <br>
+    <h2>Technical Documents</h2>
+    <p>
+      Document 1: <a href="https://docs.google.com/document/d/1RkbScHU69xw0b6SZjKDHWZXnbIZ1fug7C7c6xMgOmCE/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Proposal and Concept</a>
+      <br>
+      Document 2: <a href="https://docs.google.com/document/d/1XpSE9R7ffB_VIa2jPdGvpFIh-klgaLEWbuOCra0Syy4/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Specification</a>
+      <br>
+      Document 3: <a href="https://docs.google.com/document/d/1QWKFhp1SHc03e3a21sRBhQVHD8Hbs1qUkCneE5VOHXE/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Design</a>
+      <br>
+      Document 4: <a href="https://docs.google.com/document/d/1lPMA9hvPBuiMhkkt9URFCxpu42rIrE3kV2k7P-SgbII/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Project Prototype</a>
+      <br>
+      Document 5: <a href="https://docs.google.com/document/d/1eH8cneEGaBXOg5pZnMEDBLSA7mgX7C7rcEXhcTLy9sM/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Revised Concept and Project Management</a>
     </p>
+
+    <br>
+    <h1>Roadmap</h1>
+    <h2>This section lists future features that are currently in development:</h2>
+      <h3>Future Website Features</h3>
+      <p>
+        - Better Course Formatting
+        <br>
+        - Improved Quiz and Assessment Taking
+        <br>
+        - Improved Website Design
+        <br>
+        - More Teacher Controls such as: Student Profile Edits, Uploading Student Roster via CSV
+        <br>
+        - Filtering for messaging and text input
+      </p>
+      <br>
+      <h3>Future Courses</h3>
+      <p>
+        - Digital Forensics Fundamentals
+      </p>
+      <br>
+      <br>
+      <br>
   </div>
 </template>
+
+<style>
+.about {
+  text-align: left;
+  margin-left: 50px;
+}
+</style>
