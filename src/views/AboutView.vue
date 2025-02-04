@@ -10,7 +10,7 @@
     <br>
 
     <h3>Instructors: David Feil-Seifer, Sara Davis, Vinh Le, Levi Scully</h3>
-    <h3>External Advisors: Igor Remizov</h3>
+    <h3>External Advisors: Igor Remizov - CPE 400 Instructor</h3>
     <br>
     
     <h2>About the Platform</h2>
