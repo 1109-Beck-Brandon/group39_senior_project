@@ -21,29 +21,40 @@
         </div>
       </v-col>
 
-      <!-- Module Tabs and Content Section -->
+      <!-- Module List Section -->
       <v-col cols="12" md="6">
-        <v-tabs v-model="activeTab" background-color="primary" dark>
-          <v-tab v-for="(module, index) in modules" :key="index">
-            {{ module }}
-          </v-tab>
-        </v-tabs>
+        <v-list two-line>
+          <v-list-item class="module-title"
+            v-for="(module, index) in modules" 
+            :key="index" 
+            @click="showPopup(index)"
+          >
+            <v-list-item-content>
+              <v-list-item-title>{{ module }}</v-list-item-title>
+              <v-list-item-subtitle>{{ moduleContent[index] }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
 
-        <v-card class="module-content-box" v-if="activeTab !== null">
-          <v-card-text>
-            <h3>{{ modules[activeTab] }}</h3>
-            <p>{{ moduleContent[activeTab] }}</p>
-            <p class="detailed-description">{{ moduleDetails[activeTab] }}</p>
-            <br><br><br>
-            <!-- Button to navigate to the specific module page -->
-            <v-btn
-              color="primary"
-              @click="goToModulePage(moduleRoutes[activeTab])"
-            >
-              Go to {{ modules[activeTab] }} Page
-            </v-btn>
-          </v-card-text>
-        </v-card>
+        <!-- Popup Dialog -->
+        <v-dialog v-model="isPopupVisible" max-width="600">
+          <v-card>
+            <v-card-title>{{ modules[activeModule] }}</v-card-title>
+            <v-card-text>
+              <p>{{ moduleContent[activeModule] }}</p>
+              <p class="detailed-description">{{ moduleDetails[activeModule] }}</p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn 
+                color="primary" 
+                @click="goToModulePage(moduleRoutes[activeModule])"
+              >
+                Go to {{ modules[activeModule] }} Page
+              </v-btn>
+              <v-btn color="secondary" @click="closePopup">Back</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-col>
     </v-row>
   </v-container>
@@ -54,25 +65,35 @@ export default {
   props: ["courseName"],
   data() {
     return {
-      activeTab: 0,
-      modules: ["Module 1", "Module 2", "Module 3", "Module 4", "Module 5", "Module 6", "Module 7", "Module 8 (Final)"],
+      activeModule: null,
+      isPopupVisible: false,
+      modules: [
+        "Module 1", 
+        "Module 2", 
+        "Module 3", 
+        "Module 4", 
+        "Module 5", 
+        "Module 6", 
+        "Module 7", 
+        "Module 8 (Final)"
+      ],
       moduleContent: [
-        "Module 1: The CIA Triad",
-        "Module 2: Intro to Attacks and Defenses",
-        "Module 3: Intro to Social Engineering",
-        "Moudle 4: Intro to the OSI Model",
-        "Module 5: Basic Unix Commands Lab",
-        "Module 6: Unix Commands Lab Continued",
-        "Module 7: Jobs in Cybersecurity",
-        "Module 8: Final Course Quiz"
+        "The CIA Triad",
+        "Intro to Attacks and Defenses",
+        "Intro to Social Engineering",
+        "Intro to the OSI Model",
+        "Basic Unix Commands Lab",
+        "Unix Commands Lab Continued",
+        "Jobs in Cybersecurity",
+        "Final Course Quiz"
       ],
       moduleDetails: [
         "This module explores the CIA triad and its fundamental importance in cybersecurity.",
         "Learn about various types of attacks that affect computer systems and defenses that can be used to counter them.",
-        "In this module you will learn about the people-side of security and how they can be exploited to create security risks and incidents.",
-        "In this module you will be introduced to the OSI model and how it applies to network security.",
-        "In this lab exercise you will learn basic Unix commands in a virtual linux environment.",
-        "This lab continues where the previous lab left off and covers more intermediate level unix commands.",
+        "In this module, you will learn about the people-side of security and how they can be exploited to create security risks and incidents.",
+        "In this module, you will be introduced to the OSI model and how it applies to network security.",
+        "In this lab exercise, you will learn basic Unix commands in a virtual Linux environment.",
+        "This lab continues where the previous lab left off and covers more intermediate-level Unix commands.",
         "Discover different career paths in cybersecurity and what skills you will use in each role.",
         "A comprehensive final quiz that combines all module quiz questions from this course. This WILL count toward your final grade for this course."
       ],
@@ -89,6 +110,13 @@ export default {
     };
   },
   methods: {
+    showPopup(index) {
+      this.activeModule = index;
+      this.isPopupVisible = true;
+    },
+    closePopup() {
+      this.isPopupVisible = false;
+    },
     goToModulePage(route) {
       this.$router.push(route);
     },
@@ -97,43 +125,32 @@ export default {
 </script>
   
 <style scoped>
-  .course-title {
-    text-align: center;
-    font-size: 2.5em;
-    margin: 20px 0;
-  }
-  
-  .description-box {
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 8px;
-    min-height: 500px;
-  }
-  
-  .course-description {
-    font-size: 1.2em;
-    color: #333;
-  }
-  
-  .module-content-box {
-    margin-top: 10px;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    min-height: 400px;
-  }
-  
-  h3 {
-    margin-top: 0;
-  }
-  
-  p {
-    color: #555;
-  }
 
-  .detailed-description {
+.module-title {
+  text-align: left;
+}
+
+.course-title {
+  text-align: center;
+  font-size: 2.5em;
+  margin: 20px 0;
+}
+
+.description-box {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 8px;
+  min-height: 500px;
+}
+
+.course-description {
+  font-size: 1.2em;
+  color: #333;
+}
+
+.detailed-description {
   margin-top: 10px;
   font-style: italic;
   color: #666;
-  }
+}
 </style>
