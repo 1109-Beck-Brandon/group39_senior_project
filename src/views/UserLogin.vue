@@ -30,27 +30,31 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'UserLogin',
-  data() {
-    return {
-      username: '',
-      password: '',
-      error: null,
-    };
-  },
   methods: {
-    handleLogin() {
-      // Simulate a login process with a test case until we can get a database set up
-      if (this.username === 'user' && this.password === 'pass') {
-        this.error = null;
-        // Redirect or perform further actions on successful login
-        this.$router.push('/'); // Redirect to home
-      } else {
-        this.error = 'Invalid credentials. Please try again.';
+    async handleLogin() {
+      try {
+        const response = await axios.post('http://localhost:5000/auth/login', {
+          username: this.username,
+          password: this.password
+        }, {
+          withCredentials: true  // For cross-origin cookies
+        });
+
+        // Store JWT token
+        localStorage.setItem('jwt_token', response.data.token);
+        
+        // Set default Authorization header
+        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        
+        this.$router.push('/dashboard');
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Login failed';
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -22,7 +22,7 @@ def login():
         token = jwt.encode({
             'user_id': user.user_id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-        }, os.getenv('SECRET_KEY'), algorithm='HS256')
+        }, os.getenv('JWT_SECRET_KEY'), algorithm='HS256')
 
         return jsonify({'token': token})
 
@@ -33,6 +33,15 @@ def register():
     data = request.get_json()
     if not data or not data.get('username') or not data.get('email') or not data.get('password'):
         return jsonify({'message': 'Invalid credentials'}), 400
+    
+    # Add required fields
+    new_user = User(
+        username=data['username'],
+        email=data['email'],
+        first_name=data.get('first_name', ''),  # Add default values
+        last_name=data.get('last_name', ''),
+        role=data.get('role', 'student')
+    )
     
     username = data.get('username')
     password = data.get('password')

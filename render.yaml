@@ -5,14 +5,18 @@ services:
     plan: free
     buildCommand: |
       pip install -r backend/requirements.txt
-      npm install
-      npm run build
+      npm install --prefix frontend
+      npm run build --prefix frontend
       flask db upgrade
     startCommand: gunicorn "backend:create_app()"
     envVars:
       - key: DATABASE_URL
-        value: postgresql://cyberlpdb_user:n7OkVwnHb61CNVISiDr8X6ucMbmxkgTo@dpg-csl75sggph6c73em22m0-a.oregon-postgres.render.com:5432/cyberlpdb
+        value: postgresql://clpdb_user:MoiP7s5rpkLfsQgLhB3FuYdE3VahnFCe@dpg-cumoibij1k6c73b18cog-a.oregon-postgres.render.com/clpdb
       - key: SECRET_KEY
         value: cyber
-      - key: FLASK_ENV 
+      - key: FLASK_ENV
         value: production
+      - key: JWT_SECRET_KEY
+        value: PasswordHashKey
+      - key: PYTHON_VERSION
+        value: 3.9

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const apiClient = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL || 'https://cybersecurity-learning-platform.onrender.com/api',
-  withCredentials: false, // Keep false unless using cookies
+  withCredentials: true,
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ const apiClient = axios.create({
 
 // Add request interceptor for auth headers
 apiClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('jwt_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -22,44 +22,36 @@ apiClient.interceptors.request.use(config => {
 // Add response interceptor for error handling
 apiClient.interceptors.response.use(
   response => response,
-  error => {
-    if (error.response) {
-      // Handle CORS-related errors specifically
-      if (error.response.status === 0) {
-        return Promise.reject({
-          message: 'Network/CORS Error - Check API Availability'
-        });
-      }
-      
+  async error => {
+    const originalRequest = error.config;
+
+    // Specific login error handling
+    if (error.config.url.includes('/auth/login')) {
       return Promise.reject({
-        status: error.response.status,
-        message: error.response.data?.message || 'API Request Failed'
+        message: error.response?.data?.message || 'Login failed. Check credentials'
       });
     }
-    return Promise.reject(error);
+
+    // Handle CORS-related errors
+    if (error.response?.status === 0) {
+      return Promise.reject({
+        message: 'Network/CORS Error - Check API Availability'
+      });
+    }
+
+    // Token refresh logic for 401 errors
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      // Add token refresh logic here (if needed)
+    }
+
+    // General error handling
+    return Promise.reject({
+      status: error.response?.status,
+      message: error.response?.data?.message || 'API Request Failed'
+    });
   }
 );
-
-export const createProfile = async (profileData) => {
-  try {
-      const response = await fetch('https://cybersecurity-learning-platform.onrender.com/api/auth/createProfile', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(profileData),
-      });
-
-      if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-  } catch (error) {
-      console.error('Error creating profile:', error);
-      throw error;
-  }
-};
 
 export default {
   // Auth endpoints
@@ -75,7 +67,7 @@ export default {
     return apiClient.get('/users');
   },
   getUserProfile(userId) {
-    return apiClient.get(`/user/${userId}`);
+    return apiClient.get(`/users/${userId}`);
   },
 
   // Course endpoints
@@ -83,10 +75,10 @@ export default {
     return apiClient.get('/courses');
   },
   getCourse(courseId) {
-    return apiClient.get(`/course/${courseId}`);
+    return apiClient.get(`/courses/${courseId}`);
   },
   getCourseModules(courseId) {
-    return apiClient.get(`/course/${courseId}/modules`);
+    return apiClient.get(`/courses/${courseId}/modules`);
   },
 
   // Classroom endpoints
