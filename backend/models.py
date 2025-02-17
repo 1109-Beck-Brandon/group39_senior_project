@@ -14,6 +14,8 @@ class User(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     profile_picture = db.Column(db.String(200))
     classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.classroom_id'))
+    grade_level = db.Column(db.String(20))
+    school_name = db.Column(db.String(100))
 
     classroom = db.relationship('Classroom', back_populates='students')
     courses = db.relationship('Enrollment', back_populates='student')

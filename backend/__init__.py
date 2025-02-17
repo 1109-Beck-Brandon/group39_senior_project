@@ -10,8 +10,8 @@ def create_app():
 
     # Configure CORS first
     cors.init_app(app, resources={
-        r"/api/*": {
-            "origins": "https://1109-beck-brandon.github.io",
+        r"/*": {
+            "origins": ["https://1109-beck-brandon.github.io", "http://localhost:5173"],
             "supports_credentials": True,
             "allow_headers": ["Content-Type", "Authorization"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]

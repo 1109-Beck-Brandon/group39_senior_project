@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, send_from_directory
 from .models import User, Course, Module, Resource, Review, Classroom, Student
+from .middleware import jwt_required
 from . import db
 import os
 
@@ -56,6 +57,122 @@ def add_user():
         'message': 'User created successfully',
         'user_id': new_user.user_id
     }), 201
+
+@main.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    return jsonify({
+        "user_id": user.user_id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "joined": user.date_joined.isoformat(),  # Fixed from date_created to date_joined
+        "profile_picture": user.profile_picture,
+        "grade_level": user.grade_level,  # New field
+        "school_name": user.school_name,   # New field
+        "courses_enrolled": [{
+            "course_id": course.course_id,
+            "title": course.title
+        } for course in user.courses]
+    })
+
+@main.route('/api/users/<int:user_id>', methods=['PUT'])
+@jwt_required
+def update_user(user_id):
+    user = User.query.get_or_404(user_id)
+    data = request.get_json()
+    
+    # Update allowed fields
+    if 'profile_picture' in data:
+        user.profile_picture = data['profile_picture']
+    if 'grade_level' in data:
+        user.grade_level = data['grade_level']
+    if 'school_name' in data:
+        user.school_name = data['school_name']
+    
+    db.session.commit()
+    
+    return jsonify({"message": "User updated successfully"}), 200
+
+@main.route('/api/teacher', methods=['GET'])
+def get_teachers():
+    teacher = User.query.filter_by(role='teacher').first()
+    if teacher:
+        classroom = teacher.classroom
+        return jsonify({
+            "firstName": teacher.first_name,
+            "lastName": teacher.last_name,
+            "classroomName" : classroom.name if classroom else "No Classroom",
+            "classroomID": classroom.classroom_id if classroom else ""
+        })
+    return jsonify({"message": "No teachers found"}), 404
+
+@main.route("/classrooms/<int:classroom_id>/students", methods=["GET"])
+def get_classroom_students(classroom_id):
+    # Query for all users with role 'student' in the given classroom
+    students = User.query.filter_by(role="student", classroom_id=classroom_id).all()
+    students_data = []
+    for student in students:
+        students_data.append({
+            "firstName": student.first_name,
+            "lastName": student.last_name,
+            "profilePicture": student.profile_picture,
+            "classroomId": student.classroom_id
+            # Add any additional fields as needed
+        })
+    return jsonify(students_data)
+
+@main.route("/students", methods=["POST"])
+def add_student():
+    data = request.get_json()
+    first_name = data.get("firstName")
+    last_name = data.get("lastName")
+    classroom_id = data.get("classroomId")
+
+    if not all([first_name, last_name, classroom_id]):
+        return jsonify({"error": "Missing data"}), 400
+
+    # Create a new student. For simplicity, we generate the username and email automatically.
+    new_student = User(
+        username=f"{first_name.lower()}.{last_name.lower()}",
+        email=f"{first_name.lower()}.{last_name.lower()}@example.com",
+        password_hash="default",  # Replace this with proper password handling
+        role="student",
+        first_name=first_name,
+        last_name=last_name,
+        classroom_id=classroom_id,
+        date_joined=datetime.utcnow()
+    )
+    db.session.add(new_student)
+    db.session.commit()
+
+    return jsonify({
+        "firstName": new_student.first_name,
+        "lastName": new_student.last_name,
+        "profilePicture": new_student.profile_picture,
+        "classroomId": new_student.classroom_id
+    }), 201
+
+@main.route('/api/classrooms/join', methods=['POST'])
+@jwt_required
+def join_classroom():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    classroom_id = data.get('classroom_id')
+
+    if not user_id or not classroom_id:
+        return jsonify({"message": "Missing user_id or classroom_id"}), 400
+
+    user = User.query.get_or_404(user_id)
+    classroom = Classroom.query.get_or_404(classroom_id)
+
+    user.classroom_id = classroom_id
+    db.session.commit()
+
+    return jsonify({
+        "message": "Joined classroom successfully",
+        "classroom_name": classroom.name
+    }), 200
 
 @main.route('/api/courses', methods=['GET'])
 def get_courses():
@@ -128,21 +245,6 @@ def add_review():
         "review_id": new_review.review_id
     }), 201
 
-@main.route('/api/users/<int:user_id>', methods=['GET'])
-def get_user_profile(user_id):
-    user = User.query.get_or_404(user_id)
-    return jsonify({
-        "user_id": user.user_id,
-        "username": user.username,
-        "email": user.email,
-        "role": user.role,
-        "joined": user.date_created.isoformat(),
-        "profile_picture": user.profile_picture,
-        "courses_enrolled": [{
-            "course_id": course.course_id,
-            "title": course.title
-        } for course in user.courses]
-    })
 
 # Error handling
 @main.errorhandler(404)

@@ -214,12 +214,13 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
+import axios from "axios";
 Chart.register(...registerables);
 
 export default {
   name: "UserProfileView",
   data() {
-    const user = JSON.parse(localStorage.getItem("newUser")) || {};
+    const user = JSON.parse(localStorage.getItem("user")) || {};
     return {
       user: {
         username: user.username || "N/A",
@@ -254,19 +255,46 @@ export default {
       return this.courses.length ? Math.round(totalProgress / this.courses.length) : 0;
     },
   },
-  mounted() {
+
+  async mounted() {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt_token')}`;
+    await this.fetchUserData();
     this.updateCoursesProgress();
     this.createChart();
   },
-  methods: {
-    updateCoursesProgress() {
-      const userProgress = [0]; // Example progress, later replace with backend data
-      this.courses = this.coursesList.map((course, index) => ({
-        name: course,
-        progress: userProgress[index] || 0,
-      }));
 
+  methods: {
+    async fetchUserData() {
+      try {
+        const response = await axios.get(`/api/users/${this.user.user_id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+          }
+        });
+        this.user = response.data;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
     },
+
+    async updateCoursesProgress() {
+      try {
+        const response = await axios.get(`/api/users/${this.user.user_id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+          }
+        });
+        
+        this.courses = response.data.courses_enrolled.map(course => ({
+          id: course.course_id,
+          name: course.title,
+          progress: course.progress // You'll need to add progress tracking in your backend
+        }));
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      }
+    },
+
     createChart() {
       const ctx = document.getElementById("progressChart").getContext("2d");
       new Chart(ctx, {
@@ -293,24 +321,38 @@ export default {
         },
       });
     },
+
     redirectToClassroom() {
-      const userData = JSON.parse(localStorage.getItem("newUser")) || {};
+      const userData = JSON.parse(localStorage.getItem("user")) || {};
       if (userData.classroomId) {
         this.$router.push("/studentClassroom");
       } else {
           this.showJoinClassroomModal = true; //prompts user to put a classroom id, in order to access the /studentClassroom page
       }
     },
-    submitClassroomId() {
-      if (this.newClassroomId.trim() === "") {
-        return;
+
+    async submitClassroomId() {
+      try {
+        await axios.post('/api/classrooms/join', {
+          classroom_id: this.newClassroomId,
+          user_id: this.user.user_id
+        }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+          }
+        });
+        
+        // Update local user data
+        const userData = JSON.parse(localStorage.getItem('user'));
+        userData.classroom_id = this.newClassroomId;
+        localStorage.setItem('user', JSON.stringify(userData));
+        this.showJoinClassroomModal = false;
+        this.$router.push('/studentClassroom');
+      } catch (error) {
+        console.error('Error joining classroom:', error);
       }
-      const userData = JSON.parse(localStorage.getItem("newUser")) || {};
-      userData.classroomId = this.newClassroomId.trim();
-      localStorage.setItem("newUser", JSON.stringify(userData)); // Save to local storage
-      this.showJoinClassroomModal = false; // Close the modal
-      this.$router.push("/studentClassroom"); // Redirect to classroom
     },
+
     fetchProfilePictures() {
       this.loadingPictures = true;
       this.showEditPictureDialog = true;
@@ -332,20 +374,49 @@ export default {
       }, 500); // timeout, adjustable
 
     },
-    selectProfilePicture(picture) {
-      this.user.profilePicture = picture; // update the user's profile picture
-      this.showEditPictureDialog = false; 
-      localStorage.setItem("newUser", JSON.stringify(this.user)); // Save to localStorage so it stays there
+
+    async selectProfilePicture(picture) {
+      try {
+        await axios.put(`/api/users/${this.user.user_id}`, {
+          profile_picture: picture
+        }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+          }
+        });
+        this.user.profilePicture = picture;
+        localStorage.setItem('user', JSON.stringify(this.user));
+      } catch (error) {
+        console.error('Error updating profile picture:', error);
+      }
+      this.showEditPictureDialog = false;
     },
+
     closeEditPictureDialog() {
       this.showEditPictureDialog = false; 
     },
-    saveProfileInfo() {
-      this.user.gradeLevel = this.editProfileData.gradeLevel || "N/A";
-      this.user.schoolName = this.editProfileData.schoolName || "N/A";
-      localStorage.setItem("newUser", JSON.stringify(this.user));
+
+    async saveProfileInfo() {
+      try {
+        await axios.put(`/api/users/${this.user.user_id}`, {
+          grade_level: this.editProfileData.gradeLevel,
+          school_name: this.editProfileData.schoolName
+        }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+          }
+        });
+        
+        // Update local data
+        this.user.gradeLevel = this.editProfileData.gradeLevel;
+        this.user.schoolName = this.editProfileData.schoolName;
+        localStorage.setItem('user', JSON.stringify(this.user));
+      } catch (error) {
+        console.error('Error saving profile info:', error);
+      }
       this.showEditProfileDialog = false;
     },
+
     navigateToCourses() {
     this.$router.push({ path: "/courseSelect" });
      },
@@ -354,6 +425,7 @@ export default {
       const courseRoute = courseName.toLowerCase().replace(/\s+/g, '-');
       this.$router.push(`/course/${courseRoute}`);
     },
+    
   },
 };
 </script>
