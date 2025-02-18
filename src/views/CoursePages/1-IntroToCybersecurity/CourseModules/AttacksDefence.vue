@@ -1,10 +1,5 @@
 <template>
 
-  <!-- Application Bar -->
-  <v-layout class="rounded rounded-md">
-    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-  </v-layout>
-
   <!-- Back Button -->
   <v-btn icon class="position-absolute" style="left: 16px; background-color: gray;" @click="goBack">
       <v-icon>mdi-arrow-left</v-icon>

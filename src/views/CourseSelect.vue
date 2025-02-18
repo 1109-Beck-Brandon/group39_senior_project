@@ -1,9 +1,5 @@
 <template>
-    <!--Appplication  Bar-->
-    <v-layout class="rounded rounded-md">
-      <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-    </v-layout>
-    
+
     <v-container fluid>
       <h2 class="page-title">Select a Course</h2>
       <div class="course-scroll">

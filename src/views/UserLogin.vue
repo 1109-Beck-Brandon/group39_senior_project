@@ -22,10 +22,6 @@
     <p class="forgot-password">
       <router-link to="/passwordReset">Forgot Password? </router-link>
     </p>
-
-    <v-layout class="rounded rounded-md">
-      <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-    </v-layout>
   </div>
 </template>
 

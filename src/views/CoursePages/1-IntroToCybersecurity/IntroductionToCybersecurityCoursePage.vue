@@ -1,8 +1,4 @@
 <template>
-  <!-- Application Bar -->
-  <v-layout class="rounded rounded-md">
-    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-  </v-layout>
   
   <v-container fluid>
     <h1 class="course-title">Introduction to Cybersecurity</h1>
