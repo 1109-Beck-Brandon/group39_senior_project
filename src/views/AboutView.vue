@@ -1,8 +1,4 @@
 <template>
-    <v-layout class="rounded rounded-md">
-      <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform" role="banner"></v-app-bar>
-
-    </v-layout>
 
   <main class="about">
     <h1>CS 426 Senior Project in Computer Science, Spring 2025, at UNR, CSE Department: Cybersecurity Learning Platform</h1>

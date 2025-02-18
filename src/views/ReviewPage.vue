@@ -1,7 +1,4 @@
 <template>
-  <v-layout class="rounded rounded-md">
-    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-  </v-layout>
   <div class="reviewPage">
     <h1>Review Page</h1>
 

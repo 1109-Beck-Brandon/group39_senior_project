@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+
+    <AppNavBar />
+
     <nav>
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> | 
@@ -15,8 +18,14 @@
 
 <script>
 import api from './services/api';
+import AppNavBar from '@/components/AppNavBar.vue';
 
 export default {
+
+  components: {
+    AppNavBar,
+  },
+
   data() {
     return {
       message: ''

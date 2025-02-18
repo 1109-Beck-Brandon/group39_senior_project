@@ -1,9 +1,6 @@
 <template>
   <div class="home">
     <v-layout class="rounded rounded-md">
-      <v-app-bar color="surface-variant">
-        <v-app-bar-title>Cybersecurity Learning Platform</v-app-bar-title>
-      </v-app-bar>
       <!--
       <v-navigation-drawer width="300">
         <v-list>

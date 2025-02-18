@@ -1,7 +1,4 @@
 <template>
-  <v-layout class="rounded rounded-md">
-    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-  </v-layout>
     <v-container class="d-flex align-center justify-center" style="height: 100vh; margin-top: -20vh;">
       <v-card class="pa-5" max-width="500">
         <v-card-title>Password Reset</v-card-title>
