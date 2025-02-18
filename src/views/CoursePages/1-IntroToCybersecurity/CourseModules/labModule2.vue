@@ -10,6 +10,7 @@
     </v-btn>
 
     <v-container fluid>
+
       <!-- Page Title -->
       <v-row>
         <v-col cols="12">
@@ -22,9 +23,11 @@
         </v-col>
       </v-row>
   
-      <!-- JSLinux Terminal -->
-      <v-row justify="center">
-        <v-col cols="12" md="8">
+      <!-- Terminal and Instructions -->
+      <v-row>
+
+        <!--Terminal-->
+        <v-col cols="12" md="6">
           <div class="jslinux-container">
             <iframe
               src="https://bellard.org/jslinux/vm.html?cpu=riscv64&url=buildroot-riscv64.cfg&mem=256"
@@ -35,115 +38,116 @@
             ></iframe>
           </div>
         </v-col>
-      </v-row>
 
-      <!--Lab Instructions-->
-      <v-row>
-        <v-col cols="12">
-          <h1 class="page-title">Instructions</h1>
-          <p class="lab-instructions">
-            In this lab you will be continuing to learn useful unix commands that will be essential for you to use in future terminal-based labs on this site. It is strongly recommended that you complete the basic unix command lab before starting this one.
-          </p>
-          <h2 class="lab-section">Pipe and Redirection Commands</h2>
-          <p class="lab-instructions"> 
-            You may remember from the previous lab module, when viewing the contents of /usr/bin, the terminal screen was covered by a large amount of items that made it difficult to see all at once. You can replicate this scenario with the following command:
-            <br><br>
-            ls /usr/bin
-            <br><br>
-            One way to slow down output generation is to "pipe" the output. The pipe symbol "|" can be used with the "more" command to display a smaller section of the overall output at a time. To see the next section of the output, press the space bar. To see one line of output at a time, press the "Enter" key. If you would like to stop viewing the output midway, press the "q" key to quit. Enter the following to pipe the output of /usr/bin:
-            <br><br>
-            ls /usr/bin | more
-            <br><br>
-            Another method for dealing with a large output is redirection. This can be accomplished with the ">" symbol. You can redirect the output of a command to a file by doing the following, which will create a file named "listing" with the output of /usr/bin. Use "ls" to see that the listing file is in your root directory: 
-            <br><br>
-            ls /usr/bin > listing
-            <br>
-            ls
-            <br><br>
-            The file can also be viewed using the "cat" or "more" command that you learned earlier.
-            <br><br>
-            If the same command it repeated for the same file, the file will be overwritten by the redirection. You can instead add to the file (apending) by using the ">>" symbol. Use the following commands to append the current listing file and see the added line at the end of the file:
-            <br><br>
-            echo "testing" >> listing
-            <br>
-            cat listing
-          </p>
-
-          <h2 class="lab-section">Searching Commands</h2>
-          <p class="lab-instructions">
-            If you ever want to search for a specifc keyword in a group of files or directories, the "grep" (global regular expression pattern) command can be used. For example you can search the entire contents of the /etc directory for anything containing the keyword "network" (note that '*' is used at the end of the /etc directory to specify everything contained in this directory):
-            <br><br>
-            grep network /etc/*
-            <br><br>
-            The "grep" command usually outputs the file name that the keyword is contained in (if it is found) and sometimes the line in the file in which the keyword is found in. You may have noticed there were some errors present in the output, along with the files containing the network keyword. To make the output of the "grep" command more clean, you can silence the error outputs using "-s":
-            <br><br>
-            grep -s network /etc/*
-            <br><br>
-            An extremely useful command in unix is the "find" command. Along with "grep", it is useful for finding things. The syntax for the "find" command can be complicated at times, but has a wide range of uses, more than what can be shown in this lab. A basic use of the "find" command is to locate a file with a known name. In the /etc folder, there is a file named "hosts". You the "find" command to locate the "hosts" folder in /etc and print to the terminal:
-            <br><br>
-            find /etc -name hosts -print
-            <br><br>
-            (Note that you will not have a problem using the command in this way for this lab, due to the static nature of the virtual linux terminal and already having the appropriate privileges. On actual linux systems, you will most likely need sudo privileges. Sudo privileges are another way of saying a user has root privileges, the highest priviliege level a user can have)
-            <br><br>
-            The wild card symbol '*' can also be used with the "find" command. However when using '*' with the "find" command, it must be quoted. For example, in order to find and print a list of every single file that ends with ".h", enter the following:
-            <br><br>
-            find /usr/include -name "*.h" -print
-            <br><br>
-            The "find" command can also be used to display the path of every file it sees. For example, the following command can be used to print out every file or object contained in the /usr/local path:
-            <br><br>
-            find /usr/local -print
-          </p>
-
-          <h2 class="lab-section">Access Control Commands</h2>
-          <p class="lab-instructions">
-            Remember from the previous lab, you could see the permissions of a file when using the "ls -l" command? In this section you will learn more about these permission and how to modify them.
-            <br><br>
-            Start by displaying ALL contents of your home directory, "cd" to it if you are not there already:
-            <br><br>
-            cd
-            <br>
-            ls -al
-            <br><br>
-            The permissions for each file are listed on the left side of the screen. The permissions are in 3 different read, write, and execute groups. These groups are (User)(Group)(Other), and are formatted as (r w x)(r w -)(r - -). When the "r" is present, it means reading permissions are enabled. When the "w" is present, it means that writing permissions are enabled. When the "x" is present, it means that the execute permission is enabled. Otherwise, a "-" means that specific permission is not granted. For example, you can see that after entering the last command, the readme.txt file has read and write permissions turned on for the User, and only read permissions enabled for Group and Other. 
-            <br><br>
-            To change permissions on a file or directory, the "chmod" command can be used. While there a multiple ways to use the "chmod" command, this lab will stick to using the easier methods to understand and remember. When using the "chmod" command, 'u' is used to specify User, 'g' is used to specify Group, and 'o' is used to specify Other. For read, write, and execute, the symbols 'r', 'w', and 'x' should be used respectively. For example, use the following command to change permissions on the readme.txt file so that everyone (Other) can write to it:
-            <br><br>
-            ls -l readme.txt
-            <br>
-            chmod o+w readme.txt
-            <br>
-            ls -l readme.txt
-            <br><br>
-            To remove the newly granted file permission, use the following:
-            <br><br>
-            chmod o-w readme.txt
-            <br>
-            ls -l readme.txt
-            <br><br>
-            You are also able to modify multiple values at once. For example, to give all three permission types to User, Group, and Other for the readme.txt file, use the following command:
-            <br><br>
-            chmod ugo+rwx readme.txt
-            <br>
-            ls -l readme.txt
-            <br><br>
-            To make it so that Group and Other specifically can only have read access, use the following command:
-            <br><br>
-            chmod go=r readme.txt
-            <br>
-            ls -l readme.txt
-            </p>
-
-            <h2 class="lab-section">History</h2>
+        <!-- Instructions -->
+        <v-col cols="12" md="6">
+          <div class="instructions-container" style="height: 600px; overflow-y: auto;">
+            <h1 class="page-title">Instructions</h1>
             <p class="lab-instructions">
-            By default, most Unix terminals keep track of the commands that have been entered in a current session. To see the commands you've entered so far, enter the following in the command line:
-            <br><br>
-            history
-            <br><br>
-            There are several benefits to keeping a history of previously entered commands. One is so that you do not need to re-type a previously entered command, especially if the command is long. The up arrow key can be used to scroll through previously commands, so that they may be entered again.
+              In this lab you will be continuing to learn useful unix commands that will be essential for you to use in future terminal-based labs on this site. It is strongly recommended that you complete the basic unix command lab before starting this one.
+            </p>
+            <h2 class="lab-section">Pipe and Redirection Commands</h2>
+            <p class="lab-instructions"> 
+              You may remember from the previous lab module, when viewing the contents of /usr/bin, the terminal screen was covered by a large amount of items that made it difficult to see all at once. You can replicate this scenario with the following command:
+              <br><br>
+              <b>ls /usr/bin</b>
+              <br><br>
+              One way to slow down output generation is to "pipe" the output. The pipe symbol "|" can be used with the "more" command to display a smaller section of the overall output at a time. To see the next section of the output, press the space bar. To see one line of output at a time, press the "Enter" key. If you would like to stop viewing the output midway, press the "q" key to quit. Enter the following to pipe the output of /usr/bin:
+              <br><br>
+              <b>ls /usr/bin | more</b>
+              <br><br>
+              Another method for dealing with a large output is redirection. This can be accomplished with the ">" symbol. You can redirect the output of a command to a file by doing the following, which will create a file named "listing" with the output of /usr/bin. Use "ls" to see that the listing file is in your root directory: 
+              <br><br>
+              <b>ls /usr/bin > listing</b>
+              <br>
+              <b>ls</b>
+              <br><br>
+              The file can also be viewed using the "cat" or "more" command that you learned earlier.
+              <br><br>
+              If the same command it repeated for the same file, the file will be overwritten by the redirection. You can instead add to the file (apending) by using the ">>" symbol. Use the following commands to append the current listing file and see the added line at the end of the file:
+              <br><br>
+              <b>echo "testing" >> listing</b>
+              <br>
+              <b>cat listing</b>
             </p>
 
-          <h3>Congratulations! You have finished the second part of the unix commands lab! You will learn about more complex unix commands in labs from other courses. Test your knowledge of the lab with the quiz questions below. (Note that proper command syntax must be used for each question)</h3>
+            <h2 class="lab-section">Searching Commands</h2>
+            <p class="lab-instructions">
+              If you ever want to search for a specifc keyword in a group of files or directories, the "grep" (global regular expression pattern) command can be used. For example you can search the entire contents of the /etc directory for anything containing the keyword "network" (note that '*' is used at the end of the /etc directory to specify everything contained in this directory):
+              <br><br>
+              <b>grep network /etc/*</b>
+              <br><br>
+              The "grep" command usually outputs the file name that the keyword is contained in (if it is found) and sometimes the line in the file in which the keyword is found in. You may have noticed there were some errors present in the output, along with the files containing the network keyword. To make the output of the "grep" command more clean, you can silence the error outputs using "-s":
+              <br><br>
+              <b>grep -s network /etc/*</b>
+              <br><br>
+              An extremely useful command in unix is the "find" command. Along with "grep", it is useful for finding things. The syntax for the "find" command can be complicated at times, but has a wide range of uses, more than what can be shown in this lab. A basic use of the "find" command is to locate a file with a known name. In the /etc folder, there is a file named "hosts". You the "find" command to locate the "hosts" folder in /etc and print to the terminal:
+              <br><br>
+              <b>find /etc -name hosts -print</b>
+              <br><br>
+              (Note that you will not have a problem using the command in this way for this lab, due to the static nature of the virtual linux terminal and already having the appropriate privileges. On actual linux systems, you will most likely need sudo privileges. Sudo privileges are another way of saying a user has root privileges, the highest priviliege level a user can have)
+              <br><br>
+              The wild card symbol '*' can also be used with the "find" command. However when using '*' with the "find" command, it must be quoted. For example, in order to find and print a list of every single file that ends with ".h", enter the following:
+              <br><br>
+              <b>find /usr/include -name "*.h" -print</b>
+              <br><br>
+              The "find" command can also be used to display the path of every file it sees. For example, the following command can be used to print out every file or object contained in the /usr/local path:
+              <br><br>
+              <b>find /usr/local -print</b>
+            </p>
+
+            <h2 class="lab-section">Access Control Commands</h2>
+            <p class="lab-instructions">
+              Remember from the previous lab, you could see the permissions of a file when using the "ls -l" command? In this section you will learn more about these permission and how to modify them.
+              <br><br>
+              Start by displaying ALL contents of your home directory, "cd" to it if you are not there already:
+              <br><br>
+              <b>cd</b>
+              <br>
+              <b>ls -al</b>
+              <br><br>
+              The permissions for each file are listed on the left side of the screen. The permissions are in 3 different read, write, and execute groups. These groups are (User)(Group)(Other), and are formatted as (r w x)(r w -)(r - -). When the "r" is present, it means reading permissions are enabled. When the "w" is present, it means that writing permissions are enabled. When the "x" is present, it means that the execute permission is enabled. Otherwise, a "-" means that specific permission is not granted. For example, you can see that after entering the last command, the readme.txt file has read and write permissions turned on for the User, and only read permissions enabled for Group and Other. 
+              <br><br>
+              To change permissions on a file or directory, the "chmod" command can be used. While there a multiple ways to use the "chmod" command, this lab will stick to using the easier methods to understand and remember. When using the "chmod" command, 'u' is used to specify User, 'g' is used to specify Group, and 'o' is used to specify Other. For read, write, and execute, the symbols 'r', 'w', and 'x' should be used respectively. For example, use the following command to change permissions on the readme.txt file so that everyone (Other) can write to it:
+              <br><br>
+              <b>ls -l readme.txt</b>
+              <br>
+              <b>chmod o+w readme.txt</b>
+              <br>
+              <b>ls -l readme.txt</b>
+              <br><br>
+              To remove the newly granted file permission, use the following:
+              <br><br>
+              <b>chmod o-w readme.txt</b>
+              <br>
+              <b>ls -l readme.txt</b>
+              <br><br>
+              You are also able to modify multiple values at once. For example, to give all three permission types to User, Group, and Other for the readme.txt file, use the following command:
+              <br><br>
+              <b>chmod ugo+rwx readme.txt</b>
+              <br>
+              <b>ls -l readme.txt</b>
+              <br><br>
+              To make it so that Group and Other specifically can only have read access, use the following command:
+              <br><br>
+              <b>chmod go=r readme.txt</b>
+              <br>
+              <b>ls -l readme.txt</b>
+              </p>
+
+              <h2 class="lab-section">History</h2>
+              <p class="lab-instructions">
+              By default, most Unix terminals keep track of the commands that have been entered in a current session. To see the commands you've entered so far, enter the following in the command line:
+              <br><br>
+              <b>history</b>
+              <br><br>
+              There are several benefits to keeping a history of previously entered commands. One is so that you do not need to re-type a previously entered command, especially if the command is long. The up arrow key can be used to scroll through previously commands, so that they may be entered again.
+              </p>
+
+            <h3>Congratulations! You have finished the second part of the unix commands lab! You will learn about more complex unix commands in labs from other courses. Test your knowledge of the lab with the quiz questions below. (Note that proper command syntax must be used for each question)</h3>
+          </div>
         </v-col>
+
       </v-row>
 
       <!-- Quiz Section -->

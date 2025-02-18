@@ -39,7 +39,7 @@
                 - Other strong defenses include Multi-Factor Authentication (MFA) and constant monitoring
                 <br><br>
             </p>
-            <h2>Types of Social Engineering Attacks</h2>
+            <h2 class="SE-Types-Title">Types of Social Engineering Attacks</h2>
             <v-container>
               <v-row>
                 <v-col>
@@ -335,12 +335,17 @@
     background-color: #f5f5f5;
     border-radius: 8px;
     margin-bottom: 30px;
+    text-align: left;
   }
 
   .formatted-description {
     text-align: left;
-    margin-left: 200px;
-    margin-right: 200px;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .SE-Types-Title {
+    text-align: center;
   }
 
   .SE-Types-Description {
