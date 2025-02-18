@@ -10,6 +10,7 @@
     </v-btn>
 
     <v-container fluid>
+      
       <!-- Page Title -->
       <v-row>
         <v-col cols="12">
@@ -216,6 +217,7 @@
     data() {
       return {
         courseTitle: "Unix Basic Commands Lab",
+
         //Add quiz questions to this
         quizQuestions: [
           {
