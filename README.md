@@ -18,9 +18,9 @@ Notes for setup:
 
 Note: I created the project with: "vue create .". I believe the project should just already exist if you are pulling the project from main. 
 
-## IMPORTANT, BEFORE PUSHING ANY EDITS:
+## IMPORTANT, REGARDING PUSHING ANY EDITS:
 
-Run the "npm run build" command to make a new build folder called "docs". This is the folder the repository sources from to deploy the website. 
+Push edits to your branch, DO NOT update the build yet when doing so, might create merge conflicts when trying to merge with main branch. After your branch is up to date with your edits, merge to main branch. Switch to main branch on your terminal and update the build there by running "npm run build".
 
 The following text was automatically inputted after the vue project creation, they are not my own notes.
 
