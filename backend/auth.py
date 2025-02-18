@@ -3,12 +3,16 @@ from .models import User
 from . import db
 import jwt
 import datetime
+import os
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+    if not data or not data.get('username') or not data.get('password'):
+        return jsonify({'message': 'Invalid credentials'}), 400
+
     username = data.get('username')
     password = data.get('password')
 
@@ -18,7 +22,7 @@ def login():
         token = jwt.encode({
             'user_id': user.user_id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-        }, 'your_secret_key', algorithm='HS256')
+        }, os.getenv('JWT_SECRET_KEY'), algorithm='HS256')
 
         return jsonify({'token': token})
 
@@ -27,11 +31,30 @@ def login():
 @auth.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    new_user = User(username=data['username'], email=data['email'], role=data['role'])
-    new_user.set_password(data['password'])
+    if not data or not data.get('username') or not data.get('email') or not data.get('password'):
+        return jsonify({'message': 'Invalid credentials'}), 400
+    
+    # Add required fields
+    new_user = User(
+        username=data['username'],
+        email=data['email'],
+        first_name=data.get('first_name', ''),  # Add default values
+        last_name=data.get('last_name', ''),
+        role=data.get('role', 'student')
+    )
+    
+    username = data.get('username')
+    password = data.get('password')
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({'message': 'User already exists'}), 409
+    
+    new_user = User(username=username)
+    new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"message": "User registered successfully!"}), 201
+
+    return jsonify({'message': 'User created successfully'}), 201
 
 @auth.route('/createProfile', methods=['POST'])
 def create_profile():

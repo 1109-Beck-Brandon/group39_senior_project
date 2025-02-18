@@ -198,6 +198,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "TeacherView",
   data() {
@@ -207,43 +209,59 @@ export default {
         lastName: "",
       },
       classroom: {
-        name: "", //classname from onboarding pages /teacherOnboarding
-        id: "", //from /teacherOnboarding as well, was generated or created by the teacher
+        name: "",
+        id: "",
       },
       newStudent: {
         firstName: "",
         lastName: "",
       },
       students: [],
-      showClassroomModal: false, //the modal's visibility
-      showStudentProfileModal: false, // student profile's visibility
+      showClassroomModal: false,
+      showStudentProfileModal: false,
       selectedStudentProfilePicture: "",
-      selectedStudentProgress: [], //their progress in each course, static for now until backend is complete
+      selectedStudentProgress: [],
       showAddStudentsModal: false,
       showInboxDialog: false,
-      messages: [], //from the inbox
+      messages: [],
       selectedClassroomStudents: [],
       selectedStudent: null,
     };
   },
   created() {
-    const userData = JSON.parse(localStorage.getItem("newUser")) || {}; //idk if I used this right
-    this.classroom.name = userData.className || "My Classroom";
-    this.classroom.id = userData.classId || "No ID Available";
-    this.teacher.firstName = userData.firstName || "No first name";
-    this.teacher.lastName = userData.lastName || "No last name";
-    //fetch saved students and messages from local storage if they exist
-    const savedStudents = JSON.parse(localStorage.getItem("students")) || [];
-    this.students = savedStudents;
-    const savedMessages = JSON.parse(localStorage.getItem("messages")) || [];
-    this.messages = savedMessages;
+    this.fetchTeacherData();
   },
   computed: {
     classroomStudents() {
-      return this.students.filter(student => student.classroomId === this.classroom.id);
-    }
+      return this.students.filter(
+        (student) => student.classroomId === this.classroom.id
+      );
+    },
   },
   methods: {
+    async fetchTeacherData() {
+      try {
+        // Fetch teacher and classroom information
+        const teacherResponse = await axios.get("/api/teacher");
+        const teacherData = teacherResponse.data;
+        this.teacher.firstName = teacherData.firstName;
+        this.teacher.lastName = teacherData.lastName;
+        this.classroom.name = teacherData.classroomName;
+        this.classroom.id = teacherData.classroomId;
+
+        // Fetch classroom students
+        const studentsResponse = await axios.get(
+          `/api/classrooms/${this.classroom.id}/students`
+        );
+        this.students = studentsResponse.data;
+
+        // Fetch teacher inbox messages
+        const messagesResponse = await axios.get("/api/messages");
+        this.messages = messagesResponse.data;
+      } catch (error) {
+        console.error("Error fetching teacher data:", error);
+      }
+    },
     selectClassroom(classroom) {
       this.selectedClassroomStudents = this.students.filter(
         (student) => student.classroom === classroom.name
@@ -254,35 +272,43 @@ export default {
     },
     openStudentProfileDialog(student) {
       this.selectedStudent = student;
-      this.selectedStudentProfilePicture = "https://robohash.org/example24?set=set1"; // Static placeholder
-      this.selectedStudentProgress = student.progress || []; // Use student's progress
+      // Use a real image URL if available from student data
+      this.selectedStudentProfilePicture =
+        student.profilePicture || "https://robohash.org/example24?set=set1";
+      this.selectedStudentProgress = student.progress || [];
       this.showStudentProfileModal = true;
     },
     returnToClassroomModal() {
       this.showStudentProfileModal = false;
       this.showClassroomModal = true;
     },
-    addStudents(){
+    addStudents() {
       this.showAddStudentsModal = true;
     },
-    addStudentManually() {
+    async addStudentManually() {
       if (this.newStudent.firstName && this.newStudent.lastName) {
-        // Create student object and add it to the students array
+        // Create student object
         const student = {
           firstName: this.newStudent.firstName,
           lastName: this.newStudent.lastName,
           classroomId: this.classroom.id,
         };
-        this.students.push(student);
-        localStorage.setItem("students", JSON.stringify(this.students)); //saving students
 
+        try {
+          // Optionally post the new student to the backend
+          const response = await axios.post("/api/students", student);
+          // Add returned student data to the students array
+          this.students.push(response.data);
+        } catch (error) {
+          console.error("Error adding student:", error);
+        }
         this.newStudent.firstName = "";
         this.newStudent.lastName = "";
         this.showAddStudentsModal = false;
       } else {
         alert("Please fill in both the first and last name.");
       }
-    }, 
+    },
     navigateToCourses() {
       this.$router.push({ path: "/courseSelect" });
     },
@@ -295,9 +321,16 @@ export default {
     closeInboxDialog() {
       this.showInboxDialog = false;
     },
-    deleteMessage(index) {
-      this.messages.splice(index, 1); // Remove the message
-      localStorage.setItem("messages", JSON.stringify(this.messages)); // Update local storage
+    async deleteMessage(index) {
+      const message = this.messages[index];
+      try {
+        // Assuming your backend supports DELETE /api/messages/:id 
+        await axios.delete(`/api/messages/${message.id}`);
+        // Remove the message from the local array on success
+        this.messages.splice(index, 1);
+      } catch (error) {
+        console.error("Error deleting message:", error);
+      }
     },
   },
 };

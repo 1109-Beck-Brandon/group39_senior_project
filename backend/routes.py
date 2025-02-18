@@ -1,128 +1,262 @@
 from flask import Blueprint, jsonify, request, send_from_directory
 from .models import User, Course, Module, Resource, Review, Classroom, Student
+from .middleware import jwt_required
 from . import db
 import os
 
 main = Blueprint('main', __name__)
 
+# Frontend serving route (should be last route)
 @main.route('/', defaults={'path': ''})
 @main.route('/<path:path>')
 def serve(path):
     if path != "" and os.path.exists("docs/" + path):
         return send_from_directory('docs', path)
-    else:
-        return send_from_directory('docs', 'index.html')
+    return send_from_directory('docs', 'index.html')
 
-@main.route('/', methods=['GET'])
+# API Routes
+@main.route('/api', methods=['GET'])
 def index():
-    return jsonify({"message": "Welcome to the Flask backend"})
+    return jsonify({
+        "message": "Welcome to the Cybersecurity Learning Platform API",
+        "endpoints": {
+            "users": "/api/users",
+            "courses": "/api/courses",
+            "auth": "/auth/*"
+        }
+    })
 
-@main.route('/users', methods=['GET'])
+@main.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify([{"user_id": user.user_id, "username": user.username, "email": user.email} for user in users])
+    return jsonify([{
+        "user_id": user.user_id,
+        "username": user.username,
+        "email": user.email
+    } for user in users])
 
-@main.route('/add_user', methods=['POST'])
+@main.route('/api/users', methods=['POST'])
 def add_user():
     data = request.get_json()
-    new_user = User(username=data['username'], email=data['email'], role=data.get('role'))
+    if not data or not data.get('username') or not data.get('email') or not data.get('password'):
+        return jsonify({'message': 'Missing required fields'}), 400
+
+    if User.query.filter((User.username == data['username']) | (User.email == data['email'])).first():
+        return jsonify({'message': 'Username or email already exists'}), 409
+    
+    new_user = User(
+        username=data['username'],
+        email=data['email'],
+        role=data.get('role', 'student')
+    )
     new_user.set_password(data['password'])
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"message": "User added successfully!"}), 201
 
-@main.route('/api/data', methods=['GET'])
-def get_data():
-    data = {"message": "Hello from Flask!"}
-    return jsonify(data)
-
-@main.route('/course/<int:course_id>', methods=['GET'])
-def get_course(course_id):
-    course = Course.query.get_or_404(course_id)
     return jsonify({
-        "course_id": course.course_id,
-        "title": course.title,
-        "description": course.description,
-        "instructor_id": course.instructor_id,
-        "date_created": course.date_created
-    })
+        'message': 'User created successfully',
+        'user_id': new_user.user_id
+    }), 201
 
-@main.route('/course/<int:course_id>/modules', methods=['GET'])
-def get_course_modules(course_id):
-    modules = Module.query.filter_by(course_id=course_id).order_by(Module.order).all()
-    return jsonify([{
-        "module_id": module.module_id,
-        "title": module.title,
-        "content": module.content,
-        "order": module.order
-    } for module in modules])
-
-@main.route('/courses', methods=['GET'])
-def get_courses():
-    courses = Course.query.all()
-    return jsonify([{
-        "course_id": course.course_id,
-        "name": course.title,
-        "description": course.description,
-        "progress": 0  # Assuming progress is not stored in the database
-    } for course in courses])
-
-@main.route('/resources', methods=['GET'])
-def get_resources():
-    resources = Resource.query.all()
-    return jsonify([{
-        "resource_id": resource.resource_id,
-        "title": resource.title,
-        "description": resource.description,
-        "url": resource.url
-    } for resource in resources])
-
-@main.route('/reviews', methods=['GET'])
-def get_reviews():
-    reviews = Review.query.all()
-    return jsonify([{
-        "review_id": review.review_id,
-        "content": review.content,
-        "user_id": review.user_id,
-        "timestamp": review.timestamp
-    } for review in reviews])
-
-@main.route('/reviews', methods=['POST'])
-def add_review():
-    data = request.get_json()
-    new_review = Review(content=data['content'], user_id=data['user_id'])
-    db.session.add(new_review)
-    db.session.commit()
-    return jsonify({"message": "Review added successfully!"}), 201
-
-@main.route('/classrooms', methods=['GET'])
-def get_classrooms():
-    classrooms = Classroom.query.all()
-    return jsonify([{
-        "classroom_id": classroom.classroom_id,
-        "name": classroom.name
-    } for classroom in classrooms])
-
-@main.route('/classrooms/<int:classroom_id>/students', methods=['GET'])
-def get_students(classroom_id):
-    students = Student.query.filter_by(classroom_id=classroom_id).all()
-    return jsonify([{
-        "student_id": student.student_id,
-        "first_name": student.first_name,
-        "last_name": student.last_name,
-        "classroom_id": student.classroom_id
-    } for student in students])
-
-@main.route('/user/<int:user_id>', methods=['GET'])
+@main.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user_profile(user_id):
     user = User.query.get_or_404(user_id)
     return jsonify({
         "user_id": user.user_id,
         "username": user.username,
         "email": user.email,
-        "fullName": f"{user.first_name} {user.last_name}",
-        "membershipDuration": user.date_created.strftime('%Y-%m-%d'),
         "role": user.role,
-        "profilePicture": user.profile_picture,  # Assuming you have this field
-        "class": user.classroom.name if user.role == 'Student' else None
+        "joined": user.date_joined.isoformat(),  # Fixed from date_created to date_joined
+        "profile_picture": user.profile_picture,
+        "grade_level": user.grade_level,  # New field
+        "school_name": user.school_name,   # New field
+        "courses_enrolled": [{
+            "course_id": course.course_id,
+            "title": course.title
+        } for course in user.courses]
     })
+
+@main.route('/api/users/<int:user_id>', methods=['PUT'])
+@jwt_required
+def update_user(user_id):
+    user = User.query.get_or_404(user_id)
+    data = request.get_json()
+    
+    # Update allowed fields
+    if 'profile_picture' in data:
+        user.profile_picture = data['profile_picture']
+    if 'grade_level' in data:
+        user.grade_level = data['grade_level']
+    if 'school_name' in data:
+        user.school_name = data['school_name']
+    
+    db.session.commit()
+    
+    return jsonify({"message": "User updated successfully"}), 200
+
+@main.route('/api/teacher', methods=['GET'])
+def get_teachers():
+    teacher = User.query.filter_by(role='teacher').first()
+    if teacher:
+        classroom = teacher.classroom
+        return jsonify({
+            "firstName": teacher.first_name,
+            "lastName": teacher.last_name,
+            "classroomName" : classroom.name if classroom else "No Classroom",
+            "classroomID": classroom.classroom_id if classroom else ""
+        })
+    return jsonify({"message": "No teachers found"}), 404
+
+@main.route("/classrooms/<int:classroom_id>/students", methods=["GET"])
+def get_classroom_students(classroom_id):
+    # Query for all users with role 'student' in the given classroom
+    students = User.query.filter_by(role="student", classroom_id=classroom_id).all()
+    students_data = []
+    for student in students:
+        students_data.append({
+            "firstName": student.first_name,
+            "lastName": student.last_name,
+            "profilePicture": student.profile_picture,
+            "classroomId": student.classroom_id
+            # Add any additional fields as needed
+        })
+    return jsonify(students_data)
+
+@main.route("/students", methods=["POST"])
+def add_student():
+    data = request.get_json()
+    first_name = data.get("firstName")
+    last_name = data.get("lastName")
+    classroom_id = data.get("classroomId")
+
+    if not all([first_name, last_name, classroom_id]):
+        return jsonify({"error": "Missing data"}), 400
+
+    # Create a new student. For simplicity, we generate the username and email automatically.
+    new_student = User(
+        username=f"{first_name.lower()}.{last_name.lower()}",
+        email=f"{first_name.lower()}.{last_name.lower()}@example.com",
+        password_hash="default",  # Replace this with proper password handling
+        role="student",
+        first_name=first_name,
+        last_name=last_name,
+        classroom_id=classroom_id,
+        date_joined=datetime.utcnow()
+    )
+    db.session.add(new_student)
+    db.session.commit()
+
+    return jsonify({
+        "firstName": new_student.first_name,
+        "lastName": new_student.last_name,
+        "profilePicture": new_student.profile_picture,
+        "classroomId": new_student.classroom_id
+    }), 201
+
+@main.route('/api/classrooms/join', methods=['POST'])
+@jwt_required
+def join_classroom():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    classroom_id = data.get('classroom_id')
+
+    if not user_id or not classroom_id:
+        return jsonify({"message": "Missing user_id or classroom_id"}), 400
+
+    user = User.query.get_or_404(user_id)
+    classroom = Classroom.query.get_or_404(classroom_id)
+
+    user.classroom_id = classroom_id
+    db.session.commit()
+
+    return jsonify({
+        "message": "Joined classroom successfully",
+        "classroom_name": classroom.name
+    }), 200
+
+@main.route('/api/courses', methods=['GET'])
+def get_courses():
+    courses = Course.query.all()
+    return jsonify([{
+        "course_id": course.course_id,
+        "title": course.title,
+        "description": course.description,
+        "instructor": course.instructor.username if course.instructor else None,
+        "date_created": course.date_created.isoformat()
+    } for course in courses])
+
+@main.route('/api/courses/<int:course_id>', methods=['GET'])
+def get_course(course_id):
+    course = Course.query.get_or_404(course_id)
+    return jsonify({
+        "course_id": course.course_id,
+        "title": course.title,
+        "description": course.description,
+        "modules": [{
+            "module_id": module.module_id,
+            "title": module.title,
+            "order": module.order
+        } for module in course.modules]
+    })
+
+@main.route('/api/courses/<int:course_id>/modules', methods=['GET'])
+def get_course_modules(course_id):
+    modules = Module.query.filter_by(course_id=course_id).order_by(Module.order).all()
+    return jsonify([{
+        "module_id": module.module_id,
+        "title": module.title,
+        "content": module.content,
+        "order": module.order,
+        "resources": [{
+            "resource_id": resource.resource_id,
+            "title": resource.title,
+            "url": resource.url
+        } for resource in module.resources]
+    } for module in modules])
+
+@main.route('/api/reviews', methods=['GET'])
+def get_reviews():
+    reviews = Review.query.order_by(Review.timestamp.desc()).limit(10).all()
+    return jsonify([{
+        "review_id": review.review_id,
+        "content": review.content,
+        "author": {
+            "user_id": review.user.user_id,
+            "username": review.user.username
+        },
+        "timestamp": review.timestamp.isoformat()
+    } for review in reviews])
+
+@main.route('/api/reviews', methods=['POST'])
+def add_review():
+    data = request.get_json()
+    if not data or not data.get('content') or not data.get('user_id'):
+        return jsonify({"message": "Missing required fields"}), 400
+    
+    new_review = Review(
+        content=data['content'],
+        user_id=data['user_id']
+    )
+    db.session.add(new_review)
+    db.session.commit()
+    
+    return jsonify({
+        "message": "Review added successfully",
+        "review_id": new_review.review_id
+    }), 201
+
+
+# Error handling
+@main.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "error": "Not Found",
+        "message": "The requested resource was not found"
+    }), 404
+
+@main.errorhandler(500)
+def internal_error(error):
+    return jsonify({
+        "error": "Internal Server Error",
+        "message": "An unexpected error occurred"
+    }), 500

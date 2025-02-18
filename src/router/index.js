@@ -24,13 +24,18 @@ import Course1FinalQuiz from '../views/CoursePages/1-IntroToCybersecurity/Course
 import CourseSample202 from '../views/CoursePages/2-SampleCourse202/SampleCourse2.vue'
 import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse3.vue'
 
-//new pages, making a new profile redirects you to diff onboarding page before your profile page
+
 import TeacherOnboarding from "@/views/OnboardingPages/TeacherOnboarding.vue";
 import StudentOnboarding from "@/views/OnboardingPages/StudentOnboarding.vue";
 import UserOnboarding from "@/views/OnboardingPages/UserOnboarding.vue";
-//new gradebook page for teachers and classroom page for students
 import GradeBook from "@/views/GradeBook.vue";
 import StudentClassroom from "@/views/ClassroomPages/StudentClassroom.vue";
+//New Teacher Pages and Teacher Actions pages- Revamped
+import NewTeacherOnboarding  from '@/views/OnboardingPages/NewTeacherOnboarding.vue';
+import NewTeacherView from '@/views/OnboardingPages/NewTeacherView.vue';
+import NewGradebook from '@/views/OnboardingPages/NewGradebook.vue';
+import ClassroomStudents from '@/views/TeacherActions/ClassroomStudents.vue';
+
 
 const routes = [
   {
@@ -132,6 +137,31 @@ const routes = [
     path: '/studentClassroom',
     name: 'StudentClassroom', 
     component: StudentClassroom
+  },
+
+  //2025- new Teacher Pages for testing, I will get rid of the old ones later
+  {
+    path: '/new-teacher-onboarding',
+    name: 'NewTeacherOnboarding',
+    component: NewTeacherOnboarding,
+  },
+
+  {
+    path: '/new-teacher-view',
+    name: 'NewTeacherView',
+    component: NewTeacherView,
+  },
+
+  {
+    path: '/new-gradebook',
+    name: 'NewGradebook',
+    component: NewGradebook,
+  },
+
+  {
+    path: '/classroom-students',
+    name: 'ClassroomStudents',
+    component: ClassroomStudents,
   }
 
 ]
