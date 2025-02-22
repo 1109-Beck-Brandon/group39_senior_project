@@ -62,14 +62,18 @@ def create_profile():
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
-    role = data.get('role', 'user')  # Default role is 'user'
+    role = data.get('role', 'user')
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
 
-    # Check if the user already exists
+    if not username or not email or not password or not first_name or not last_name:
+        return jsonify({'message': 'Missing required fields'}), 400
+
     if User.query.filter((User.username == username) | (User.email == email)).first():
         return jsonify({'message': 'User already exists'}), 409
 
-    # Create a new user
-    new_user = User(username=username, email=email, role=role)
+    new_user = User(username=username, email=email, role=role,
+                    first_name=first_name, last_name=last_name)
     new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()

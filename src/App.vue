@@ -31,6 +31,11 @@ export default {
       message: ''
     };
   },
+
+  mounted() {
+    this.fetchData();
+  },
+  
   methods: {
     async fetchData() {
       try {

@@ -61,6 +61,9 @@ export default {
   createProfile(profileData) {
     return apiClient.post('/auth/createProfile', profileData);
   },
+  getData() {
+    return apiClient.get('/');
+  },
 
   // User endpoints
   getUsers() {
