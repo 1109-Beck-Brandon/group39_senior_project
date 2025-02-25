@@ -57,6 +57,8 @@ export default {
                 email: '',
                 password: '',
                 role: '',
+                first_name: '',
+                last_name: '',
             },
             roles: ['Student', 'Teacher', 'Individual'],
         };

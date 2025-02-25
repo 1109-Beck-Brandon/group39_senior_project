@@ -24,23 +24,72 @@
 </template>
 
 <script>
-import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg'; // Path to your image
+import axios from 'axios';
+import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg';
 
 export default {
   data() {
     return {
-      reviews: [
-        "Yooooooooo I finaly can hacck thanks guys."
-      ], // Store reviews here
-      newReview: '', // Store new review input here
-      imageSrc: squirrelImage, // Image source for the page
+      reviews: [],         // Will be populated from the API
+      newReview: '',       // For user input
+      imageSrc: squirrelImage,
+      error: '',           // For error messages
     };
   },
+  created() {
+    this.fetchReviews();
+  },
   methods: {
-    submitReview() {
-      if (this.newReview.trim()) {
-        this.reviews.push(this.newReview.trim()); // Add the new review to the list
-        this.newReview = ''; // Clear the input field
+    async fetchReviews() {
+      try {
+        const response = await axios.get('/api/reviews', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+          }
+        });
+        this.reviews = response.data;
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+        this.error = 'Error fetching reviews';
+      }
+    },
+    async submitReview() {
+      if (!this.newReview.trim()) {
+        return;
+      }
+      // Retrieve the logged-in user from localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.user_id) {
+        this.error = 'User not logged in';
+        return;
+      }
+      try {
+        const payload = {
+          content: this.newReview.trim(),
+          user_id: user.user_id
+        };
+        const response = await axios.post('/api/reviews', payload, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+          }
+        });
+        // Option 1: Re-fetch all reviews
+        // await this.fetchReviews();
+
+        // Option 2: Prepend the new review to the reviews array for immediate feedback
+        this.reviews.unshift({
+          review_id: response.data.review_id,
+          content: payload.content,
+          author: {
+            user_id: user.user_id,
+            username: user.username
+          },
+          timestamp: new Date().toISOString()
+        });
+        this.newReview = '';
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        this.error = 'Error submitting review';
       }
     },
   },

@@ -19,6 +19,7 @@ class User(db.Model):
 
     classroom = db.relationship('Classroom', back_populates='students')
     courses = db.relationship('Enrollment', back_populates='student')
+    instructed_courses = db.relationship('Course', back_populates='instructor')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -37,7 +38,7 @@ class Course(db.Model):
     instructor_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
-    instructor = db.relationship('User', back_populates='courses')
+    instructor = db.relationship('User', back_populates='instructed_courses')
     modules = db.relationship('Module', back_populates='course')
     enrollments = db.relationship('Enrollment', back_populates='course')
 
@@ -133,3 +134,12 @@ class Student(db.Model):
 
     def __repr__(self):
         return f'<Student {self.first_name} {self.last_name}>'
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Message {self.id}>'
