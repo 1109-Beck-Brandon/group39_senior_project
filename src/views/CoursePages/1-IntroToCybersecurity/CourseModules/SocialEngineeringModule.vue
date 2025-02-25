@@ -70,15 +70,34 @@
                 The following links will take you to websites where you can practice identifying phishing emails by determining if the presented 
                 <br> email is legitimate or a phishing email. You may use a fake name and a fake email address to use the quizzes.
                 <br>
-                Quiz 1: <a href="https://www.sonicwall.com/phishing-iq-test">https://www.sonicwall.com/phishing-iq-test</a>
-                <br>
-                Quiz 2: <a href="https://phishingquiz.withgoogle.com/">https://phishingquiz.withgoogle.com/</a>
+
+                <v-menu>
+                  <template v-slot:activator="{ props }">
+                    <v-btn v-bind="props" color="primary">Activity Quizzes</v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item>
+                      <a href="https://www.sonicwall.com/phishing-iq-test" target="_blank"> Phishing Activity 1 </a>
+                    </v-list-item>
+                    <v-list-item>
+                      <a href="https://phishingquiz.withgoogle.com/" target="_blank"> Phishing Activity 2 </a>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
             </p>
 
             <h3>Additional Resources</h3>
-            <p> Microsoft Security Blog: https://www.microsoft.com/en-us/security/blog/2021/08/26/widespread-credential-phishing-campaign-abuses-open-redirector-links/
-
-            </p>
+            
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-btn v-bind="props" color="primary">Show Resources</v-btn>
+              </template>
+              <v-list>
+                <v-list-item>
+                  <a href="https://www.microsoft.com/en-us/security/blog/2021/08/26/widespread-credential-phishing-campaign-abuses-open-redirector-links/" target="_blank"> Microsoft Security Blog </a>
+                </v-list-item>
+              </v-list>
+            </v-menu>
 
           </div>
         </v-col>
