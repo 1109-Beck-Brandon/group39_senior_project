@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL || 'https://cybersecurity-learning-platform.onrender.com/api',
+  baseURL: process.env.VUE_APP_API_BASE_URL || 'https://cybersecurity-learning-platform.onrender.com/',
   withCredentials: true,
   headers: {
     'Accept': 'application/json',
