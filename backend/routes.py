@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, send_from_directory
-from .models import User, Course, Module, Resource, Review, Classroom, Student
+from .models import User, Course, Module, Resource, Review, Classroom, Student, Message
 from .middleware import jwt_required
 from . import db
 import os
@@ -107,7 +107,7 @@ def get_teachers():
         })
     return jsonify({"message": "No teachers found"}), 404
 
-@main.route("/classrooms/<int:classroom_id>/students", methods=["GET"])
+@main.route("/api/classrooms/<int:classroom_id>/students", methods=["GET"])
 def get_classroom_students(classroom_id):
     # Query for all users with role 'student' in the given classroom
     students = User.query.filter_by(role="student", classroom_id=classroom_id).all()
@@ -122,7 +122,7 @@ def get_classroom_students(classroom_id):
         })
     return jsonify(students_data)
 
-@main.route("/students", methods=["POST"])
+@main.route("/api/students", methods=["POST"])
 def add_student():
     data = request.get_json()
     first_name = data.get("firstName")
@@ -244,6 +244,27 @@ def add_review():
         "message": "Review added successfully",
         "review_id": new_review.review_id
     }), 201
+
+@main.route('/api/messages', methods=['GET'])
+@jwt_required
+def get_messages():
+    messages = Message.query.order_by(Message.timestamp.desc()).all()
+    message_data = [{
+        'id': message.id,
+        'content': message.content,
+        'timestamp': message.timestamp.isoformat()
+    } for message in messages]
+    return jsonify(message_data)
+
+@main.route('/api/messages/<int:message_id>', methods=['DELETE'])
+@jwt_required
+def delete_message(message_id):
+    message = Message.query.get(message_id)
+    if not message:
+        return jsonify({'message': 'Message not found'}), 404
+    db.session.delete(message)
+    db.session.commit()
+    return jsonify({'message': 'Message deleted successfully'}), 200
 
 
 # Error handling

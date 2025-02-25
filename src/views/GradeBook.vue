@@ -118,45 +118,77 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: "GradeBook",
   data() {
     return {
-      classrooms: [], // Store classrooms for the teacher
-      selectedClassroom: null, // Selected classroom ID
-      students: [], // Students for the selected classroom
+      classrooms: [],
+      selectedClassroom: null,
+      students: [],
       selectedStudent: null,
       showStudentDetailsModal: false,
-      assignments: [
-        { title: 'Intro to Cybersecurity', description: 'First assignment in Cybersecurity basics' },
-      ],
+      assignments: [],         // Will be fetched from API instead of hard-coded
       studentAssignments: [],
-      classGrade: 0, // Placeholder class grade
+      classGrade: 0,           // This might also be dynamically calculated
+      error: '',
     };
   },
-  created() {
-    // Retrieve the teacher's email and classrooms
-    const userData = JSON.parse(localStorage.getItem("newUser")) || {};
-    const classrooms = JSON.parse(localStorage.getItem("classrooms")) || [];
-    
-    // Filter classrooms associated with this teacher's email
-    this.classrooms = classrooms.filter(classroom => classroom.email === userData.email);
-    this.selectedClassroom = this.classrooms[0]?.id || null;
-
-    // Load the students based on the selected classroom
-    this.loadStudents();
+  async created() {
+    try {
+      // Fetch teacher's classrooms from the API
+      const classroomsResponse = await axios.get('/api/classrooms', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }
+      });
+      this.classrooms = classroomsResponse.data;
+      
+      // For consistency, assume each classroom object has a property "classroom_id" and "email"
+      // Adjust filtering logic accordingly
+      const userData = JSON.parse(localStorage.getItem("newUser")) || {};
+      this.classrooms = this.classrooms.filter(
+        classroom => classroom.email === userData.email
+      );
+      this.selectedClassroom = this.classrooms[0]?.classroom_id || null;
+      
+      // Fetch students for the selected classroom
+      await this.loadStudents();
+      
+      // Optionally fetch assignments if available from the backend
+      const assignmentsResponse = await axios.get('/api/assignments', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }
+      });
+      this.assignments = assignmentsResponse.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      this.error = "Failed to load grade book data.";
+    }
   },
   methods: {
-    loadStudents() {
+    async loadStudents() {
       if (this.selectedClassroom) {
-        // Filter students based on selected classroom ID
-        const savedStudents = JSON.parse(localStorage.getItem("students")) || [];
-        this.students = savedStudents.filter(student => student.classroomId === this.selectedClassroom);
+        try {
+          // Fetch students associated with the selected classroom
+          const studentsResponse = await axios.get(`/api/classrooms/${this.selectedClassroom}/students`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+            }
+          });
+          this.students = studentsResponse.data;
+        } catch (error) {
+          console.error("Error loading students:", error);
+          this.error = "Failed to load students.";
+        }
       }
     },
     openStudentDetails(student) {
       this.selectedStudent = student;
-      this.studentAssignments = this.assignments; // Link the assignments to the selected student
+      // Link the assignments to the selected student; you may want to fetch these details from an API instead
+      this.studentAssignments = this.assignments;
       this.showStudentDetailsModal = true;
     },
     navigateToTeacherView() {

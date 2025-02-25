@@ -223,14 +223,16 @@ export default {
     const user = JSON.parse(localStorage.getItem("user")) || {};
     return {
       user: {
+        user_id: user.user_id || null,
         username: user.username || "N/A",
         email: user.email || "N/A",
         role: user.role || "N/A",
-        profilePicture: user.profilePicture || null, // idk if this should be null or user.profilePicture, Default profile picture logic
-        membershipDuration: "Just Joined", // Placeholder for now
-        fullName: `${user.firstName || "First"} ${user.lastName || "Last"}`,
-        gradeLevel: user.gradeLevel || null,
-        schoolName: user.schoolName || null,
+        profile_picture: user.profile_picture || null,
+        membershipDuration: "Just Joined",
+        fullName: `${user.first_name || "First"} ${user.last_name || "Last"}`,
+        grade_level: user.grade_level || null,
+        school_name: user.school_name || null,
+        classroom_id: user.classroom_id || null
       },
       editProfileData: {
         gradeLevel: user.gradeLevel || "",

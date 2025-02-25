@@ -32,9 +32,9 @@ export default {
   methods: {
     async handleLogin() {
       try {
-        const response = await axios.post('http://localhost:5000/auth/login', {
+        const response = await axios.post('http://localhost:5000/api/auth/login', {
           username: this.username,
-          password: this.password
+           password: this.password
         }, {
           withCredentials: true  // For cross-origin cookies
         });

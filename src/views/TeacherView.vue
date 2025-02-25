@@ -244,7 +244,7 @@ export default {
         this.teacher.firstName = teacherData.firstName;
         this.teacher.lastName = teacherData.lastName;
         this.classroom.name = teacherData.classroomName;
-        this.classroom.id = teacherData.classroomId;
+        this.classroom.id = teacherData.classroomID;
 
         // Fetch classroom students
         const studentsResponse = await axios.get(

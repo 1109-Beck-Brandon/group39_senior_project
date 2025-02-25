@@ -42,25 +42,35 @@
 </template>
   
 <script>
-  export default {
-    data() {
-      return {
-        email: "",
-        newPassword: "",
-        confirmPassword: "",
-      };
-    },
-    methods: {
-      handleReset() {
-        if (this.newPassword !== this.confirmPassword) {
-          alert("Passwords do not match.");
-          return;
-        }
-        alert("Password reset link sent (placeholder functionality).");
-      },
-    },
-  };
-  </script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      email: '',
+      newPassword: '',
+      confirmPassword: '',
+      message: "",
+      error: "",
+    };
+  },
+  methods: {
+    async handleReset() {
+      try {
+        const response = await axios.post('/api/auth/resetPassword', {
+          email: this.email,
+          newPassword: this.newPassword,
+          confirmPassword: this.confirmPassword,
+        });
+        this.message = response.data.message;
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Password reset failed';
+      }
+    }
+  }
+};
+
+</script>
   
   <style scoped>
   .v-card {
