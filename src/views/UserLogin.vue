@@ -32,7 +32,7 @@ export default {
   methods: {
     async handleLogin() {
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/login', {
+        const response = await axios.post('https://cybersecurity-learning-platform.onrender.com/api/auth/login', {
           username: this.username,
            password: this.password
         }, {
