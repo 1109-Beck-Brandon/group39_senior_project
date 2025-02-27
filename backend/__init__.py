@@ -22,7 +22,7 @@ def create_app():
     Migrate(app, db)
 
     # Configure CORS first
-    cors = CORS(app, resources={
+    cors.init_app(app, resources={
         r"/*": {
             "origins": ["https://1109-beck-brandon.github.io", "http://localhost:10000"],
             "supports_credentials": True,
