@@ -42,14 +42,12 @@
 </template>
   
 <script>
-import axios from 'axios';
+import { resetPassword } from '@/api.js';
 
 export default {
   data() {
     return {
       email: '',
-      newPassword: '',
-      confirmPassword: '',
       message: "",
       error: "",
     };
@@ -57,19 +55,14 @@ export default {
   methods: {
     async handleReset() {
       try {
-        const response = await axios.post('/api/auth/resetPassword', {
-          email: this.email,
-          newPassword: this.newPassword,
-          confirmPassword: this.confirmPassword,
-        });
+        const response = await resetPassword(this.email);
         this.message = response.data.message;
       } catch (error) {
-        this.error = error.response?.data?.message || 'Password reset failed';
+        this.error = error.response?.data?.error || 'Password reset failed';
       }
     }
   }
 };
-
 </script>
   
   <style scoped>

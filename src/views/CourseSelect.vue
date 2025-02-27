@@ -33,35 +33,28 @@
 </template>
   
 <script>
-  export default {
-    data() {
-      return {
-        courses: [
-          { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
-          { name: "Sample Course 202", description: "This is a sample course to test the slide bar", progress: 0 },
-          { name: "Sample Course 303", description: "This is a sample course to test the slide bar", progress: 0 },
-          // Add more courses as needed
-        ],
-      };
+export default {
+  name: 'CourseSelect',
+  data() {
+    return {
+      courses: [
+        { id: 1, name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0, route: "/course/intro-to-cybersecurity" },
+        { id: 2, name: "Sample Course 202", description: "This is a sample course to test the slide bar", progress: 0, route: "/course/sample-202" },
+        { id: 3, name: "Sample Course 303", description: "This is a sample course to test the slide bar", progress: 0, route: "/course/sample-303" },
+        // Add more courses as needed
+      ],
+    };
+  },
+  methods: {
+    goToCoursePage(course) {
+      if (course && course.route) {
+        this.$router.push(course.route);
+      } else {
+        console.error("No route defined for this course:", course);
+      }
     },
-    methods: {
-      goToCoursePage(courseName) {
-        const courseRoutes = {
-          "Introduction to Cybersecurity": "/course/intro-to-cybersecurity",
-          "Sample Course 202": "/course/sample-202",
-          "Sample Course 303": "/course/sample-303",
-          // More course routings
-        };
-
-        const route = courseRoutes[courseName];
-        if (route) {
-          this.$router.push(route);
-        } else {
-          console.error("No route defined for this course:", courseName);
-        }
-      },
-    },
-  };
+  },
+};
 </script>
   
 <style scoped>

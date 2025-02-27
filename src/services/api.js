@@ -109,10 +109,8 @@ export function postReview(courseId, reviewData) {
   return apiClient.post(`/courses/${courseId}/reviews`, reviewData);
 }
 
-// Password Reset API
-export function resetPassword(email) {
-  // email: { email }
-  return apiClient.post('/password-reset', { email });
+export function resetPassword(payload) {
+  return apiClient.post('/password-reset', payload);
 }
 
 // Course Selection API

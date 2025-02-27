@@ -214,7 +214,8 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
-import axios from "axios";
+import { getUserProfile } from '@/services/api';
+//import axios from "axios"
 Chart.register(...registerables);
 
 export default {
@@ -259,7 +260,6 @@ export default {
   },
 
   async mounted() {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt_token')}`;
     await this.fetchUserData();
     this.updateCoursesProgress();
     this.createChart();
@@ -268,11 +268,7 @@ export default {
   methods: {
     async fetchUserData() {
       try {
-        const response = await axios.get(`/api/users/${this.user.user_id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
-        });
+        const response = await getUserProfile(this.user.user_id);
         this.user = response.data;
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -281,16 +277,11 @@ export default {
 
     async updateCoursesProgress() {
       try {
-        const response = await axios.get(`/api/users/${this.user.user_id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
-        });
-        
+        const response = await getUserProfile(this.user.user_id);
         this.courses = response.data.courses_enrolled.map(course => ({
           id: course.course_id,
           name: course.title,
-          progress: course.progress // You'll need to add progress tracking in your backend
+          progress: course.progress,
         }));
       } catch (error) {
         console.error('Error fetching courses:', error);

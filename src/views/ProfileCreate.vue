@@ -46,40 +46,48 @@
 </template>
 
 <script>
-
-import api from '@/services/api';
+import { register } from '@/api.js';
 
 export default {
-    data() {
-        return {
-            formData: {
-                username: '',
-                email: '',
-                password: '',
-                role: '',
-                first_name: '',
-                last_name: '',
-            },
-            roles: ['Student', 'Teacher', 'Individual'],
-        };
+  data() {
+    return {
+      formData: {
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        role: '',
+      },
+      roles: ['Student', 'Teacher', 'Individual'],
+      message: ''
+    };
+  },
+  methods: {
+    async handleSubmit() {
+      // Combine first and last name into a single name field
+      const payload = {
+        name: `${this.formData.first_name} ${this.formData.last_name}`.trim(),
+        email: this.formData.email,
+        password: this.formData.password,
+        role: this.formData.role
+      };
+      try {
+        const response = await register(payload);
+        this.message = response.data.message;
+        console.log('Profile Created:', response.data);
+        this.$router.push('/login');
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          console.error('Email already exists:', error.response.data.error);
+        } else {
+          console.error('Error creating profile:', error);
+        }
+        this.message = error.response && error.response.data.error
+          ? error.response.data.error
+          : 'Error creating profile';
+      }
     },
-    methods: {
-        async handleSubmit() {
-            try {
-                const response = await api.createProfile(this.formData);
-                this.message = response.data.message;
-                console.log('Profile Created:', response.data);
-                this.$router.push('/login');
-            } catch (error) {
-                if (error.response && error.response.status === 409) {
-                    console.error('Username or Email already exists:', error);
-                } else {
-                    console.error('Error creating profile:', error);
-                }
-                console.error('Error creating profile:', error);
-            }
-        },
-    },
+  },
 };
 </script>
 

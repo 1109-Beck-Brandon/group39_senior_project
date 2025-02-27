@@ -26,29 +26,35 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { login } from '@/api.js';
 
 export default {
+  data() {
+    return {
+      email: '',
+      password: '',
+      error: ''
+    };
+  },
   methods: {
-    async handleLogin() {
-      try {
-        const response = await axios.post('https://cybersecurity-learning-platform.onrender.com/api/auth/login', {
-          username: this.username,
-           password: this.password
-        }, {
-          withCredentials: true  // For cross-origin cookies
+    submitLogin() {
+      this.error = '';
+      login({ email: this.email, password: this.password })
+        .then(response => {
+          // Assuming the backend responds with a token property in response.data
+          const token = response.data.token;
+          if (token) {
+            localStorage.setItem('jwt_token', token);
+            // Redirect to home or dashboard
+            this.$router.push('/');
+          } else {
+            this.error = 'Login failed: No token received.';
+          }
+        })
+        .catch(err => {
+          // You can also check err.status for more detailed error handling
+          this.error = err.message || 'Login failed';
         });
-
-        // Store JWT token
-        localStorage.setItem('jwt_token', response.data.token);
-        
-        // Set default Authorization header
-        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-        
-        this.$router.push('/dashboard');
-      } catch (error) {
-        this.error = error.response?.data?.message || 'Login failed';
-      }
     }
   }
 };

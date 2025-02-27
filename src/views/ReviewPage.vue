@@ -24,16 +24,23 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/api.js';
 import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg';
 
 export default {
+  props: {
+    courseId: {
+      type: Number,
+      required: true,
+    },
+  },
   data() {
     return {
-      reviews: [],         // Will be populated from the API
-      newReview: '',       // For user input
+      reviews: [],        // Array to hold fetched reviews
+      newReview: '',      // For user comment input
+      newRating: null,    // For user rating input
       imageSrc: squirrelImage,
-      error: '',           // For error messages
+      error: '',          // For error messages
     };
   },
   created() {
@@ -42,19 +49,18 @@ export default {
   methods: {
     async fetchReviews() {
       try {
-        const response = await axios.get('/api/reviews', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
-        });
-        this.reviews = response.data;
+        const url = `/courses/${this.courseId}/reviews`;
+        const response = await apiClient.get(url);
+        // The API returns an object with a 'reviews' key
+        this.reviews = response.data.reviews;
       } catch (error) {
         console.error('Error fetching reviews:', error);
         this.error = 'Error fetching reviews';
       }
     },
     async submitReview() {
-      if (!this.newReview.trim()) {
+      if (!this.newReview.trim() || this.newRating === null) {
+        this.error = 'Please provide both a rating and a comment';
         return;
       }
       // Retrieve the logged-in user from localStorage
@@ -65,28 +71,17 @@ export default {
       }
       try {
         const payload = {
-          content: this.newReview.trim(),
+          comment: this.newReview.trim(),
+          rating: this.newRating,
           user_id: user.user_id
         };
-        const response = await axios.post('/api/reviews', payload, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
-        });
-        // Option 1: Re-fetch all reviews
-        // await this.fetchReviews();
-
-        // Option 2: Prepend the new review to the reviews array for immediate feedback
-        this.reviews.unshift({
-          review_id: response.data.review_id,
-          content: payload.content,
-          author: {
-            user_id: user.user_id,
-            username: user.username
-          },
-          timestamp: new Date().toISOString()
-        });
+        const url = `/courses/${this.courseId}/reviews`;
+        await apiClient.post(url, payload);
+        // Re-fetch all reviews to show the newly submitted one
+        await this.fetchReviews();
+        // Reset input fields
         this.newReview = '';
+        this.newRating = null;
       } catch (error) {
         console.error('Error submitting review:', error);
         this.error = 'Error submitting review';

@@ -82,18 +82,19 @@
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'; // Import the HelloWorld component
+import HelloWorld from '@/components/HelloWorld.vue';
 
 export default {
   name: 'HomeView',
   components: {
-    HelloWorld, // Register the HelloWorld component
+    HelloWorld,
   },
   data() {
     return {
       showModal: false,
       newUser: {
-        username: "",
+        first_name: "",
+        last_name: "",
         email: "",
         password: "",
         role: "",
@@ -103,25 +104,28 @@ export default {
   },
   methods: {
     createProfile() {
-      const fakeUser = {
-        username: this.newUser.username,
+      // Combine first and last name into a single name field
+      const userPayload = {
+        name: `${this.newUser.first_name} ${this.newUser.last_name}`.trim(),
         email: this.newUser.email,
         password: this.newUser.password,
         role: this.newUser.role,
       };
 
-      localStorage.setItem("newUser", JSON.stringify(fakeUser));
+      // Store the user information locally for later use
+      localStorage.setItem("newUser", JSON.stringify(userPayload));
 
-      if (fakeUser.role === "Teacher") {
+      // Route the user to the appropriate onboarding page based on their role
+      if (userPayload.role === "Teacher") {
         this.$router.push({ name: "NewTeacherOnboarding" });
-      } else if (fakeUser.role === "Student") {
+      } else if (userPayload.role === "Student") {
         this.$router.push({ name: "StudentOnboarding" });
       } else {
-        this.$router.push({ name: "UserOnboarding" });        
+        this.$router.push({ name: "UserOnboarding" });
       }
     },
-  },  
-}
+  },
+};
 </script>
 
 <style scoped>

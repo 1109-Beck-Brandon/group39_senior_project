@@ -118,7 +118,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+//import axios from 'axios';
+import { getClassrooms, getAssignments, getStudentsByClassroom } from '@/services/api';
 
 export default {
   name: "GradeBook",
@@ -137,17 +138,12 @@ export default {
   },
   async created() {
     try {
-      // Fetch teacher's classrooms from the API
-      const classroomsResponse = await axios.get('/api/classrooms', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-        }
-      });
+      // Fetch teacher's classrooms
+      const classroomsResponse = await getClassrooms();
       this.classrooms = classroomsResponse.data;
       
-      // For consistency, assume each classroom object has a property "classroom_id" and "email"
-      // Adjust filtering logic accordingly
-      const userData = JSON.parse(localStorage.getItem("newUser")) || {};
+      // Filter classrooms based on the current user's email
+      const userData = JSON.parse(localStorage.getItem("user")) || {};
       this.classrooms = this.classrooms.filter(
         classroom => classroom.email === userData.email
       );
@@ -156,12 +152,8 @@ export default {
       // Fetch students for the selected classroom
       await this.loadStudents();
       
-      // Optionally fetch assignments if available from the backend
-      const assignmentsResponse = await axios.get('/api/assignments', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-        }
-      });
+      // Fetch assignments if available from the backend
+      const assignmentsResponse = await getAssignments();
       this.assignments = assignmentsResponse.data;
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -172,12 +164,7 @@ export default {
     async loadStudents() {
       if (this.selectedClassroom) {
         try {
-          // Fetch students associated with the selected classroom
-          const studentsResponse = await axios.get(`/api/classrooms/${this.selectedClassroom}/students`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-            }
-          });
+          const studentsResponse = await getStudentsByClassroom(this.selectedClassroom);
           this.students = studentsResponse.data;
         } catch (error) {
           console.error("Error loading students:", error);
@@ -187,7 +174,6 @@ export default {
     },
     openStudentDetails(student) {
       this.selectedStudent = student;
-      // Link the assignments to the selected student; you may want to fetch these details from an API instead
       this.studentAssignments = this.assignments;
       this.showStudentDetailsModal = true;
     },

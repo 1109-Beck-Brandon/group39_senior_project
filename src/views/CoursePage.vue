@@ -29,20 +29,44 @@
 </template>
   
 <script>
-  export default {
-    props: ["courseName"],
-    data() {
-      return {
-        activeTab: 0,
-        modules: ["Module 1", "Module 2", "Module 3"],
-        moduleContent: [
-          "Module 1 content: This is the first module of the course. Add module content here.",
-          "Module 2 content: This is the second module of the course. Add module content here.",
-          "Module 3 content: This is the third module of the course. Add module content here.",
-        ],
-      };
+import apiClient from '@/api.js';
+
+export default {
+  props: ["courseId"],
+  data() {
+    return {
+      course: null,         // Holds fetched course data from the backend
+      activeTab: 0,
+      modules: [],
+      moduleContent: [],
+      error: ""
+    };
+  },
+  created() {
+    this.fetchCourse();
+  },
+  methods: {
+    async fetchCourse() {
+      try {
+        const response = await apiClient.get(`/courses/${this.courseId}`);
+        this.course = response.data;
+        // Configure modules and content dynamically based on the course details.
+        this.modules = ["Overview", "Curriculum", "Reviews"];
+        this.moduleContent = [
+          // Using the course description for the "Overview" tab
+          this.course.description,
+          // Placeholder for curriculum details – update as needed
+          "Curriculum content: details about the course curriculum can be added here.",
+          // Placeholder for reviews – you might want to integrate a reviews component here
+          "Reviews: read what others have said about the course."
+        ];
+      } catch (error) {
+        console.error("Error fetching course data:", error);
+        this.error = "Error fetching course data.";
+      }
     },
-  };
+  },
+};
 </script>
   
 <style scoped>

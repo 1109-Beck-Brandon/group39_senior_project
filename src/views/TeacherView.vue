@@ -195,7 +195,13 @@
 </template>
 
 <script>
-import axios from "axios";
+import { 
+  getTeacherData, 
+  getClassroomStudents, 
+  getMessages, 
+  addStudent, 
+  deleteMessage 
+} from '@/services/api';
 
 export default {
   name: "TeacherView",
@@ -239,7 +245,7 @@ export default {
     async fetchTeacherData() {
       try {
         // Fetch teacher and classroom information
-        const teacherResponse = await axios.get("/api/teacher");
+        const teacherResponse = await getTeacherData();
         const teacherData = teacherResponse.data;
         this.teacher.firstName = teacherData.firstName;
         this.teacher.lastName = teacherData.lastName;
@@ -247,13 +253,11 @@ export default {
         this.classroom.id = teacherData.classroomID;
 
         // Fetch classroom students
-        const studentsResponse = await axios.get(
-          `/api/classrooms/${this.classroom.id}/students`
-        );
+        const studentsResponse = await getClassroomStudents(this.classroom.id);
         this.students = studentsResponse.data;
 
         // Fetch teacher inbox messages
-        const messagesResponse = await axios.get("/api/messages");
+        const messagesResponse = await getMessages();
         this.messages = messagesResponse.data;
       } catch (error) {
         console.error("Error fetching teacher data:", error);
@@ -269,7 +273,7 @@ export default {
     },
     openStudentProfileDialog(student) {
       this.selectedStudent = student;
-      // Use a real image URL if available from student data
+      // Use a real image URL if available from student data; fallback to a default image
       this.selectedStudentProfilePicture =
         student.profilePicture || "https://robohash.org/example24?set=set1";
       this.selectedStudentProgress = student.progress || [];
@@ -292,8 +296,8 @@ export default {
         };
 
         try {
-          // Optionally post the new student to the backend
-          const response = await axios.post("/api/students", student);
+          // Post the new student to the backend using the API instance
+          const response = await addStudent(student);
           // Add returned student data to the students array
           this.students.push(response.data);
         } catch (error) {
@@ -321,8 +325,7 @@ export default {
     async deleteMessage(index) {
       const message = this.messages[index];
       try {
-        // Assuming your backend supports DELETE /api/messages/:id 
-        await axios.delete(`/api/messages/${message.id}`);
+        await deleteMessage(message.id);
         // Remove the message from the local array on success
         this.messages.splice(index, 1);
       } catch (error) {
