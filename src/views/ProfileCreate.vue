@@ -60,6 +60,7 @@ export default {
   },
   methods: {
     async handleSubmit() {
+      console.log('formData:', this.formData);
       const payload = {
         name: `${this.formData.first_name} ${this.formData.last_name}`.trim(),
         email: this.formData.email,
