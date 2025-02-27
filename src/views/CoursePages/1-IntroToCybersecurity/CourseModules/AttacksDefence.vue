@@ -1,206 +1,424 @@
 <template>
-
   <!-- Back Button -->
-  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray;" @click="goBack">
-      <v-icon>mdi-arrow-left</v-icon>
+  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray; z-index: 10;" @click="goBack">
+    <v-icon>mdi-arrow-left</v-icon>
   </v-btn>
 
-    <v-container fluid>
-      <!-- Full Page Content -->
-      <v-row justify="center" align="center" style="min-height: 100vh;">
-        <!-- Image at the Beginning -->
-        <v-col cols="12" class="text-center">
-          <img :src="headerImage" alt="Header Image" class="header-image" />
-        </v-col>
-        <!-- Text Section -->
-            <v-col cols="12" md="8" class="text-center">
-            <h2 class="table-theme">Attacks</h2>
-            <p class="table-description">
-                The time has come to understand what cybersecurity is all about. Today we are going to learn about common cyberattacks,
-                what they represent, and how we can defend against them.
-            </p>
-            <ul class="text-below-list">
-                <li>
-                <strong>Malware:</strong>
-                Malware is a term used to describe malicious software, including spyware, ransomware, viruses, and worms.
-                <img :src="images.malware" alt="Malware Image" class="text-image" />
-                </li>
-                <li>
-                <strong>Man-in-the-middle attack:</strong>
-                These attacks occur when attackers insert themselves into a two-party transaction.
-                <img :src="images.mitm" alt="Man-in-the-Middle Image" class="text-image" />
-                </li>
-                <li>
-                <strong>Denial-of-service attack:</strong>
-                A denial-of-service attack floods systems, servers, or networks with traffic to exhaust resources.
-                <img :src="images.ddos" alt="DDoS Image" class="text-image" />
-                </li>
-                <li>
-                <strong>SQL injection:</strong>
-                An attacker inserts malicious code into a server that uses SQL.
-                <img :src="images.sqlInjection" alt="SQL Injection Image" class="text-image" />
-                </li>
-                <li>
-                <strong>Zero-day exploit:</strong>
-                A zero-day exploit hits after a network vulnerability is announced but before a solution is implemented.
-                <img :src="images.zeroDay" alt="Zero-Day Exploit Image" class="text-image" />
-                </li>
-                <li>
-                <strong>DNS tunneling:</strong>
-                DNS tunneling utilizes the DNS protocol to communicate non-DNS traffic over port 53.
-                <img :src="images.dnsTunneling" alt="DNS Tunneling Image" class="text-image" />
-                </li>
-                <li>
-                <strong>Phishing:</strong>
-                Phishing is the practice of sending fraudulent communications to steal sensitive data.
-                <img :src="images.phishing" alt="Phishing Image" class="text-image" />
-                Phishing often involves emails that appear to come from reputable sources, aiming to steal credit card details, login information, or install malware.
-                </li>
-                <li>
-                <strong>Types of Phishing:</strong>
-                There are several types of phishing attacks, each targeting victims in different ways:
-                <ul>
-                    <li><strong>Email Phishing:</strong> Fake emails designed to trick users into providing sensitive information.</li>
-                    <li><strong>Spear Phishing:</strong> Targeted attacks on specific individuals or organizations, often personalized to increase success.</li>
-                    <li><strong>Whaling:</strong> Phishing attacks targeting high-level executives or prominent individuals.</li>
-                    <li><strong>Smishing:</strong> Phishing carried out through SMS (text messages).</li>
-                    <li><strong>Vishing:</strong> Phishing conducted over voice calls to deceive victims.</li>
-                </ul>
-                </li>
-            </ul>
-        </v-col>
-        <!-- Quiz Section -->
-        <v-col cols="12">
-          <h2 class="quiz-title">Module Quiz</h2>
-          <div class="quiz-container">
-            <div
-              v-for="(question, index) in quizQuestions"
-              :key="index"
-              class="quiz-question"
-            >
-              <p class="question-text">{{ question.text }}</p>
-  
-              <!-- Multiple Choice -->
-              <div v-if="question.type === 'multiple-choice'" class="answer-options">
-                <v-radio-group v-model="userAnswers[index]" row>
-                  <v-radio
-                    v-for="(option, optIndex) in question.options"
-                    :key="optIndex"
-                    :label="option"
-                    :value="option"
-                  ></v-radio>
-                </v-radio-group>
-              </div>
-  
-              <!-- Feedback -->
-              <p
-                v-if="feedback[index]"
-                :class="feedback[index].correct ? 'feedback-correct' : 'feedback-wrong'"
-              >
-                {{ feedback[index].message }}
-              </p>
-            </div>
-          </div>
-          <v-btn color="primary" @click="submitQuiz">Submit Quiz</v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
-  </template>
-  
-  <script>
-  import headerImage from "@/assets/1000_F_245067789_zik0XUAuBWDyC5YCHKfAQbKAJceKFdK4.jpg";
-  import malwareImage from "@/assets/images.jpg";
-  import mitmImage from "@/assets/Phases-of-man-in-middle-attack-alt.png";
-  import ddosImage from "@/assets/ddos attack (1)-1.webp";
-  import sqlInjectionImage from "@/assets/SQL-Injection-1.png";
-  import zeroDayImage from "@/assets/Zero-Day-Attack.png";
-  import dnsTunnelingImage from "@/assets/how-dns-tunneling-works.webp";
-  import phishingImage from "@/assets/phishing.webp";
-  
-  export default {
-    name: "OSITable",
-    data() {
-      return {
-        headerImage,
-        images: {
-          malware: malwareImage,
-          mitm: mitmImage,
-          ddos: ddosImage,
-          sqlInjection: sqlInjectionImage,
-          zeroDay: zeroDayImage,
-          dnsTunneling: dnsTunnelingImage,
-          phishing: phishingImage,
-        },
-        quizQuestions: [
-          {
-            text: "What is the name of the phishing attack targeting high-level executives?",
-            type: "multiple-choice",
-            options: ["Smishing", "Whaling", "Spear Phishing"],
-            answer: "Whaling",
-          },
-          {
-            text: "What type of phishing attack uses SMS messages?",
-            type: "multiple-choice",
-            options: ["Smishing", "Email Phishing", "Vishing"],
-            answer: "Smishing",
-          },
-          {
-            text: "Which type of phishing attack involves voice calls?",
-            type: "multiple-choice",
-            options: ["Spear Phishing", "Vishing", "Whaling"],
-            answer: "Vishing",
-          },
-        ],
-        userAnswers: [],
-        feedback: [],
-      };
-    },
-    methods: {
+  <v-container fluid class="main-container">
+    <!-- Header -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8" class="text-center">
+        <img :src="headerImage" alt="Header Image" class="header-image" />
+        <h2 class="table-theme">Cybersecurity Attacks</h2>
+        <p class="table-description">
+          The time has come to understand what cybersecurity is all about. Today we are going to learn about common cyberattacks,
+          what they represent, and how we can defend against them.
+        </p>
+      </v-col>
+    </v-row>
 
-      //Back Button
-      goBack() {
-      this.$router.go(-1); 
-      },
+    <!-- Attack Types Carousel Section -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="9">
+        <v-carousel
+          v-model="currentSlide"
+          height="400"
+          hide-delimiter-background
+          show-arrows="hover"
+          :continuous="false"
+        >
+          <v-carousel-item v-for="(attack, index) in attacks" :key="index">
+            <v-card class="carousel-card h-100" elevation="4">
+              <v-container fluid>
+                <v-row>
+                  <v-col cols="12" sm="5" class="d-flex align-center justify-center">
+                    <v-img
+                      :src="attack.image"
+                      :alt="attack.name + ' Image'"
+                      max-height="300"
+                      contain
+                      class="attack-image"
+                    ></v-img>
+                  </v-col>
+                  <v-col cols="12" sm="7" class="pa-4">
+                    <div class="attack-content">
+                      <h3 class="attack-title text-h4 mb-3">{{ attack.name }}</h3>
+                      <div class="attack-description">{{ attack.description }}</div>
+                      <div class="attack-details mt-4" v-if="attack.details">
+                        <div class="details-text">{{ attack.details }}</div>
+                      </div>
+                      <div class="attack-subtypes mt-4" v-if="attack.subtypes && attack.subtypes.length > 0">
+                        <strong>Types:</strong>
+                        <ul class="subtype-list mt-2">
+                          <li v-for="(subtype, idx) in attack.subtypes" :key="idx">
+                            <strong>{{ subtype.name }}:</strong> {{ subtype.description }}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-carousel-item>
+        </v-carousel>
+
+        <!-- Progress Bar -->
+        <v-card class="mt-4 mb-6" elevation="2">
+          <v-card-text class="pa-2">
+            <div class="progress-text d-flex justify-space-between mb-1">
+              <span>{{ attacks[currentSlide].name }}</span>
+              <span>{{ currentSlide + 1 }} of {{ attacks.length }}</span>
+            </div>
+            <v-progress-linear
+              :value="((currentSlide + 1) / attacks.length) * 100"
+              height="12"
+              color="primary"
+              rounded
+              striped
+            ></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Summary Section -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="3" class="pa-4 mb-6">
+          <h3 class="text-h5 mb-4">Cybersecurity Attacks Summary</h3>
+          <p class="text-below">
+            Understanding these common attacks is crucial for maintaining strong cybersecurity defenses.
+            Let's review what we've learned:
+          </p>
+          <ul class="text-below-list">
+            <li><strong>Malware:</strong> Malicious software including spyware, ransomware, viruses, and worms that can damage systems.</li>
+            <li><strong>Man-in-the-middle:</strong> Attacks where hackers insert themselves into communications between two parties.</li>
+            <li><strong>Denial-of-service:</strong> Attacks that flood systems with traffic to exhaust resources and disrupt services.</li>
+            <li><strong>SQL injection:</strong> Inserting malicious code into servers that use SQL to manipulate databases.</li>
+            <li><strong>Zero-day exploit:</strong> Attacks that target announced but unpatched vulnerabilities.</li>
+            <li><strong>DNS tunneling:</strong> Using DNS protocol to communicate non-DNS traffic and bypass security measures.</li>
+            <li><strong>Phishing:</strong> Fraudulent communications designed to steal sensitive data through deception.</li>
+          </ul>
+          <p class="text-below">
+            Remember that staying informed about these threats is your first line of defense in the digital world.
+          </p>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Quiz Section -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="4" class="quiz-card">
+          <v-card-title class="quiz-title">Module Quiz</v-card-title>
+          <v-card-text>
+            <div class="quiz-container">
+              <div
+                v-for="(question, index) in quizQuestions"
+                :key="index"
+                class="quiz-question mb-6"
+              >
+                <p class="question-text font-weight-bold mb-3">{{ index + 1 }}. {{ question.text }}</p>
       
-      submitQuiz() {
-        this.feedback = this.quizQuestions.map((question, index) => {
-          const userAnswer = this.userAnswers[index];
-          const isCorrect =
-            userAnswer === question.answer;
-          return {
-            correct: isCorrect,
-            message: isCorrect
-              ? "Correct! Great job!"
-              : `Incorrect. The correct answer is: ${question.answer}`,
-          };
-        });
-      },
+                <!-- Multiple Choice -->
+                <div v-if="question.type === 'multiple-choice'" class="answer-options">
+                  <v-radio-group v-model="userAnswers[index]" row>
+                    <v-radio
+                      v-for="(option, optIndex) in question.options"
+                      :key="optIndex"
+                      :label="option"
+                      :value="option"
+                    ></v-radio>
+                  </v-radio-group>
+                </div>
+      
+                <!-- Feedback -->
+                <v-alert
+                  v-if="feedback[index]"
+                  :type="feedback[index].correct ? 'success' : 'error'"
+                  dense
+                  class="mt-2"
+                >
+                  {{ feedback[index].message }}
+                </v-alert>
+              </div>
+            </div>
+            <v-btn color="primary" @click="submitQuiz" class="mt-4">Submit Quiz</v-btn>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+import headerImage from "@/assets/1000_F_245067789_zik0XUAuBWDyC5YCHKfAQbKAJceKFdK4.jpg";
+import malwareImage from "@/assets/images.jpg";
+import mitmImage from "@/assets/Phases-of-man-in-middle-attack-alt.png";
+import ddosImage from "@/assets/ddos attack (1)-1.webp";
+import sqlInjectionImage from "@/assets/SQL-Injection-1.png";
+import zeroDayImage from "@/assets/Zero-Day-Attack.png";
+import dnsTunnelingImage from "@/assets/how-dns-tunneling-works.webp";
+import phishingImage from "@/assets/phishing.webp";
+
+export default {
+  name: "CyberAttacksCarousel",
+  data() {
+    return {
+      headerImage,
+      currentSlide: 0,
+      attacks: [
+        {
+          name: "Malware",
+          description: "Malware is a term used to describe malicious software, including spyware, ransomware, viruses, and worms. These malicious programs can perform various harmful functions such as stealing, encrypting, or deleting sensitive data.",
+          image: malwareImage,
+          details: "Malware can infect systems through downloads, email attachments, or security vulnerabilities. Modern malware is often designed to avoid detection while stealing data or spying on users."
+        },
+        {
+          name: "Man-in-the-Middle Attack",
+          description: "These attacks occur when attackers insert themselves into a two-party transaction, intercepting and potentially altering the communication between the two parties who believe they are directly communicating with each other.",
+          image: mitmImage,
+          details: "This attack can happen on unsecured WiFi networks, allowing attackers to intercept sensitive information such as login credentials or payment details."
+        },
+        {
+          name: "Denial-of-Service Attack",
+          description: "A denial-of-service attack floods systems, servers, or networks with traffic to exhaust resources and bandwidth, preventing legitimate users from accessing services.",
+          image: ddosImage,
+          details: "When multiple compromised devices are used in the attack, it's called a Distributed Denial of Service (DDoS) attack. These attacks can target websites, services, or entire networks."
+        },
+        {
+          name: "SQL Injection",
+          description: "An attacker inserts malicious code into a server that uses SQL by exploiting vulnerabilities in a website's database. This can allow attackers to access or delete data, or even take control of the server.",
+          image: sqlInjectionImage,
+          details: "SQL injections remain one of the most common web application vulnerabilities and can lead to exposure of sensitive data, authentication bypass, or complete database compromise."
+        },
+        {
+          name: "Zero-Day Exploit",
+          description: "A zero-day exploit hits after a network vulnerability is announced but before a solution or patch is implemented. Attackers target the vulnerability during this window of opportunity.",
+          image: zeroDayImage,
+          details: "These exploits are particularly dangerous because there are no defenses in place, giving organizations little to no time to mitigate the vulnerability before it can be exploited."
+        },
+        {
+          name: "DNS Tunneling",
+          description: "DNS tunneling utilizes the DNS protocol to communicate non-DNS traffic over port 53, bypassing security controls by hiding data within DNS queries and responses.",
+          image: dnsTunnelingImage,
+          details: "Attackers can use DNS tunneling to maintain persistent connections to command and control servers, exfiltrate data, or bypass captive portals in restricted networks."
+        },
+        {
+          name: "Phishing",
+          description: "Phishing is the practice of sending fraudulent communications that appear to come from reputable sources, usually through email. The goal is to steal sensitive data like credit card numbers, login information, or to install malware.",
+          image: phishingImage,
+          details: "Phishing attacks often use urgency and fear to pressure victims into acting quickly without carefully verifying the sender or the request.",
+          subtypes: [
+            { name: "Email Phishing", description: "Fake emails designed to trick users into providing sensitive information." },
+            { name: "Spear Phishing", description: "Targeted attacks on specific individuals or organizations, often personalized to increase success." },
+            { name: "Whaling", description: "Phishing attacks targeting high-level executives or prominent individuals." },
+            { name: "Smishing", description: "Phishing carried out through SMS (text messages)." },
+            { name: "Vishing", description: "Phishing conducted over voice calls to deceive victims." }
+          ]
+        }
+      ],
+      // Quiz data
+      quizQuestions: [
+        {
+          text: "What is the name of the phishing attack targeting high-level executives?",
+          type: "multiple-choice",
+          options: ["Smishing", "Whaling", "Spear Phishing"],
+          answer: "Whaling",
+        },
+        {
+          text: "What type of phishing attack uses SMS messages?",
+          type: "multiple-choice",
+          options: ["Smishing", "Email Phishing", "Vishing"],
+          answer: "Smishing",
+        },
+        {
+          text: "Which type of phishing attack involves voice calls?",
+          type: "multiple-choice",
+          options: ["Spear Phishing", "Vishing", "Whaling"],
+          answer: "Vishing",
+        },
+      ],
+      userAnswers: [],
+      feedback: [],
+    };
+  },
+  methods: {
+    // Back Button
+    goBack() {
+      this.$router.go(-1);
     },
-  };
-  </script>
-  
-  <style scoped>
-  .header-image {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 30px;
-  }
-  
-  .text-image {
-    display: block;
-    max-width: 100%;
-    margin: 20px auto;
-  }
-  
-  .quiz-container {
-    margin-top: 40px;
-  }
-  
-  .feedback-correct {
-    color: green;
-  }
-  
-  .feedback-wrong {
-    color: red;
-  }
-  </style>  
+    submitQuiz() {
+      this.feedback = this.quizQuestions.map((question, index) => {
+        const userAnswer = this.userAnswers[index];
+        const isCorrect = userAnswer === question.answer;
+        return {
+          correct: isCorrect,
+          message: isCorrect
+            ? "Correct! Great job!"
+            : `Incorrect. The correct answer is: ${question.answer}`,
+        };
+      });
+    },
+  },
+};
+</script>
+
+<style scoped>
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.main-container {
+  position: relative;
+  background-color: #f8f9fa;
+  background-image: 
+    linear-gradient(rgba(173, 216, 230, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(173, 216, 230, 0.3) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 99, 71, 0.1) 2px, transparent 2px);
+  background-size: 50px 50px, 50px 50px, 40px 40px;
+  background-position: 0 0, 0 0, 20px 20px;
+  min-height: 100vh;
+  padding-top: 20px;
+  padding-bottom: 60px;
+}
+
+.header-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.text-center {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.table-theme {
+  font-size: 2.2em;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.table-description {
+  font-size: 1.2em;
+  color: #34495e;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.carousel-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 100%;
+  max-width: 100%;
+  border-left: 5px solid #e74c3c;
+}
+
+.attack-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.attack-title {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.attack-description {
+  font-size: 1.1em;
+  color: #2c3e50;
+  line-height: 1.6;
+}
+
+.attack-details {
+  max-width: 100%;
+}
+
+.details-text {
+  font-size: 1em;
+  color: #34495e;
+  line-height: 1.5;
+}
+
+.attack-subtypes {
+  font-size: 0.95em;
+  color: #34495e;
+}
+
+.subtype-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.subtype-list li {
+  margin-bottom: 8px;
+}
+
+.attack-image {
+  max-height: 300px;
+  padding: 10px;
+}
+
+.quiz-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+.quiz-title {
+  font-size: 1.8em;
+  color: #2c3e50;
+  padding: 20px;
+  background-color: #ecf0f1;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.quiz-container {
+  padding: 20px;
+}
+
+.question-text {
+  font-size: 1.2em;
+  color: #2c3e50;
+}
+
+.text-below {
+  font-size: 1.1em;
+  color: #2c3e50;
+  text-align: left;
+  margin-top: 20px;
+  line-height: 1.6;
+}
+
+.text-below-list {
+  margin-top: 10px;
+  margin-left: 20px;
+  text-align: left;
+  list-style-type: disc;
+  color: #2c3e50;
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+.text-below-list li {
+  margin-bottom: 10px;
+}
+
+.progress-text {
+  font-size: 0.9em;
+  color: #2c3e50;
+}
+
+.h-100 {
+  height: 100%;
+}
+</style>
