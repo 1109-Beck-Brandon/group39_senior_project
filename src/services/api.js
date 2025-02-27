@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL || 'https://cybersecurity-learning-platform.onrender.com/',
+  baseURL: process.env.VUE_APP_API_BASE_URL || 'http://localhost:10000/api',
   withCredentials: true,
   headers: {
     'Accept': 'application/json',
@@ -53,64 +53,88 @@ apiClient.interceptors.response.use(
   }
 );
 
+export function login(credentials) {
+  // credentials: { email, password }
+  return apiClient.post('/login', credentials);
+}
+
+export function logout() {
+  return apiClient.post('/logout');
+}
+
+export function register(userData) {
+  // userData: { name, email, password, ... }
+  return apiClient.post('/register', userData);
+}
+
+// User Profile APIs
+export function getUserProfile(userId) {
+  return apiClient.get(`/users/${userId}`);
+}
+
+export function updateUserProfile(userId, data) {
+  return apiClient.put(`/users/${userId}`, data);
+}
+
+// Teacher View API
+export function getTeacherData(teacherId) {
+  return apiClient.get(`/teachers/${teacherId}`);
+}
+
+// GradeBook APIs
+export function getGradebook(userId) {
+  return apiClient.get(`/gradebook/${userId}`);
+}
+
+export function updateGradebook(userId, data) {
+  return apiClient.put(`/gradebook/${userId}`, data);
+}
+
+// Courses APIs
+export function getCourses() {
+  return apiClient.get('/courses');
+}
+
+export function getCourse(courseId) {
+  return apiClient.get(`/courses/${courseId}`);
+}
+
+// Reviews APIs
+export function getReviews(courseId) {
+  return apiClient.get(`/courses/${courseId}/reviews`);
+}
+
+export function postReview(courseId, reviewData) {
+  // reviewData: { rating, comment, ... }
+  return apiClient.post(`/courses/${courseId}/reviews`, reviewData);
+}
+
+// Password Reset API
+export function resetPassword(email) {
+  // email: { email }
+  return apiClient.post('/password-reset', { email });
+}
+
+// Course Selection API
+export function selectCourse(userId, courseId) {
+  // Enroll the user in the specified course
+  return apiClient.post(`/users/${userId}/courses`, { courseId });
+}
+
+// Export all functions as the default export if preferred
 export default {
-  // Auth endpoints
-  login(credentials) {
-    return apiClient.post('/auth/login', credentials);
-  },
-  createProfile(profileData) {
-    return apiClient.post('/auth/createProfile', profileData);
-  },
-  getData() {
-    return apiClient.get('/');
-  },
-
-  // User endpoints
-  getUsers() {
-    return apiClient.get('/users');
-  },
-  getUserProfile(userId) {
-    return apiClient.get(`/users/${userId}`);
-  },
-
-  // Course endpoints
-  getCourses() {
-    return apiClient.get('/courses');
-  },
-  getCourse(courseId) {
-    return apiClient.get(`/courses/${courseId}`);
-  },
-  getCourseModules(courseId) {
-    return apiClient.get(`/courses/${courseId}/modules`);
-  },
-
-  // Classroom endpoints
-  getClassrooms() {
-    return apiClient.get('/classrooms');
-  },
-  getClassroomStudents(classroomId) {
-    return apiClient.get(`/classrooms/${classroomId}/students`);
-  },
-
-  // Resource endpoints
-  getResources() {
-    return apiClient.get('/resources');
-  },
-
-  // Review endpoints
-  getReviews() {
-    return apiClient.get('/reviews');
-  },
-  addReview(reviewData) {
-    return apiClient.post('/reviews', reviewData);
-  },
-
-  // Error helper
-  handleError(error) {
-    console.error('API Error:', error);
-    return {
-      error: true,
-      message: error.message || 'Unknown API Error'
-    };
-  }
+  login,
+  logout,
+  register,
+  getUserProfile,
+  updateUserProfile,
+  getTeacherData,
+  getGradebook,
+  updateGradebook,
+  getCourses,
+  getCourse,
+  getReviews,
+  postReview,
+  resetPassword,
+  selectCourse
 };
