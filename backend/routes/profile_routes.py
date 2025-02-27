@@ -22,7 +22,6 @@ def update_profile(user_id):
     data = request.get_json()
     user.name = data.get('name', user.name)
     user.email = data.get('email', user.email)
-    # Optionally update the password
     if 'password' in data:
         user.set_password(data['password'])
     db.session.commit()

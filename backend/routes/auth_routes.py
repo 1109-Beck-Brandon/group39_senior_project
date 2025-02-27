@@ -2,9 +2,6 @@ from flask import Blueprint, request, jsonify, session
 from flask_cors import cross_origin
 from ..models import User
 from .. import db
-import jwt
-import datetime
-import os
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -18,7 +15,6 @@ def login():
 
     user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
-        # Here you can implement session management or token generation
         session['user_id'] = user.id
         return jsonify({'message': 'Logged in successfully', 
                         'user': {'id': user.id, 'name': user.name, 'email': user.email}}), 200
@@ -30,7 +26,7 @@ def logout():
     return jsonify({'message': 'Logged out successfully'}), 200
 
 @auth_bp.route('/register', methods=['POST'])
-@cross_origin(origins=["https://1109-beck-brandon.github.io", "http://localhost:10000"], supports_credentials=True)
+@cross_origin(origins=["https://1109-beck-brandon.github.io", "http://localhost:5000"], supports_credentials=True)
 def register():
     data = request.get_json()
     name = data.get('name')

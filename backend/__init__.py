@@ -4,7 +4,6 @@ from .config import Config
 from .extensions import db, cors, migrate
 from flask_migrate import Migrate
 
-# Import blueprints from your route modules
 from .routes.auth_routes import auth_bp
 from .routes.profile_routes import profile_bp
 from .routes.teacher_routes import teacher_bp
@@ -18,14 +17,12 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Initialize extensions
     db.init_app(app)
     Migrate(app, db)
 
-    # Configure CORS first
     cors.init_app(app, resources={
         r"/*": {
-            "origins": ["https://1109-beck-brandon.github.io", "http://localhost:10000"],
+            "origins": "*",
             "supports_credentials": True,
             "allow_headers": ["Content-Type", "Authorization"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
