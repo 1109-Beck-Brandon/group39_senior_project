@@ -45,42 +45,42 @@
 import { register } from '@/services/api';
 
 export default {
-data() {
-  return {
-    formData: {
-      first_name: '',
-      last_name: '',
-      email: '',
-      password: '',
-      role: '',
-    },
-    roles: ['Student', 'Teacher', 'Individual'],
-    message: ''
-  };
-},
-methods: {
-  async handleSubmit() {
-    const payload = {
-      name: `${this.formData.first_name} ${this.formData.last_name}`.trim(),
-      email: this.formData.email,
-      password: this.formData.password,
-      role: this.formData.role
+  data() {
+    return {
+      formData: {
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        role: '',
+      },
+      roles: ['Student', 'Teacher', 'Individual'],
+      message: ''
     };
-    try {
-      const response = await register(payload);
-      this.message = response.data.message;
-      console.log('Profile Created:', response.data);
-      this.$router.push('/login');
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        this.message = 'Email already exists';
-      } else {
-        this.message = error.response?.data?.error || 'Error creating profile';
-      }
-      console.error('Error creating profile:', error);
-    }
   },
-},
+  methods: {
+    async handleSubmit() {
+      const payload = {
+        name: `${this.formData.first_name} ${this.formData.last_name}`.trim(),
+        email: this.formData.email,
+        password: this.formData.password,
+        role: this.formData.role
+      };
+      try {
+        const response = await register(payload);
+        this.message = response.data.message;
+        console.log('Profile Created:', response.data);
+        this.$router.push('/login');
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          this.message = 'Email already exists';
+        } else {
+          this.message = error.response?.data?.error || 'Error creating profile';
+        }
+        console.error('Error creating profile:', error);
+      }
+    },
+  },
 };
 </script>
 
