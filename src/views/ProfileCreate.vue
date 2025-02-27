@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { register } from '@/api.js';
+import { register } from '@/services/api';
 
 export default {
   data() {

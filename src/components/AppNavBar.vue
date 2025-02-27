@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { logout as apiLogout } from '@/api.js';
+import { logout as apiLogout } from '@/services/api.js';
 
 export default {
   data() {
@@ -36,7 +36,7 @@ export default {
       this.showLogoutDialog = false;
       // Call the backend logout API
       apiLogout()
-        .then(response => {
+        .then(() => {
           // Clear any local authentication tokens if needed
           localStorage.removeItem('jwt_token');
           // Redirect to the login page after successful logout

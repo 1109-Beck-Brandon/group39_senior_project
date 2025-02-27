@@ -42,7 +42,7 @@
 </template>
   
 <script>
-import { resetPassword } from '@/api.js';
+import { resetPassword } from '@/services/api';
 
 export default {
   data() {

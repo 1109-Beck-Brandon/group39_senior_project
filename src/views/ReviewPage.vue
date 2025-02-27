@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import apiClient from '@/api.js';
+import apiClient from '@/services/api';
 import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg';
 
 export default {

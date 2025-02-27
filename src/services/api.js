@@ -10,6 +10,7 @@ const apiClient = axios.create({
   timeout: 10000 // Add timeout
 });
 
+/*
 // Add request interceptor for auth headers
 apiClient.interceptors.request.use(config => {
   const token = localStorage.getItem('jwt_token');
@@ -52,6 +53,7 @@ apiClient.interceptors.response.use(
     });
   }
 );
+*/ 
 
 export function login(credentials) {
   // credentials: { email, password }

@@ -29,7 +29,7 @@
 </template>
   
 <script>
-import apiClient from '@/api.js';
+import apiClient from '@/services/api';
 
 export default {
   props: ["courseId"],

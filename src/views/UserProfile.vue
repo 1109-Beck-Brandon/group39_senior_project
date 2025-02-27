@@ -214,8 +214,7 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
-import { getUserProfile } from '@/services/api';
-//import axios from "axios"
+import { getUserProfile, updateUserProfile, apiClient } from '@/services/api';
 Chart.register(...registerables);
 
 export default {
@@ -233,22 +232,22 @@ export default {
         fullName: `${user.first_name || "First"} ${user.last_name || "Last"}`,
         grade_level: user.grade_level || null,
         school_name: user.school_name || null,
-        classroom_id: user.classroom_id || null
+        classroom_id: user.classroom_id || null,
       },
       editProfileData: {
         gradeLevel: user.gradeLevel || "",
         schoolName: user.schoolName || "",
       },
       grades: ["9th grade", "10th grade", "11th grade", "12th grade"],
-      coursesList: ["Intro to Cybersecurity"], //updated later
+      coursesList: ["Intro to Cybersecurity"], // updated later
       courses: [],
       achievements: [],
-      showEditPictureDialog: false, //these are visibility flags 
+      showEditPictureDialog: false,
       showEditProfileDialog: false,
       showJoinClassroomModal: false,
-      newClassroomId: "", //for the user to input their classroom id if they haven't done so from onboarding
-      fetchedPictures: [],  
-      defaultProfilePicture: "https://robohash.org/example4?set=set1", // Default avatar placeholder, changeable
+      newClassroomId: "",
+      fetchedPictures: [],
+      defaultProfilePicture: "https://robohash.org/example4?set=set1",
       loadingPictures: false,
     };
   },
@@ -258,13 +257,11 @@ export default {
       return this.courses.length ? Math.round(totalProgress / this.courses.length) : 0;
     },
   },
-
   async mounted() {
     await this.fetchUserData();
     this.updateCoursesProgress();
     this.createChart();
   },
-
   methods: {
     async fetchUserData() {
       try {
@@ -274,10 +271,10 @@ export default {
         console.error('Error fetching user data:', error);
       }
     },
-
     async updateCoursesProgress() {
       try {
         const response = await getUserProfile(this.user.user_id);
+        // Assume that response.data.courses_enrolled is an array of courses
         this.courses = response.data.courses_enrolled.map(course => ({
           id: course.course_id,
           name: course.title,
@@ -287,22 +284,19 @@ export default {
         console.error('Error fetching courses:', error);
       }
     },
-
     createChart() {
       const ctx = document.getElementById("progressChart").getContext("2d");
       new Chart(ctx, {
         type: "bar",
         data: {
-          labels: this.courses.map((course) => course.name),
-          datasets: [
-            {
-              label: "Progress (%)",
-              data: this.courses.map((course) => course.progress),
-              backgroundColor: "rgba(54, 162, 235, 0.2)",
-              borderColor: "rgba(54, 162, 235, 1)",
-              borderWidth: 1,
-            },
-          ],
+          labels: this.courses.map(course => course.name),
+          datasets: [{
+            label: "Progress (%)",
+            data: this.courses.map(course => course.progress),
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+          }],
         },
         options: {
           scales: {
@@ -314,28 +308,21 @@ export default {
         },
       });
     },
-
     redirectToClassroom() {
       const userData = JSON.parse(localStorage.getItem("user")) || {};
       if (userData.classroomId) {
         this.$router.push("/studentClassroom");
       } else {
-          this.showJoinClassroomModal = true; //prompts user to put a classroom id, in order to access the /studentClassroom page
+        this.showJoinClassroomModal = true;
       }
     },
-
     async submitClassroomId() {
       try {
-        await axios.post('/api/classrooms/join', {
+        await apiClient.post('/classrooms/join', {
           classroom_id: this.newClassroomId,
-          user_id: this.user.user_id
-        }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
+          user_id: this.user.user_id,
         });
-        
-        // Update local user data
+        // Update local user data with the new classroom ID
         const userData = JSON.parse(localStorage.getItem('user'));
         userData.classroom_id = this.newClassroomId;
         localStorage.setItem('user', JSON.stringify(userData));
@@ -345,80 +332,58 @@ export default {
         console.error('Error joining classroom:', error);
       }
     },
-
     fetchProfilePictures() {
       this.loadingPictures = true;
       this.showEditPictureDialog = true;
-
-      // for generating 6 random profile pictures from the robohash api
       const baseUrl = "https://robohash.org";
-      const theme = "set1"; // set5 represents humans, set1 represents robots
+      const theme = "set1"; // Robots
       const fetchedImages = [];
-
       for (let i = 0; i < 6; i++) {
-        const randomString = `${Math.random().toString(36).substring(2)}`;
+        const randomString = Math.random().toString(36).substring(2);
         fetchedImages.push(`${baseUrl}/${randomString}?set=${theme}&size=200x200`);
       }
-
-      // for the loading indicator
       setTimeout(() => {
         this.fetchedPictures = fetchedImages;
-        this.loadingPictures = false; // stop loading indicator
-      }, 500); // timeout, adjustable
-
+        this.loadingPictures = false;
+      }, 500);
     },
-
     async selectProfilePicture(picture) {
       try {
-        await axios.put(`/api/users/${this.user.user_id}`, {
-          profile_picture: picture
-        }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
+        await apiClient.put(`/users/${this.user.user_id}`, {
+          profile_picture: picture,
         });
-        this.user.profilePicture = picture;
+        this.user.profile_picture = picture;
         localStorage.setItem('user', JSON.stringify(this.user));
       } catch (error) {
         console.error('Error updating profile picture:', error);
       }
       this.showEditPictureDialog = false;
     },
-
     closeEditPictureDialog() {
-      this.showEditPictureDialog = false; 
+      this.showEditPictureDialog = false;
     },
-
     async saveProfileInfo() {
       try {
-        await axios.put(`/api/users/${this.user.user_id}`, {
+        await updateUserProfile(this.user.user_id, {
           grade_level: this.editProfileData.gradeLevel,
-          school_name: this.editProfileData.schoolName
-        }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
+          school_name: this.editProfileData.schoolName,
         });
-        
-        // Update local data
-        this.user.gradeLevel = this.editProfileData.gradeLevel;
-        this.user.schoolName = this.editProfileData.schoolName;
+        // Update local user data after saving
+        this.user.grade_level = this.editProfileData.gradeLevel;
+        this.user.school_name = this.editProfileData.schoolName;
         localStorage.setItem('user', JSON.stringify(this.user));
       } catch (error) {
         console.error('Error saving profile info:', error);
       }
       this.showEditProfileDialog = false;
     },
-
     navigateToCourses() {
-    this.$router.push({ path: "/courseSelect" });
-     },
-     navigateToCourse(courseName) {
-      // IMPORTANT this will break if the course's page name doesn't follow the format /intro-to-cyber-.... so I will probably replace this with something else
+      this.$router.push({ path: "/courseSelect" });
+    },
+    navigateToCourse(courseName) {
       const courseRoute = courseName.toLowerCase().replace(/\s+/g, '-');
       this.$router.push(`/course/${courseRoute}`);
     },
-    
   },
 };
 </script>
