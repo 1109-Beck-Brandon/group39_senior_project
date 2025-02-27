@@ -32,7 +32,7 @@ class Course(db.Model):
     description = db.Column(db.Text)
     teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    modules = db.relationship('Module', back_populates='course', lazy=True)
     enrollments = db.relationship('Enrollment', backref='course', lazy=True)
     reviews = db.relationship('Review', backref='course', lazy=True)
     grades = db.relationship('Grade', backref='course', lazy=True)
@@ -42,7 +42,7 @@ class Course(db.Model):
 
 class Module(db.Model):
     __tablename__ = 'modules'
-    module_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
@@ -55,12 +55,13 @@ class Module(db.Model):
 
 class Assessment(db.Model):
     __tablename__ = 'assessments'
-    assessment_id = db.Column(db.Integer, primary_key=True)
-    module_id = db.Column(db.Integer, db.ForeignKey('modules.module_id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    module_id = db.Column(db.Integer, db.ForeignKey('modules.id'), nullable=False)
     title = db.Column(db.String(100), nullable=False)
     type = db.Column(db.String(50), nullable=False)
     content = db.Column(db.Text, nullable=False)
     max_score = db.Column(db.Integer, nullable=False)
+    module = db.relationship('Module', backref='assessments')
 
     def __repr__(self):
         return f'<Assessment {self.title}>'
@@ -101,9 +102,9 @@ class PasswordResetToken(db.Model):
 
 class Progress(db.Model):
     __tablename__ = 'progress'
-    progress_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    module_id = db.Column(db.Integer, db.ForeignKey('modules.module_id'), nullable=False)
+    module_id = db.Column(db.Integer, db.ForeignKey('modules.id'), nullable=False)
     status = db.Column(db.String(50), nullable=False)
     score = db.Column(db.Integer)
     last_accessed = db.Column(db.DateTime, default=datetime.utcnow)

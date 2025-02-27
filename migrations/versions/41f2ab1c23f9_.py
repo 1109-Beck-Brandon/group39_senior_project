@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3e8721b2d998
+Revision ID: 41f2ab1c23f9
 Revises: 
-Create Date: 2025-02-26 21:21:31.227343
+Create Date: 2025-02-27 00:28:19.780697
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3e8721b2d998'
+revision = '41f2ab1c23f9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -94,13 +94,13 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('modules',
-    sa.Column('module_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('course_id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=100), nullable=False),
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('order', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ),
-    sa.PrimaryKeyConstraint('module_id')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('reviews',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -114,25 +114,25 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('assessments',
-    sa.Column('assessment_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('module_id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=100), nullable=False),
     sa.Column('type', sa.String(length=50), nullable=False),
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('max_score', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['module_id'], ['modules.module_id'], ),
-    sa.PrimaryKeyConstraint('assessment_id')
+    sa.ForeignKeyConstraint(['module_id'], ['modules.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('progress',
-    sa.Column('progress_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('module_id', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(length=50), nullable=False),
     sa.Column('score', sa.Integer(), nullable=True),
     sa.Column('last_accessed', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['module_id'], ['modules.module_id'], ),
+    sa.ForeignKeyConstraint(['module_id'], ['modules.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('progress_id')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 

@@ -35,18 +35,19 @@ def register():
     email = data.get('email')
     password = data.get('password')
     role = data.get('role', 'student')
+
     if not name or not email or not password:
-        return jsonify({'error': 'Name, email, and password are required'}), 400
+        return jsonify({'error': 'Missing required fields'}), 400
 
     if User.query.filter_by(email=email).first():
-        return jsonify({'error': 'Email already exists'}), 400
+        return jsonify({'error': 'Email already exists'}), 409
 
     user = User(name=name, email=email, role=role)
     user.set_password(password)
+
     db.session.add(user)
     db.session.commit()
-    return jsonify({'message': 'User registered successfully', 
-                    'user': {'id': user.id, 'name': user.name, 'email': user.email}}), 201
+    return jsonify({'message': 'User registered successfully'}), 201
 
 
 
