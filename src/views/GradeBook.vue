@@ -1,26 +1,17 @@
 <template>
   <v-container fluid>
-    <!-- Back Button -->
-    <v-btn
-      class="ma-2"
-      color="blue"
-      @click="navigateToTeacherView"
-    >
+    <v-btn class="ma-2" color="blue" @click="navigateToTeacherView">
       <v-icon start>mdi-arrow-left</v-icon>
       Back
     </v-btn>
 
     <v-row>
-      <!-- Left Section: Classroom Dropdown and Students List -->
       <v-col cols="12" md="6">
         <v-card class="pa-4 student-card" elevation="5">
           <v-card-title>
             <h3 class="title-text">Select Classroom</h3>
           </v-card-title>
-
           <v-divider></v-divider>
-
-          <!-- Classroom Dropdown -->
           <v-select
             v-model="selectedClassroom"
             :items="classrooms"
@@ -30,23 +21,14 @@
             @change="loadStudents"
             outlined
           ></v-select>
-
-          <!-- Students List -->
           <v-list>
             <v-list-item-group v-if="students.length" color="primary">
-              <v-list-item
-                v-for="(student, index) in students"
-                :key="index"
-                class="student-item"
-                @click="openStudentDetails(student)"
-              >
+              <v-list-item v-for="student in students" :key="student.id" class="student-item" @click="openStudentDetails(student)">
                 <v-list-item-content>
                   <v-list-item-title class="student-title">
                     <v-icon start>mdi-account-circle</v-icon>
-                    {{ student.firstName }} {{ student.lastName }}
-                    <span class="student-info">
-                      : {{ student.grade }}%
-                    </span>
+                    {{ student.name }}
+                    <span class="student-info"> : {{ student.grade }}% </span>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -57,16 +39,12 @@
           </v-list>
         </v-card>
       </v-col>
-
-      <!-- Right Section: Class Performance -->
       <v-col cols="12" md="6">
         <v-card class="pa-4 assignments-card" elevation="5">
           <v-card-title>
             <h3 class="title-text">Overall Performance</h3>
           </v-card-title>
           <v-divider></v-divider>
-
-          <!-- Class Grade Display -->
           <v-row class="d-flex justify-center">
             <v-col cols="auto">
               <div class="class-grade">
@@ -74,12 +52,10 @@
               </div>
             </v-col>
           </v-row>
-
-          <!-- Assignments List -->
           <v-divider></v-divider>
           <h3 class="title-text">Current Assignments:</h3>
           <v-list>
-            <v-list-item v-for="(assignment, index) in assignments" :key="index">
+            <v-list-item v-for="assignment in assignments" :key="assignment.id">
               <v-list-item-content>
                 <v-list-item-title class="assignment-title">{{ assignment.title }}</v-list-item-title>
                 <v-list-item-subtitle class="assignment-desc">{{ assignment.description }}</v-list-item-subtitle>
@@ -90,19 +66,15 @@
       </v-col>
     </v-row>
 
-    <!-- Student Details Modal -->
     <v-dialog v-model="showStudentDetailsModal" max-width="600px">
       <v-card>
         <v-card-title class="headline">Student Details</v-card-title>
         <v-card-text>
-          <p><strong>Name:</strong> {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}</p>
-          <p><strong>Classroom:</strong> {{ selectedStudent.classroomId }}</p>
+          <p><strong>Name:</strong> {{ selectedStudent.name }}</p>
+          <p><strong>Classroom:</strong> {{ selectedStudent.classroom }}</p>
           <p><strong>Assignments:</strong></p>
           <v-list>
-            <v-list-item
-              v-for="(assignment, index) in studentAssignments"
-              :key="index"
-            >
+            <v-list-item v-for="assignment in studentAssignments" :key="assignment.id">
               <v-list-item-content>
                 <v-list-item-title>{{ assignment.title }}</v-list-item-title>
               </v-list-item-content>
@@ -118,7 +90,6 @@
 </template>
 
 <script>
-//import axios from 'axios';
 import { getClassrooms, getAssignments, getStudentsByClassroom } from '@/services/api';
 
 export default {
@@ -128,31 +99,20 @@ export default {
       classrooms: [],
       selectedClassroom: null,
       students: [],
-      selectedStudent: null,
+      selectedStudent: {},
       showStudentDetailsModal: false,
-      assignments: [],         // Will be fetched from API instead of hard-coded
+      assignments: [],
       studentAssignments: [],
-      classGrade: 0,           // This might also be dynamically calculated
+      classGrade: 0,
       error: '',
     };
   },
   async created() {
     try {
-      // Fetch teacher's classrooms
       const classroomsResponse = await getClassrooms();
       this.classrooms = classroomsResponse.data;
-      
-      // Filter classrooms based on the current user's email
-      const userData = JSON.parse(localStorage.getItem("user")) || {};
-      this.classrooms = this.classrooms.filter(
-        classroom => classroom.email === userData.email
-      );
-      this.selectedClassroom = this.classrooms[0]?.classroom_id || null;
-      
-      // Fetch students for the selected classroom
+      this.selectedClassroom = this.classrooms[0]?.id || null;
       await this.loadStudents();
-      
-      // Fetch assignments if available from the backend
       const assignmentsResponse = await getAssignments();
       this.assignments = assignmentsResponse.data;
     } catch (error) {
@@ -185,8 +145,9 @@ export default {
 </script>
 
 <style scoped>
-/* Your existing styles remain unchanged */
+/* Retaining existing styles */
 </style>
+
 
 
 

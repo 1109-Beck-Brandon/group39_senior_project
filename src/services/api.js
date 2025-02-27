@@ -7,10 +7,9 @@ const apiClient = axios.create({
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
-  timeout: 10000 // Add timeout
+  timeout: 10000,
 });
 
-/*
 // Add request interceptor for auth headers
 apiClient.interceptors.request.use(config => {
   const token = localStorage.getItem('jwt_token');
@@ -25,38 +24,18 @@ apiClient.interceptors.response.use(
   response => response,
   async error => {
     const originalRequest = error.config;
-
-    // Specific login error handling
-    if (error.config.url.includes('/auth/login')) {
-      return Promise.reject({
-        message: error.response?.data?.message || 'Login failed. Check credentials'
-      });
-    }
-
-    // Handle CORS-related errors
-    if (error.response?.status === 0) {
-      return Promise.reject({
-        message: 'Network/CORS Error - Check API Availability'
-      });
-    }
-
-    // Token refresh logic for 401 errors
+    
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      // Add token refresh logic here (if needed)
+      // Optional: Implement token refresh logic here
     }
-
-    // General error handling
-    return Promise.reject({
-      status: error.response?.status,
-      message: error.response?.data?.message || 'API Request Failed'
-    });
+    
+    return Promise.reject(error.response?.data || { message: 'API Request Failed' });
   }
 );
-*/ 
 
+// Authentication APIs
 export function login(credentials) {
-  // credentials: { email, password }
   return apiClient.post('/login', credentials);
 }
 
@@ -65,8 +44,12 @@ export function logout() {
 }
 
 export function register(userData) {
-  // userData: { name, email, password, ... }
-  return apiClient.post('/register', userData);
+  return apiClient.post('/register', {
+    name: userData.name,
+    email: userData.email,
+    password: userData.password,
+    role: userData.role || 'student'
+  });
 }
 
 // User Profile APIs
@@ -78,7 +61,7 @@ export function updateUserProfile(userId, data) {
   return apiClient.put(`/users/${userId}`, data);
 }
 
-// Teacher View API
+// Teacher APIs
 export function getTeacherData(teacherId) {
   return apiClient.get(`/teachers/${teacherId}`);
 }
@@ -89,7 +72,7 @@ export function getGradebook(userId) {
 }
 
 export function updateGradebook(userId, data) {
-  return apiClient.put(`/gradebook/${userId}`, data);
+  return apiClient.put(`/gradebook/${userId}`, { grades: data });
 }
 
 // Courses APIs
@@ -101,27 +84,25 @@ export function getCourse(courseId) {
   return apiClient.get(`/courses/${courseId}`);
 }
 
+// Enrollment APIs
+export function enrollCourse(userId, courseId) {
+  return apiClient.post(`/users/${userId}/courses`, { course_id: courseId });
+}
+
 // Reviews APIs
 export function getReviews(courseId) {
   return apiClient.get(`/courses/${courseId}/reviews`);
 }
 
 export function postReview(courseId, reviewData) {
-  // reviewData: { rating, comment, ... }
   return apiClient.post(`/courses/${courseId}/reviews`, reviewData);
 }
 
+// Password Reset APIs
 export function resetPassword(payload) {
   return apiClient.post('/password-reset', payload);
 }
 
-// Course Selection API
-export function selectCourse(userId, courseId) {
-  // Enroll the user in the specified course
-  return apiClient.post(`/users/${userId}/courses`, { courseId });
-}
-
-// Export all functions as the default export if preferred
 export default {
   login,
   logout,
@@ -133,8 +114,8 @@ export default {
   updateGradebook,
   getCourses,
   getCourse,
+  enrollCourse,
   getReviews,
   postReview,
   resetPassword,
-  selectCourse
 };

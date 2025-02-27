@@ -1,10 +1,10 @@
 <template>
   <div class="login">
     <h1>Login</h1>
-    <form @submit.prevent="handleLogin">
+    <form @submit.prevent="submitLogin">
       <div>
-        <label for="username">Username: </label>
-        <input type="text" id="username" v-model="username" required />
+        <label for="email">Email: </label>
+        <input type="email" id="email" v-model="email" required />
       </div>
       <div>
         <label for="password">Password: </label>
@@ -16,7 +16,7 @@
 
     <!-- Add the new user link -->
     <p class="new-user">
-      <router-link to="/createProfile">New user?  Create a profile</router-link>
+      <router-link to="/createProfile">New user? Create a profile</router-link>
     </p>
     <!-- Add Forgot Password Link-->
     <p class="forgot-password">
@@ -41,19 +41,17 @@ export default {
       this.error = '';
       login({ email: this.email, password: this.password })
         .then(response => {
-          // Assuming the backend responds with a token property in response.data
-          const token = response.data.token;
-          if (token) {
-            localStorage.setItem('jwt_token', token);
-            // Redirect to home or dashboard
-            this.$router.push('/');
+          const userData = response.data;
+          if (userData && userData.user && userData.user.id) {
+            localStorage.setItem('jwt_token', userData.token);
+            localStorage.setItem('user', JSON.stringify(userData.user));
+            this.$router.push('/dashboard');
           } else {
-            this.error = 'Login failed: No token received.';
+            this.error = 'Login failed: Invalid credentials.';
           }
         })
         .catch(err => {
-          // You can also check err.status for more detailed error handling
-          this.error = err.message || 'Login failed';
+          this.error = err.response?.data?.error || 'Login failed. Please check your credentials.';
         });
     }
   }
@@ -87,5 +85,4 @@ export default {
 .new-user a:hover {
   text-decoration: underline;
 }
-
 </style>

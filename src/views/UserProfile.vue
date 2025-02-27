@@ -214,7 +214,7 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
-import { getUserProfile, updateUserProfile, apiClient } from '@/services/api';
+import { logout, getUserProfile, updateUserProfile, enrollCourse, apiClient } from '@/services/api';
 Chart.register(...registerables);
 
 export default {
@@ -251,39 +251,73 @@ export default {
       loadingPictures: false,
     };
   },
+
   computed: {
     averageProgress() {
       const totalProgress = this.courses.reduce((sum, course) => sum + course.progress, 0);
       return this.courses.length ? Math.round(totalProgress / this.courses.length) : 0;
     },
   },
-  async mounted() {
-    await this.fetchUserData();
+
+  mounted() {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      this.$router.push('/login'); // Redirect to login if no token
+    }
+    this.fetchUserData();
     this.updateCoursesProgress();
     this.createChart();
   },
+
   methods: {
     async fetchUserData() {
       try {
         const response = await getUserProfile(this.user.user_id);
-        this.user = response.data;
+        if (response.data) {
+          this.user = { ...this.user, ...response.data }; // Merge user data
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     },
+
+    async logout() {
+      try {
+        await logout(); // Call API logout
+        localStorage.removeItem('jwt_token');
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
+    },
+
     async updateCoursesProgress() {
       try {
         const response = await getUserProfile(this.user.user_id);
-        // Assume that response.data.courses_enrolled is an array of courses
         this.courses = response.data.courses_enrolled.map(course => ({
           id: course.course_id,
           name: course.title,
-          progress: course.progress,
+          progress: course.progress || 0,
         }));
       } catch (error) {
         console.error('Error fetching courses:', error);
       }
     },
+
+    async enrollCourse(courseId) {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+          console.error("User not logged in.");
+          return;
+        }
+        await enrollCourse(user.id, courseId);
+        console.log('Enrolled successfully');
+      } catch (error) {
+        console.error('Error enrolling in course:', error);
+      }
+    },
+
     createChart() {
       const ctx = document.getElementById("progressChart").getContext("2d");
       new Chart(ctx, {
@@ -308,6 +342,7 @@ export default {
         },
       });
     },
+
     redirectToClassroom() {
       const userData = JSON.parse(localStorage.getItem("user")) || {};
       if (userData.classroomId) {
@@ -316,13 +351,10 @@ export default {
         this.showJoinClassroomModal = true;
       }
     },
+
     async submitClassroomId() {
       try {
-        await apiClient.post('/classrooms/join', {
-          classroom_id: this.newClassroomId,
-          user_id: this.user.user_id,
-        });
-        // Update local user data with the new classroom ID
+        await enrollCourse(this.user.user_id, this.newClassroomId);
         const userData = JSON.parse(localStorage.getItem('user'));
         userData.classroom_id = this.newClassroomId;
         localStorage.setItem('user', JSON.stringify(userData));
@@ -332,6 +364,7 @@ export default {
         console.error('Error joining classroom:', error);
       }
     },
+
     fetchProfilePictures() {
       this.loadingPictures = true;
       this.showEditPictureDialog = true;
@@ -347,6 +380,7 @@ export default {
         this.loadingPictures = false;
       }, 500);
     },
+
     async selectProfilePicture(picture) {
       try {
         await apiClient.put(`/users/${this.user.user_id}`, {
@@ -359,9 +393,11 @@ export default {
       }
       this.showEditPictureDialog = false;
     },
+
     closeEditPictureDialog() {
       this.showEditPictureDialog = false;
     },
+
     async saveProfileInfo() {
       try {
         await updateUserProfile(this.user.user_id, {

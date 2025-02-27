@@ -1,24 +1,6 @@
 <template>
   <div class="home">
-    <v-layout class="rounded rounded-md">
-      <!--
-      <v-navigation-drawer width="300">
-        <v-list>
-          <h2 class="gradient-text">Resources</h2>
-          <v-list-item>
-            <v-list-item-content>
-              <div class="list-item-container">
-                <img src="path-to-your-image.jpg" alt="Learning resource icon">
-                <v-list-item-title>Resource Description</v-list-item-title>
-              </div>
-              <v-list-item-subtitle class="wrap-text">
-                This section will be for resources that users can click on to further reinforce their learning.
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer> -->
-    </v-layout>
+    <v-layout class="rounded rounded-md"></v-layout>
 
     <div class="join-button-container">
       <v-btn color="primary" class="join-button" @click="showModal = true">
@@ -26,7 +8,6 @@
       </v-btn>
     </div>  
 
-    <!-- Use the HelloWorld component -->
     <div class="hello-world-section">
       <HelloWorld msg="Welcome to Cybersecurity Learning Platform!" />
     </div>
@@ -36,41 +17,12 @@
         <v-card-title>Create Profile</v-card-title>
         <v-card-text>
           <form @submit.prevent="createProfile">
-            <v-text-field
-              v-model="newUser.username"
-              label="Username"
-              id="username-field"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="newUser.email"
-              label="Email"
-              type="email"
-              id="email-field"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="newUser.password"
-              label="Password"
-              type="password"
-              id="password-field"
-              required
-            ></v-text-field>
-            <v-select
-              v-model="newUser.role"
-              :items="roles"
-              label="Select Role"
-              id="role-select"
-              required
-            ></v-select>
-            <v-btn 
-              outlined 
-              color="primary" 
-              class="submit-button" 
-              type="submit"
-            >
-              Submit
-            </v-btn>
+            <v-text-field v-model="newUser.first_name" label="First Name" required></v-text-field>
+            <v-text-field v-model="newUser.last_name" label="Last Name" required></v-text-field>
+            <v-text-field v-model="newUser.email" label="Email" type="email" required></v-text-field>
+            <v-text-field v-model="newUser.password" label="Password" type="password" required></v-text-field>
+            <v-select v-model="newUser.role" :items="roles" label="Select Role" required></v-select>
+            <v-btn outlined color="primary" class="submit-button" type="submit">Submit</v-btn>
           </form>
         </v-card-text>
         <v-card-actions>
@@ -83,6 +35,7 @@
 
 <script>
 import HelloWorld from '@/components/HelloWorld.vue';
+import { register } from '@/services/api';
 
 export default {
   name: 'HomeView',
@@ -103,25 +56,18 @@ export default {
     };
   },
   methods: {
-    createProfile() {
-      // Combine first and last name into a single name field
+    async createProfile() {
       const userPayload = {
         name: `${this.newUser.first_name} ${this.newUser.last_name}`.trim(),
         email: this.newUser.email,
         password: this.newUser.password,
         role: this.newUser.role,
       };
-
-      // Store the user information locally for later use
-      localStorage.setItem("newUser", JSON.stringify(userPayload));
-
-      // Route the user to the appropriate onboarding page based on their role
-      if (userPayload.role === "Teacher") {
-        this.$router.push({ name: "NewTeacherOnboarding" });
-      } else if (userPayload.role === "Student") {
-        this.$router.push({ name: "StudentOnboarding" });
-      } else {
-        this.$router.push({ name: "UserOnboarding" });
+      try {
+        await register(userPayload);
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Error creating profile:', error.response?.data?.error || error);
       }
     },
   },
@@ -186,5 +132,4 @@ export default {
 .hello-world-section p {
   font-size: 40px;
 }
-
 </style>
