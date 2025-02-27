@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, session
+from flask_cors import cross_origin
 from ..models import User
 from .. import db
 import jwt
@@ -29,6 +30,7 @@ def logout():
     return jsonify({'message': 'Logged out successfully'}), 200
 
 @auth_bp.route('/register', methods=['POST'])
+@cross_origin(origins=["https://1109-beck-brandon.github.io", "http://localhost:10000"], supports_credentials=True)
 def register():
     data = request.get_json()
     name = data.get('name')
