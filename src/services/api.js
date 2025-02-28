@@ -67,6 +67,26 @@ export function getTeacherData(teacherId) {
   return apiClient.get(`/teachers/${teacherId}`);
 }
 
+export function getClassrooms() {
+  return apiClient.get('/classrooms');
+}
+
+export function getStudentsByClassroom(classroomId) {
+  return apiClient.get(`/classrooms/${classroomId}/students`);
+}
+
+export function getAssignments() {
+  return apiClient.get('/assignments');
+}
+
+export function getMessages() {
+  return apiClient.get('/messages');
+}
+
+export function deleteMessage(messageId) {
+  return apiClient.delete(`/messages/${messageId}`);
+}
+
 // GradeBook APIs
 export function getGradebook(userId) {
   return apiClient.get(`/gradebook/${userId}`);
@@ -104,6 +124,8 @@ export function resetPassword(payload) {
   return apiClient.post('/password-reset', payload);
 }
 
+export { apiClient };
+
 export default {
   login,
   logout,
@@ -119,4 +141,9 @@ export default {
   getReviews,
   postReview,
   resetPassword,
+  getClassrooms,
+  getStudentsByClassroom,
+  getAssignments,
+  getMessages,
+  deleteMessage
 };

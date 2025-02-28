@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { getTeacherData, getClassroomStudents, getMessages, deleteMessage } from '@/services/api';
+import { getTeacherData, getStudentsByClassroom, getMessages, deleteMessage } from '@/services/api';
 
 export default {
   name: "TeacherView",
@@ -101,7 +101,7 @@ export default {
         const teacherResponse = await getTeacherData();
         this.teacher = teacherResponse.data;
         this.classroom = this.teacher.classroom;
-        const studentsResponse = await getClassroomStudents(this.classroom.id);
+        const studentsResponse = await getStudentsByClassroom(this.classroom.id);
         this.students = studentsResponse.data;
         const messagesResponse = await getMessages();
         this.messages = messagesResponse.data;
