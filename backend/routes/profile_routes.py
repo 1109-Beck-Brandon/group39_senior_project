@@ -31,7 +31,7 @@ def update_profile(user_id):
     db.session.commit()
     return jsonify({'message': 'Profile updated successfully'}), 200
 
-@profile_bp.route('/users/<int:user_id>', methods=['PUT'])
+'''@profile_bp.route('/users/<int:user_id>', methods=['PUT'])
 @login_required
 def update_profile(user_id):
     user = User.query.get_or_404(user_id)
@@ -53,4 +53,4 @@ def update_profile(user_id):
     if 'gradeLevel' in data:
         user.grade_level = data['gradeLevel']
     db.session.commit()
-    return jsonify({'message': 'Profile updated successfully', 'user': user.to_dict()}), 200
+    return jsonify({'message': 'Profile updated successfully', 'user': user.to_dict()}), 200'''
