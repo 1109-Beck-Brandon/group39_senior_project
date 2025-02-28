@@ -50,3 +50,8 @@ def register():
 
     return jsonify({'message': 'User registered successfully'}), 201
 
+@auth_bp.route('/refresh-token', methods=['POST'])
+@login_required
+def refresh_token():
+    return jsonify({'message': 'Token refreshed successfully'}), 200
+

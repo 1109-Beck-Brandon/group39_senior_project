@@ -31,38 +31,37 @@
 </template>
 
 <script>
-import { getCourses } from '@/services/api';
+// import { getCourses } from '@/services/api';
 
 export default {
-  name: 'CourseSelect',
-  data() {
-    return {
-      courses: [],
-    };
-  },
-  async created() {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      this.$router.push('/login');
-      return;
-    }
-    try {
-      const response = await getCourses();
-      this.courses = response.data.courses;
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-    }
-  },
-  methods: {
-    goToCoursePage(courseId) {
-      if (courseId) {
-        this.$router.push(`/course/${courseId}`);
-      } else {
-        console.error("No valid course ID provided");
-      }
+    data() {
+      return {
+        courses: [
+          { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
+          { name: "Sample Course 202", description: "This is a sample course to test the slide bar", progress: 0 },
+          { name: "Sample Course 303", description: "This is a sample course to test the slide bar", progress: 0 },
+          // Add more courses as needed
+        ],
+      };
     },
-  },
-};
+    methods: {
+      goToCoursePage(courseName) {
+        const courseRoutes = {
+          "Introduction to Cybersecurity": "/course/intro-to-cybersecurity",
+          "Sample Course 202": "/course/sample-202",
+          "Sample Course 303": "/course/sample-303",
+          // More course routings
+        };
+
+        const route = courseRoutes[courseName];
+        if (route) {
+          this.$router.push(route);
+        } else {
+          console.error("No route defined for this course:", courseName);
+        }
+      },
+    },
+  };
 </script>
 
 <style scoped>
