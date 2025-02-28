@@ -34,29 +34,34 @@
 import { getCourses } from '@/services/api';
 
 export default {
-name: 'CourseSelect',
-data() {
-  return {
-    courses: [],
-  };
-},
-async created() {
-  try {
-    const response = await getCourses();
-    this.courses = response.data.courses;
-  } catch (error) {
-    console.error("Error fetching courses:", error);
-  }
-},
-methods: {
-  goToCoursePage(courseId) {
-    if (courseId) {
-      this.$router.push(`/course/${courseId}`);
-    } else {
-      console.error("No valid course ID provided");
+  name: 'CourseSelect',
+  data() {
+    return {
+      courses: [],
+    };
+  },
+  async created() {
+    const user = localStorage.getItem('user');
+    if (!user) {
+      this.$router.push('/login');
+      return;
+    }
+    try {
+      const response = await getCourses();
+      this.courses = response.data.courses;
+    } catch (error) {
+      console.error("Error fetching courses:", error);
     }
   },
-},
+  methods: {
+    goToCoursePage(courseId) {
+      if (courseId) {
+        this.$router.push(`/course/${courseId}`);
+      } else {
+        console.error("No valid course ID provided");
+      }
+    },
+  },
 };
 </script>
 

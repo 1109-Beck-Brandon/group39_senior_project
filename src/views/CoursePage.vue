@@ -28,30 +28,35 @@
 import { getCourse } from '@/services/api';
 
 export default {
-props: ["courseId"],
-data() {
-  return {
-    course: {},
-    activeTab: 0,
-    modules: [],
-    error: ""
-  };
-},
-async created() {
-  await this.fetchCourse();
-},
-methods: {
-  async fetchCourse() {
-    try {
-      const response = await getCourse(this.courseId);
-      this.course = response.data;
-      this.modules = response.data.modules || [];
-    } catch (error) {
-      console.error("Error fetching course data:", error);
-      this.error = "Error fetching course data.";
-    }
+  props: ["courseId"],
+  data() {
+    return {
+      course: {},
+      activeTab: 0,
+      modules: [],
+      error: ""
+    };
   },
-},
+  async created() {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      this.$router.push('/login');
+      return;
+    }
+    await this.fetchCourse();
+  },
+  methods: {
+    async fetchCourse() {
+      try {
+        const response = await getCourse(this.courseId);
+        this.course = response.data;
+        this.modules = response.data.modules || [];
+      } catch (error) {
+        console.error("Error fetching course data:", error);
+        this.error = "Error fetching course data.";
+      }
+    },
+  },
 };
 </script>
 

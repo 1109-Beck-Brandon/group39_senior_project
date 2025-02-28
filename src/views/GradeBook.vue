@@ -23,7 +23,12 @@
           ></v-select>
           <v-list>
             <v-list-item-group v-if="students.length" color="primary">
-              <v-list-item v-for="student in students" :key="student.id" class="student-item" @click="openStudentDetails(student)">
+              <v-list-item
+                v-for="student in students"
+                :key="student.id"
+                class="student-item"
+                @click="openStudentDetails(student)"
+              >
                 <v-list-item-content>
                   <v-list-item-title class="student-title">
                     <v-icon start>mdi-account-circle</v-icon>
@@ -57,8 +62,12 @@
           <v-list>
             <v-list-item v-for="assignment in assignments" :key="assignment.id">
               <v-list-item-content>
-                <v-list-item-title class="assignment-title">{{ assignment.title }}</v-list-item-title>
-                <v-list-item-subtitle class="assignment-desc">{{ assignment.description }}</v-list-item-subtitle>
+                <v-list-item-title class="assignment-title">
+                  {{ assignment.title }}
+                </v-list-item-title>
+                <v-list-item-subtitle class="assignment-desc">
+                  {{ assignment.description }}
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -74,7 +83,10 @@
           <p><strong>Classroom:</strong> {{ selectedStudent.classroom }}</p>
           <p><strong>Assignments:</strong></p>
           <v-list>
-            <v-list-item v-for="assignment in studentAssignments" :key="assignment.id">
+            <v-list-item
+              v-for="assignment in studentAssignments"
+              :key="assignment.id"
+            >
               <v-list-item-content>
                 <v-list-item-title>{{ assignment.title }}</v-list-item-title>
               </v-list-item-content>
@@ -82,7 +94,9 @@
           </v-list>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="secondary" text @click="showStudentDetailsModal = false">Close</v-btn>
+          <v-btn color="secondary" text @click="showStudentDetailsModal = false">
+            Close
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -107,7 +121,22 @@ export default {
       error: '',
     };
   },
+  computed: {
+    isTeacher() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      return user && user.role === "Teacher";
+    },
+  },
   async created() {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      this.$router.push("/login");
+      return;
+    }
+    if (!this.isTeacher) {
+      this.$router.push("/dashboard");
+      return;
+    }
     try {
       const classroomsResponse = await getClassrooms();
       this.classrooms = classroomsResponse.data;
@@ -143,13 +172,6 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Retaining existing styles */
-</style>
-
-
-
 
 <style scoped>
 .student-item {
@@ -194,17 +216,17 @@ export default {
 }
 
 .title-text {
-  color: #1976d2; /* Blue text for titles */
+  color: #1976d2;
 }
 
 .assignments-card {
-  background-color: #fafafa; /* Light background for assignment cards */
+  background-color: #fafafa;
   border-radius: 8px;
 }
 
 .student-card {
   background-color: #ffffff;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Light shadow effect */
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
 
@@ -218,9 +240,8 @@ export default {
 }
 
 .class-grade {
-  font-size: 48px; /* Large text for grade */
+  font-size: 48px;
   font-weight: bold;
-  color: #388e3c; /* Green color for class grade */
   text-align: center;
 }
 </style>

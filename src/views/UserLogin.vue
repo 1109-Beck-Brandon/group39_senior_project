@@ -43,8 +43,8 @@ export default {
         .then(response => {
           const userData = response.data;
           if (userData && userData.user && userData.user.id) {
-            localStorage.setItem('jwt_token', userData.token);
-            localStorage.setItem('user', JSON.stringify(userData.user));
+            const user = { ...userData.user, user_id: userData.user.id };
+            localStorage.setItem('user', JSON.stringify(user));
             this.$router.push('/dashboard');
           } else {
             this.error = 'Login failed: Invalid credentials.';

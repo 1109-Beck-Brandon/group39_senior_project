@@ -1,7 +1,7 @@
-from flask import Blueprint, request, jsonify, session
-from flask_cors import cross_origin
+from flask import Blueprint, request, jsonify
+from flask_login import login_user, logout_user, login_required
 from ..models import User
-from .. import db
+from ..extensions import db
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -15,18 +15,20 @@ def login():
 
     user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
-        session['user_id'] = user.id
-        return jsonify({'message': 'Logged in successfully', 
-                        'user': {'id': user.id, 'name': user.name, 'email': user.email}}), 200
+        login_user(user)
+        return jsonify({
+            'message': 'Logged in successfully', 
+            'user': {'id': user.id, 'name': user.name, 'email': user.email}
+        }), 200
     return jsonify({'error': 'Invalid credentials'}), 401
 
 @auth_bp.route('/logout', methods=['POST'])
+@login_required
 def logout():
-    session.pop('user_id', None)
+    logout_user()
     return jsonify({'message': 'Logged out successfully'}), 200
 
 @auth_bp.route('/register', methods=['POST'])
-@cross_origin(origins=["https://1109-beck-brandon.github.io", "http://localhost:5000"], supports_credentials=True)
 def register():
     data = request.get_json()
     name = data.get('name')

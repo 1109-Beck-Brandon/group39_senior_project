@@ -2,11 +2,11 @@
   <div class="home">
     <v-layout class="rounded rounded-md"></v-layout>
 
-    <div class="join-button-container">
+    <div v-if="!isLoggedIn" class="join-button-container">
       <v-btn color="primary" class="join-button" @click="showModal = true">
         Create an Account for Free
       </v-btn>
-    </div>  
+    </div> 
 
     <div class="hello-world-section">
       <HelloWorld msg="Welcome to Cybersecurity Learning Platform!" />
@@ -54,6 +54,16 @@ export default {
       },
       roles: ['Student', 'Teacher', 'Individual'], 
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return !!localStorage.getItem('user');
+    },
+  },
+  mounted() {
+    if (this.isLoggedIn) {
+      this.$router.push('/dashboard');
+    }
   },
   methods: {
     async createProfile() {

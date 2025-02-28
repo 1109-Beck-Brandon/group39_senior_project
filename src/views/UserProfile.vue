@@ -260,10 +260,6 @@ export default {
   },
 
   mounted() {
-    const token = localStorage.getItem('jwt_token');
-    if (!token) {
-      this.$router.push('/login'); // Redirect to login if no token
-    }
     this.fetchUserData();
     this.updateCoursesProgress();
     this.createChart();
@@ -274,7 +270,7 @@ export default {
       try {
         const response = await getUserProfile(this.user.user_id);
         if (response.data) {
-          this.user = { ...this.user, ...response.data }; // Merge user data
+          this.user = { ...this.user, ...response.data };
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -283,8 +279,8 @@ export default {
 
     async logout() {
       try {
-        await logout(); // Call API logout
-        localStorage.removeItem('jwt_token');
+        await logout();
+        localStorage.removeItem('user');
         this.$router.push('/login');
       } catch (error) {
         console.error('Error logging out:', error);
@@ -307,11 +303,11 @@ export default {
     async enrollCourse(courseId) {
       try {
         const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.id) {
+        if (!user || !user.user_id) {
           console.error("User not logged in.");
           return;
         }
-        await enrollCourse(user.id, courseId);
+        await enrollCourse(user.user_id, courseId);
         console.log('Enrolled successfully');
       } catch (error) {
         console.error('Error enrolling in course:', error);

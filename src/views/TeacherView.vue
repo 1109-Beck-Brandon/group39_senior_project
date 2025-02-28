@@ -98,7 +98,12 @@ export default {
   methods: {
     async fetchTeacherData() {
       try {
-        const teacherResponse = await getTeacherData();
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user || !user.user_id) {
+          this.$router.push('/login');
+          return;
+        }
+        const teacherResponse = await getTeacherData(user.user_id);
         this.teacher = teacherResponse.data;
         this.classroom = this.teacher.classroom;
         const studentsResponse = await getStudentsByClassroom(this.classroom.id);

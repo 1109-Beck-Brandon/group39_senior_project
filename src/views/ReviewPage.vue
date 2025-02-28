@@ -59,7 +59,7 @@ export default {
       try {
         const response = await getReviews(this.courseId);
         this.reviews = response.data.reviews.map(review => ({
-          userName: `User ${review.user_id}`, 
+          userName: `User ${review.user_id}`,
           rating: review.rating,
           comment: review.comment,
           userImage: review.userImage || this.imageSrc
@@ -75,15 +75,16 @@ export default {
         return;
       }
       const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.id) {
+      if (!user || !user.user_id) {
         this.error = 'User not logged in';
+        this.$router.push('/login');
         return;
       }
       try {
         await postReview(this.courseId, {
           comment: this.newReview.trim(),
           rating: this.newRating,
-          user_id: user.id
+          user_id: user.user_id
         });
         await this.fetchReviews();
         this.newReview = '';

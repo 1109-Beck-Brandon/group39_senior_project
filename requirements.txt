@@ -9,3 +9,5 @@ psycopg2-binary==2.9.9
 PyJWT==2.8.0
 Werkzeug>=2.3.7
 SQLAlchemy==2.0.21
+Flask-Login==0.6.2
+Flask-Bcrypt==1.0.1

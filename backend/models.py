@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
-from werkzeug.security import generate_password_hash, check_password_hash
-from .extensions import db
+from flask_login import UserMixin
+from .extensions import db, bcrypt
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
@@ -17,10 +17,11 @@ class User(db.Model):
     password_reset_tokens = db.relationship('PasswordResetToken', backref='user', lazy=True)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        # bcrypt.generate_password_hash returns bytes, so decode to get a string
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return bcrypt.check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return f'<User {self.email}>'
