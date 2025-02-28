@@ -17,11 +17,9 @@ def password_reset():
     if not user:
         return jsonify({'error': 'No user found with that email'}), 404
 
-    # Generate a unique token and set expiration (e.g., 1 hour)
     token = str(uuid.uuid4())
     expiration = datetime.utcnow() + timedelta(hours=1)
     reset_token = PasswordResetToken(token=token, user_id=user.id, expiration=expiration)
     db.session.add(reset_token)
     db.session.commit()
-    # In a real app, send the token to the user's email.
     return jsonify({'message': 'Password reset token generated', 'token': token}), 200

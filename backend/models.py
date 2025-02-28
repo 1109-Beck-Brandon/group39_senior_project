@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from .extensions import db
 
@@ -139,7 +139,8 @@ class Classroom(db.Model):
     classroom_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
 
-    students = db.relationship('User', back_populates='classroom')
+    students = db.relationship('Student', backref='classroom', lazy=True)
+
 
     def __repr__(self):
         return f'<Classroom {self.name}>'

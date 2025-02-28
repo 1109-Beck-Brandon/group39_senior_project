@@ -6,7 +6,6 @@ review_bp = Blueprint('review', __name__)
 
 @review_bp.route('/courses/<int:course_id>/reviews', methods=['GET'])
 def get_reviews(course_id):
-    # Ensure course exists
     Course.query.get_or_404(course_id)
     reviews = Review.query.filter_by(course_id=course_id).all()
     reviews_list = [{

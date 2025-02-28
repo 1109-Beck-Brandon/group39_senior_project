@@ -13,7 +13,6 @@ def get_gradebook(user_id):
 @gradebook_bp.route('/gradebook/<int:user_id>', methods=['PUT'])
 def update_gradebook(user_id):
     data = request.get_json()
-    # Expected payload: {'grades': [{'course_id': x, 'grade': y}, ...]}
     updated_grades = []
     for grade_data in data.get('grades', []):
         course_id = grade_data.get('course_id')

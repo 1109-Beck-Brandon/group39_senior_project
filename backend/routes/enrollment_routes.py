@@ -13,7 +13,6 @@ def enroll_course(user_id):
         return jsonify({'error': 'Course ID is required'}), 400
 
     course = Course.query.get_or_404(course_id)
-    # Prevent duplicate enrollment
     if Enrollment.query.filter_by(user_id=user.id, course_id=course.id).first():
         return jsonify({'error': 'User already enrolled in this course'}), 400
 
