@@ -165,10 +165,10 @@ const routes = [
   },
 
   {
-    path: '/course/:courseId/reviews',
-    name: 'ReviewPage',
+    path: "/course/:courseId/reviews",
+    name: "ReviewPage",
     component: ReviewPage,
-    props: true, // Enable props to be passed from the route
+    props: route => ({ courseId: Number(route.params.courseId) })
   }
 
 ]

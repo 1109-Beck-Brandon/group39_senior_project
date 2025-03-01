@@ -290,13 +290,20 @@ export default {
     async updateCoursesProgress() {
       try {
         const response = await getUserProfile(this.user.user_id);
-        this.courses = response.data.courses_enrolled.map(course => ({
-          id: course.course_id,
-          name: course.title,
-          progress: course.progress || 0,
-        }));
+        if (response.data && response.data.courses_enrolled && Array.isArray(response.data.courses_enrolled)) {
+          this.courses = response.data.courses_enrolled.map(course => ({
+            id: course.course_id,
+            name: course.title,
+            progress: course.progress || 0,
+          }));
+        } else {
+          // Handle case where courses_enrolled doesn't exist or isn't an array
+          this.courses = [];
+          console.log('No courses enrolled data available');
+        }
       } catch (error) {
         console.error('Error fetching courses:', error);
+        this.courses = []; // Initialize with empty array
       }
     },
 
