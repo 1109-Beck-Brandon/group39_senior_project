@@ -212,6 +212,7 @@ export default {
 
 .gradient-text {
   background: linear-gradient(to right, rgb(225, 119, 5), #d514b2, purple);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;

@@ -57,12 +57,20 @@ export function getTeacherData(teacherId) {
   return apiClient.get(`/teachers/${teacherId}`);
 }
 
+export function getTeacherDashboard() {
+  return apiClient.get('/teacher/dashboard');
+}
+
 export function getClassrooms() {
   return apiClient.get('/classrooms');
 }
 
 export function getStudentsByClassroom(classroomId) {
   return apiClient.get(`/classrooms/${classroomId}/students`);
+}
+
+export function addStudentToClassroom(classroomId, studentData) {
+  return apiClient.post(`/classrooms/${classroomId}/students`, studentData);
 }
 
 export function getAssignments() {
@@ -131,5 +139,7 @@ export default {
   getStudentsByClassroom,
   getAssignments,
   getMessages,
-  deleteMessage
+  deleteMessage,
+  getTeacherDashboard,
+  addStudentToClassroom
 };
