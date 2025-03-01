@@ -162,6 +162,13 @@ const routes = [
     path: '/classroom-students',
     name: 'ClassroomStudents',
     component: ClassroomStudents,
+  },
+
+  {
+    path: '/course/:courseId/reviews',
+    name: 'ReviewPage',
+    component: ReviewPage,
+    props: true, // Enable props to be passed from the route
   }
 
 ]

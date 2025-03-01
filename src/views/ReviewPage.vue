@@ -62,7 +62,7 @@ export default {
           userName: `User ${review.user_id}`,
           rating: review.rating,
           comment: review.comment,
-          userImage: review.userImage || this.imageSrc
+          userImage: review.userImage || this.imageSrc,
         }));
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -84,7 +84,7 @@ export default {
         await postReview(this.courseId, {
           comment: this.newReview.trim(),
           rating: this.newRating,
-          user_id: user.user_id
+          user_id: user.user_id,
         });
         await this.fetchReviews();
         this.newReview = '';

@@ -38,12 +38,16 @@ export default {
       apiLogout()
         .then(() => {
           // Clear any local authentication tokens if needed
-          localStorage.removeItem('jwt_token');
+          localStorage.removeItem('user');
           // Redirect to the login page after successful logout
           this.$router.push('/login');
         })
         .catch(error => {
           console.error('Logout error:', error);
+          // Clear any local authentication tokens if needed
+          localStorage.removeItem('user');
+          // Redirect to the login page if logout fails
+          this.$router.push('/login');
         });
     },
   },

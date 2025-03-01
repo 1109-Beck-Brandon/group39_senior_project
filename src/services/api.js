@@ -33,7 +33,15 @@ export function login(credentials) {
 }
 
 export function logout() {
-  return apiClient.post('/logout');
+  return apiClient.post('/logout')
+    .catch(error => {
+      if (error.response?.status === 401) {
+        // If the user is unauthorized, clear the local storage and redirect to login
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
+      return Promise.reject(error);
+    });
 }
 
 export function register(userData) {
@@ -118,6 +126,10 @@ export function resetPassword(payload) {
   return apiClient.post('/password-reset', payload);
 }
 
+export function getData() {
+  return apiClient.get('/data-endpoint');
+}
+
 export { apiClient };
 
 export default {
@@ -141,5 +153,6 @@ export default {
   getMessages,
   deleteMessage,
   getTeacherDashboard,
-  addStudentToClassroom
+  addStudentToClassroom,
+  getData
 };
