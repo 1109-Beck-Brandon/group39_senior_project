@@ -60,11 +60,11 @@ export default {
       return !!localStorage.getItem('user');
     },
   },
-  mounted() {
-    if (this.isLoggedIn) {
-      this.$router.push('/dashboard');
-    }
-  },
+//  mounted() {
+//    if (this.isLoggedIn) {
+//      this.$router.push('/dashboard');
+//    }
+//  },
   methods: {
     async createProfile() {
       const userPayload = {
