@@ -78,7 +78,8 @@ const routes = [
   //Add Review Page
   { path: '/reviewPage', 
     name: 'ReviewPage', 
-    component: ReviewPage 
+    component: ReviewPage,
+    props: route => ({ courseId: route.query.courseId ? Number(route.query.courseId) : null })
   },
   //Add Profile View Page
   {
