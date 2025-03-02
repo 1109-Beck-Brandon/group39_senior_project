@@ -18,7 +18,14 @@ def login():
         login_user(user)
         return jsonify({
             'message': 'Logged in successfully', 
-            'user': {'id': user.id, 'name': user.name, 'email': user.email}
+            'user': {
+                'id': user.id, 
+                'name': user.name,  # Keep for backward compatibility
+                'first_name': user.first_name, 
+                'last_name': user.last_name, 
+                'email': user.email,
+                'role': user.role
+            }
         }), 200
     return jsonify({'error': 'Invalid credentials'}), 401
 

@@ -43,7 +43,18 @@ export default {
         .then(response => {
           const userData = response.data;
           if (userData && userData.user && userData.user.id) {
-            const user = { ...userData.user, user_id: userData.user.id };
+            const user = { 
+              ...userData.user, 
+              user_id: userData.user.id 
+            };
+            
+            // Split name into first_name and last_name if only name is provided
+            if (user.name && (!user.first_name || !user.last_name)) {
+              const nameParts = user.name.split(' ');
+              user.first_name = nameParts[0] || '';
+              user.last_name = nameParts.slice(1).join(' ') || '';
+            }
+            
             localStorage.setItem('user', JSON.stringify(user));
             this.$router.push('/dashboard');
           } else {
