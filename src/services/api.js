@@ -131,6 +131,22 @@ export function getData() {
   return apiClient.get('/data-endpoint');
 }
 
+/**
+ * Save user progress for a module
+ * @param {number} userId - User ID
+ * @param {number} moduleId - Module ID
+ * @param {number} score - Score achieved (0-100)
+ * @returns {Promise} - API response
+ */
+export function saveModuleProgress(userId, moduleId, score) {
+  return apiClient.post('/progress', {
+    user_id: userId,
+    module_id: moduleId,
+    status: 'completed',
+    score: score
+  });
+}
+
 export { apiClient };
 
 export default {
@@ -155,5 +171,6 @@ export default {
   deleteMessage,
   getTeacherDashboard,
   addStudentToClassroom,
-  getData
+  getData,
+  saveModuleProgress
 };

@@ -451,7 +451,22 @@ export default {
       const courseRoute = courseName.toLowerCase().replace(/\s+/g, '-');
       this.$router.push(`/course/${courseRoute}`);
     },
+    // Add this method
+    async refreshProgress() {
+      await this.updateCoursesProgress();
+      this.createChart();
+    }
   },
+  // Listen for route changes
+  created() {
+    this.$router.beforeEach((to, from, next) => {
+      // If returning to profile from a course module
+      if (from.path.includes('/course/') && to.path === '/dashboard') {
+        this.refreshProgress();
+      }
+      next();
+    });
+  }
 };
 </script>
 

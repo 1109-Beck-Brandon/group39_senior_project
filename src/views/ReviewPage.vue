@@ -1,6 +1,19 @@
 <template>
   <div class="reviewPage">
     <h1>Course Reviews</h1>
+    
+    <!-- Debug information - always visible -->
+    <div class="debug-panel">
+      <p>Debug Info:</p>
+      <ul>
+        <li>Loading: {{ loading }}</li>
+        <li>Selected Course ID: {{ selectedCourseId }}</li>
+        <li>Courses Count: {{ courses.length }}</li>
+        <li>Reviews Count: {{ reviews.length }}</li>
+        <li>User logged in: {{ isUserLoggedIn }}</li>
+      </ul>
+      <button @click="forceRefresh" class="primary-button">Reload Courses</button>
+    </div>
 
     <!-- Course Selection -->
     <div v-if="!selectedCourseId" class="course-selection">
@@ -102,19 +115,71 @@ export default {
       this.updateSelectedCourseName();
     }
   },
+  mounted() {
+    console.log('ReviewPage mounted');
+    this.initialize();
+  },
   methods: {
+    async initialize() {
+      // Check for courseId in route params/query
+      const routeId = this.$route.params.courseId || this.$route.query.courseId;
+      if (routeId) {
+        this.selectedCourseId = Number(routeId);
+      }
+      
+      console.log('Selected course ID from route:', this.selectedCourseId);
+      
+      // Always fetch courses for the dropdown regardless
+      await this.fetchCourses();
+      
+      if (this.selectedCourseId) {
+        await this.fetchReviews();
+        this.updateSelectedCourseName();
+      }
+    },
     async fetchCourses() {
       this.loading = true;
       try {
         const response = await getCourses();
-        console.log('Courses response:', response);
-        this.courses = response.data.courses || [];
+        console.log('Courses raw response:', response); // Log the raw response
+        
+        // Handle different possible API response structures
+        if (response && response.data) {
+          if (Array.isArray(response.data)) {
+            // If API returns array directly
+            this.courses = response.data;
+          } else if (response.data.courses && Array.isArray(response.data.courses)) {
+            // If API returns {courses: [...]}
+            this.courses = response.data.courses;
+          } else {
+            // Convert object to array if needed
+            this.courses = Object.values(response.data).filter(item => item.id);
+          }
+        } else {
+          this.courses = [];
+        }
+        
+        console.log('Processed courses:', this.courses);
+        
         if (this.courses.length === 0) {
-          this.error = 'No courses available';
+          // Add a sample course for testing if none are returned
+          this.courses = [{ 
+            id: 1, 
+            title: 'Test Course (No courses found in API)',
+            description: 'This is a test course for UI debugging'
+          }];
+          this.error = 'No courses available from API - using test data';
         }
       } catch (error) {
         console.error('Error fetching courses:', error);
         this.error = 'Failed to load courses. Please try again later.';
+        
+        // Add test data for UI debugging
+        this.courses = [{ 
+          id: 1, 
+          title: 'Test Course (API Error)',
+          description: 'This is a test course for UI debugging'
+        }];
       } finally {
         this.loading = false;
       }
@@ -201,12 +266,29 @@ export default {
 .reviewPage {
   padding: 20px;
   max-width: 800px;
-  min-height: 400px; /* Add this */
-  margin: 0 auto;
+  min-height: 50vh;
+  margin: 20px auto;
   background-color: #fff;
+  border: 2px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3); /* Make shadow stronger */
-  margin-top: 30px; /* Add some top margin */
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+.debug-panel {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.debug-panel ul {
+  margin: 5px 0;
+  padding-left: 20px;
+}
+
+.debug-panel li {
+  margin-bottom: 5px;
 }
 
 h1, h2, h3 {

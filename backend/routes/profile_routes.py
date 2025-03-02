@@ -1,8 +1,10 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from ..models import db, User
+from ..models import db, User, Progress
+from datetime import datetime
 
 profile_bp = Blueprint('profile', __name__)
+progress_bp = Blueprint('progress', __name__)
 
 @profile_bp.route('/users/<int:user_id>', methods=['GET'])
 @login_required
@@ -36,26 +38,39 @@ def update_profile(user_id):
     db.session.commit()
     return jsonify({'message': 'Profile updated successfully'}), 200
 
-'''@profile_bp.route('/users/<int:user_id>', methods=['PUT'])
+@progress_bp.route('/progress', methods=['POST'])
 @login_required
-def update_profile(user_id):
-    user = User.query.get_or_404(user_id)
+def save_progress():
     data = request.get_json()
-    # Update fields if they are provided in the request data
-    if 'first_name' in data:
-        user.first_name = data['first_name']
-    if 'last_name' in data:
-        user.last_name = data['last_name']
-    if 'classroomName' in data:
-        # If storing a single classroom name
-        user.classroom_name = data['classroomName']
-    if 'phoneNumber' in data:
-        user.phone_number = data['phoneNumber']
-    if 'schoolName' in data:
-        user.school_name = data['schoolName']
-    if 'preferredContactMethod' in data:
-        user.preferred_contact_method = data['preferredContactMethod']
-    if 'gradeLevel' in data:
-        user.grade_level = data['gradeLevel']
+    
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+    
+    user_id = data.get('user_id')
+    module_id = data.get('module_id')
+    status = data.get('status', 'completed')
+    score = data.get('score')
+    
+    if not user_id or not module_id:
+        return jsonify({'error': 'User ID and Module ID are required'}), 400
+    
+    # Check if progress record exists
+    progress = Progress.query.filter_by(user_id=user_id, module_id=module_id).first()
+    
+    if progress:
+        # Update existing record
+        progress.status = status
+        progress.score = score
+        progress.last_accessed = datetime.utcnow()
+    else:
+        # Create new record
+        progress = Progress(
+            user_id=user_id,
+            module_id=module_id,
+            status=status,
+            score=score
+        )
+        db.session.add(progress)
+    
     db.session.commit()
-    return jsonify({'message': 'Profile updated successfully', 'user': user.to_dict()}), 200'''
+    return jsonify({'message': 'Progress saved successfully'}), 200

@@ -110,14 +110,23 @@
             </div>
           </div>
           <v-btn color="primary" @click="submitQuiz">Submit Quiz</v-btn>
+          <div v-if="showProgressSavedMessage" class="progress-saved-message">
+            Progress saved successfully! Your score: {{ Math.round((correctAnswers / quizQuestions.length) * 100) }}%
+          </div>
         </v-col>
       </v-row>
     </v-container>
 </template>
   
 <script>
+  // Import the module mapping and progress tracking function
+  //import { getModuleIdFromRoute } from '@/utils/moduleMap';
+  //import { saveModuleProgress } from '@/services/api';
+  import ProgressTracking from '@/mixins/progressTracking';
+
   export default {
     name: "CourseWithQuizPage",
+    mixins: [ProgressTracking],
     data() {
       return {
         courseTitle: "The CIA Triad",
@@ -181,6 +190,8 @@
         ],
         userAnswers: {}, // Stores user's answers
         feedback: {}, // Stores feedback for each question
+        showProgressSavedMessage: false, // To show progress saved message
+        correctAnswers: 0, // To store the number of correct answers
       };
     },
     methods: {
@@ -191,28 +202,19 @@
       },
 
       //Quiz Logic
-      submitQuiz() {
-        this.feedback = {}; // Reset feedback
-  
-        this.quizQuestions.forEach((question, index) => {
-          //Ensures that fill in the blank questions are not case sensitive
-          const userAnswer = this.userAnswers[index]?.trim()?.toLowerCase();
-          const correctAnswer = question.answer.toLowerCase();
-          
-          //Checks for correct answer
-          if (userAnswer === correctAnswer) {
-            this.feedback[index] = {
-              correct: true,
-              message: `Correct! The answer is "${question.answer}".`,
-            };
-          } else {
-            this.feedback[index] = {
-              correct: false,
-              message: `Incorrect. The correct answer is "${question.answer}".`,
-            };
-          }
-        });
-      },
+      async submitQuiz() {
+        // Call the mixin method instead of handling quiz logic directly
+        const result = await this.submitQuizWithTracking();
+        
+        // You can do additional things with the result
+        console.log(`Quiz completed! Score: ${result.score}%`);
+        
+        // You might want to redirect after a delay
+        setTimeout(() => {
+          // Optional: redirect to course page or next module
+          this.$router.push('/courseSelect');
+        }, 5000);
+      }
     },
   };
 </script>
@@ -274,4 +276,4 @@
     font-weight: bold;
     margin-top: 10px;
   }
-</style>  
+</style>
