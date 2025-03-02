@@ -24,7 +24,12 @@ def update_profile(user_id):
         return jsonify({"message": "Unauthorized access"}), 403
     user = current_user
     data = request.get_json()
-    user.name = data.get('name', user.name)
+    if 'name' in data:
+        user.name = data.get('name')
+        # Split the name into first_name and last_name
+        name_parts = user.name.split(' ', 1)
+        user.first_name = name_parts[0]
+        user.last_name = name_parts[1] if len(name_parts) > 1 else ''
     user.email = data.get('email', user.email)
     if 'password' in data:
         user.set_password(data['password'])

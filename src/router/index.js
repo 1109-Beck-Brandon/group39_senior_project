@@ -169,6 +169,13 @@ const routes = [
     name: "ReviewPage",
     component: ReviewPage,
     props: route => ({ courseId: Number(route.params.courseId) })
+  },
+
+  // Add or update this route
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/UserProfile.vue')
   }
 
 ]
