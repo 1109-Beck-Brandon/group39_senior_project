@@ -70,15 +70,25 @@
 
     <v-divider class="gradient-line mt-5"></v-divider>
 
+    <!-- Modify the Start Journey button to show different options based on login status -->
     <v-row justify="center" class="mt-6">
       <v-btn
+        v-if="!isLoggedIn"
         class="gradient-button"
         rounded
         large
-        href="#"
         @click="redirectToLogin"
       >
         Start journey now!
+      </v-btn>
+      <v-btn
+        v-else
+        class="gradient-button"
+        rounded
+        large
+        @click="goToDashboard"
+      >
+        Go to your dashboard
       </v-btn>
     </v-row>
 
@@ -157,11 +167,15 @@ export default {
       { src: require('../assets/HD-wallpaper-sound-skull-bones-crossbones-pirate-skull-sound-removebg-preview.png'), alt: 'Innovate' },
       { src: require('../assets/pngtree-vector-globe-icon-png-image_855070.jpg'), alt: 'Empower' },
     ],
+    isLoggedIn: false, // Add this line
   }),
 
   methods: { 
     redirectToLogin() { 
       this.$router.push('/login');
+    },
+    goToDashboard() { // Add this method
+      this.$router.push('/dashboard');
     }
   }
 }
