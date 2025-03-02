@@ -112,7 +112,6 @@
         <!-- Normal User Information Panel (this appears for student and Individual-role users) -->
         <v-card class="pa-3 mb-4">
           <h3>Name: {{ user.fullName || "Full Name" }}</h3>
-          <p><strong>Username:</strong> {{ user.username }}</p>
           <p><strong>Email:</strong> {{ user.email }}</p>
           <p><strong>Role:</strong> {{ user.role }}</p>
           <p><strong>Member Since:</strong> {{ user.membershipDuration }}</p>
@@ -221,6 +220,9 @@ export default {
   name: "UserProfileView",
   data() {
     const user = JSON.parse(localStorage.getItem("user")) || {};
+    const firstName = user.first_name || user.firstName || "";
+    const lastName = user.last_name || user.lastName || "";
+    
     return {
       user: {
         user_id: user.user_id || null,
@@ -229,7 +231,9 @@ export default {
         role: user.role || "N/A",
         profile_picture: user.profile_picture || null,
         membershipDuration: "Just Joined",
-        fullName: `${user.first_name || "First"} ${user.last_name || "Last"}`,
+        fullName: firstName && lastName ? `${firstName} ${lastName}` : (user.name || "User"),
+        first_name: firstName,
+        last_name: lastName,
         grade_level: user.grade_level || null,
         school_name: user.school_name || null,
         classroom_id: user.classroom_id || null,
@@ -270,7 +274,20 @@ export default {
       try {
         const response = await getUserProfile(this.user.user_id);
         if (response.data) {
-          this.user = { ...this.user, ...response.data };
+          // Extract first and last name, checking multiple possible field formats
+          const firstName = response.data.first_name || response.data.firstName || this.user.first_name;
+          const lastName = response.data.last_name || response.data.lastName || this.user.last_name;
+          
+          this.user = { 
+            ...this.user, 
+            ...response.data,
+            first_name: firstName,
+            last_name: lastName,
+            fullName: firstName && lastName ? `${firstName} ${lastName}` : (response.data.name || this.user.fullName)
+          };
+          
+          // Update localStorage with the latest user data
+          localStorage.setItem('user', JSON.stringify(this.user));
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
