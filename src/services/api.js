@@ -45,11 +45,13 @@ export function logout() {
 }
 
 export function register(userData) {
-  return apiClient.post("/register", {
-    name: `${userData.first_name} ${userData.last_name}`,
+  return apiClient.post('/register', {
+    name: `${userData.first_name} ${userData.last_name}`.trim(),
+    first_name: userData.first_name || '',
+    last_name: userData.last_name || '',
     email: userData.email,
     password: userData.password,
-    role: userData.role || "student",
+    role: userData.role || 'student'
   });
 }
 

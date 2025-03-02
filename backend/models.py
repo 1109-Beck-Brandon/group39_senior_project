@@ -5,7 +5,9 @@ from .extensions import db, bcrypt
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.String(128), nullable=False)  # Keep for backwards compatibility
+    first_name = db.Column(db.String(64))  # Add this line
+    last_name = db.Column(db.String(64))   # Add this line
     email = db.Column(db.String(128), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(64), default='student')

@@ -31,23 +31,18 @@ def logout():
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    name = data.get('name')
-    email = data.get('email')
-    password = data.get('password')
-    role = data.get('role', 'student')
-
-    if not name or not email or not password:
-        return jsonify({'error': 'Missing required fields'}), 400
-
-    if User.query.filter_by(email=email).first():
-        return jsonify({'error': 'Email already exists'}), 409
-
-    user = User(name=name, email=email, role=role)
-    user.set_password(password)
-
+    # Create the user with first and last name
+    user = User(
+        name=data.get('name', ''),
+        first_name=data.get('first_name', ''),
+        last_name=data.get('last_name', ''),
+        email=data.get('email'),
+        role=data.get('role', 'student')
+    )
+    user.set_password(data.get('password'))
     db.session.add(user)
     db.session.commit()
-
+    # Rest of your code
     return jsonify({'message': 'User registered successfully'}), 201
 
 @auth_bp.route('/refresh-token', methods=['POST'])
