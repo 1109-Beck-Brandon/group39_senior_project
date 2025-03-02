@@ -181,7 +181,18 @@ export default {
       this.selectedCourseId = null;
       this.reviews = [];
       this.error = '';
-    }
+    },
+    navigateToReviewPage(courseIdValue) {
+      this.$router.push({ 
+        name: 'ReviewPage',
+        query: { courseId: courseIdValue }  // If you have a course ID
+      });
+    },
+    forceRefresh() {
+      this.loading = false;
+      this.error = '';
+      this.fetchCourses();
+    },
   },
 };
 </script>
@@ -190,10 +201,12 @@ export default {
 .reviewPage {
   padding: 20px;
   max-width: 800px;
+  min-height: 400px; /* Add this */
   margin: 0 auto;
-  background-color: white;
+  background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.3); /* Make shadow stronger */
+  margin-top: 30px; /* Add some top margin */
 }
 
 h1, h2, h3 {
