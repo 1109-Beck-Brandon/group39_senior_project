@@ -6,7 +6,7 @@
         <!-- user profile Picture stuff -->
         <v-card class="pa-3 mb-4 text-center">
           <v-img
-            :src="user.profilePicture || defaultProfilePicture"
+            :src="user.profile_picture || defaultProfilePicture"
             class="rounded-circle mx-auto"
             contain
             height="150"
@@ -111,7 +111,7 @@
 
         <!-- Normal User Information Panel (this appears for student and Individual-role users) -->
         <v-card class="pa-3 mb-4">
-          <h3>Name: {{ user.fullName || "Full Name" }}</h3>
+          <h3>Name: {{ user.fullName || "User" }}</h3>
           <p><strong>Email:</strong> {{ user.email }}</p>
           <p><strong>Role:</strong> {{ user.role }}</p>
           <p><strong>Member Since:</strong> {{ user.membershipDuration }}</p>
@@ -220,8 +220,8 @@ export default {
   name: "UserProfileView",
   data() {
     const user = JSON.parse(localStorage.getItem("user")) || {};
-    const firstName = user.first_name || user.firstName || "";
-    const lastName = user.last_name || user.lastName || "";
+    const firstName = user.first_name || "";
+    const lastName = user.last_name || "";
     
     return {
       user: {
