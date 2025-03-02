@@ -63,10 +63,10 @@ export default {
   mounted() {
     console.log('HomeView mounted');
     console.log('isLoggedIn:', this.isLoggedIn);
-    if (this.isLoggedIn) {
-      console.log('Redirecting to /dashboard');
-      this.$router.push('/dashboard');
-    }
+    //if (this.isLoggedIn) {
+    //  console.log('Redirecting to /dashboard');
+    //  this.$router.push('/dashboard');
+    //}
   },
   methods: {
     async createProfile() {

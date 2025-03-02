@@ -167,8 +167,13 @@ export default {
       { src: require('../assets/HD-wallpaper-sound-skull-bones-crossbones-pirate-skull-sound-removebg-preview.png'), alt: 'Innovate' },
       { src: require('../assets/pngtree-vector-globe-icon-png-image_855070.jpg'), alt: 'Empower' },
     ],
-    isLoggedIn: false, // Add this line
   }),
+
+  computed: {
+    isLoggedIn() {
+      return !!localStorage.getItem('user');
+    }
+  },
 
   methods: { 
     redirectToLogin() { 
