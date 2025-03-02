@@ -2,6 +2,16 @@
   <div class="reviewPage">
     <h1>Review Page</h1>
 
+    <div v-if="!selectedCourseId" class="course-selection">
+      <h2>Select a Course to Review</h2>
+      <select v-model="selectedCourseId" @change="onCourseSelected">
+        <option disabled value="">Choose a course</option>
+        <option v-for="course in courses" :key="course.id" :value="course.id">
+          {{ course.title }}
+        </option>
+      </select>
+    </div>
+
     <!-- Review Form (Add new review directly) -->
     <form @submit.prevent="submitReview">
       <textarea v-model="newReview" placeholder="Write a review..." rows="5"></textarea>
@@ -32,18 +42,20 @@
 </template>
 
 <script>
-import { getReviews, postReview } from '@/services/api';
+import { getReviews, postReview, getCourses } from '@/services/api';
 import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg';
 
 export default {
   props: {
     courseId: {
       type: Number,
-      required: true,
+      required: false,
     },
   },
   data() {
     return {
+      selectedCourseId: this.courseId || null,
+      courses: [],
       reviews: [],        
       newReview: '',      
       newRating: null,    
@@ -52,12 +64,21 @@ export default {
     };
   },
   async created() {
-    await this.fetchReviews();
+    if (!this.selectedCourseId) {
+      try {
+        const response = await getCourses();
+        this.courses = response.data.courses;
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      }
+    } else {
+      await this.fetchReviews();
+    }
   },
   methods: {
     async fetchReviews() {
       try {
-        const response = await getReviews(this.courseId);
+        const response = await getReviews(this.selectedCourseId);
         this.reviews = response.data.reviews.map(review => ({
           userName: `User ${review.user_id}`,
           rating: review.rating,
@@ -81,7 +102,7 @@ export default {
         return;
       }
       try {
-        await postReview(this.courseId, {
+        await postReview(this.selectedCourseId, {
           comment: this.newReview.trim(),
           rating: this.newRating,
           user_id: user.user_id,
@@ -92,6 +113,11 @@ export default {
       } catch (error) {
         console.error('Error submitting review:', error);
         this.error = 'Error submitting review';
+      }
+    },
+    onCourseSelected() {
+      if (this.selectedCourseId) {
+        this.fetchReviews();
       }
     },
   },

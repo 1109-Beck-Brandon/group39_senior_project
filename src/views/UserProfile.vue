@@ -180,22 +180,33 @@
           </v-row>
         </v-card>
 
-        <!-- Enrolled courses panel, also clickable and redirects to the Courses page based on the course title -->
+        <!-- Enrolled courses panel with responsive layout -->
         <v-card class="pa-3 mb-4">
           <h3>Currently Enrolled Courses</h3>
-          <v-row>
+          <div v-if="courses.length === 0" class="text-center pa-3">
+            <p>You are not enrolled in any courses yet.</p>
+            <v-btn color="primary" @click="navigateToCourses" class="mt-2">Browse Courses</v-btn>
+          </div>
+          <v-row v-else>
             <v-col 
               v-for="(course, index) in courses" 
               :key="index" 
-              cols="4"
+              cols="12" sm="6" md="4"
             >
               <v-card 
                 class="pa-3 course-panel" 
                 outlined 
+                height="100%"
                 @click="navigateToCourse(course.name)"
               >
                 <p><strong>Course Name:</strong> {{ course.name }}</p>
                 <p><strong>Progress:</strong> {{ course.progress }}%</p>
+                <v-progress-linear
+                  v-model="course.progress"
+                  color="success"
+                  height="10"
+                  rounded
+                ></v-progress-linear>
               </v-card>
             </v-col>
           </v-row>
@@ -560,6 +571,8 @@ canvas {
   background-color: #28293d;
   border-radius: 10px;
   padding: 10px;
+  max-width: 100%;
+  height: auto !important;
 }
 
 h1, h3 {
@@ -600,6 +613,26 @@ p {
   text-transform: uppercase;
   margin-left: auto;
 }
+.course-panel {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.course-panel:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.v-container.fluid {
+  max-width: 100%;
+  overflow-x: hidden;
+  padding-bottom: 30px;
+}
+
 .course-panel {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;

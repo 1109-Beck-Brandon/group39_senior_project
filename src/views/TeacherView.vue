@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { getTeacherData, getStudentsByClassroom, getMessages, deleteMessage } from '@/services/api';
+import { getUserProfile, getStudentsByClassroom, getMessages, deleteMessage } from '@/services/api';
 
 export default {
   name: "TeacherView",
@@ -103,15 +103,46 @@ export default {
           this.$router.push('/login');
           return;
         }
-        const teacherResponse = await getTeacherData(user.user_id);
-        this.teacher = teacherResponse.data;
-        this.classroom = this.teacher.classroom;
-        const studentsResponse = await getStudentsByClassroom(this.classroom.id);
-        this.students = studentsResponse.data;
-        const messagesResponse = await getMessages();
-        this.messages = messagesResponse.data;
+        
+        // Use getUserProfile instead of getTeacherData
+        const userResponse = await getUserProfile(user.user_id);
+        this.teacher = {
+          name: userResponse.data.first_name + ' ' + userResponse.data.last_name,
+          ...userResponse.data
+        };
+        
+        // Check if classroom data exists or create default values
+        this.classroom = this.teacher.classroom || {
+          name: "Your Classroom",
+          id: "No ID available" 
+        };
+        
+        // Try to get students if classroom exists
+        if (this.classroom.id && this.classroom.id !== "No ID available") {
+          try {
+            const studentsResponse = await getStudentsByClassroom(this.classroom.id);
+            this.students = studentsResponse.data;
+          } catch (err) {
+            console.log("No students found or classroom doesn't exist yet");
+            this.students = [];
+          }
+        }
+        
+        // Get messages if available
+        try {
+          const messagesResponse = await getMessages();
+          this.messages = messagesResponse.data;
+        } catch (err) {
+          console.log("No messages available");
+          this.messages = [];
+        }
       } catch (error) {
         console.error("Error fetching teacher data:", error);
+        // Set default values when API fails
+        this.teacher = { name: "Teacher" };
+        this.classroom = { name: "Your Classroom", id: "Create a classroom" };
+        this.students = [];
+        this.messages = [];
       }
     },
     openClassroomModal() {
