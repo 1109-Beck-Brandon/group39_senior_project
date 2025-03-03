@@ -113,7 +113,7 @@ class Progress(db.Model):
     last_accessed = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<Progress {self.progress_id}>'
+        return f'<Progress {self.id}>'
 
 class Resource(db.Model):
     __tablename__ = 'resources'

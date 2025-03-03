@@ -15,13 +15,18 @@ apiClient.interceptors.response.use(
   response => response,
   async error => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Don't retry if the request is for the refresh-token endpoint itself
+    if (error.response?.status === 401 && !originalRequest._retry && 
+        !originalRequest.url.includes('/refresh-token')) {
       originalRequest._retry = true;
       try {
         await apiClient.post('/refresh-token');
         return apiClient(originalRequest);
       } catch (refreshError) {
-        return Promise.reject(refreshError.response?.data || { message: 'API Request Failed' });
+        // Handle refresh failure - clear user data and redirect
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return Promise.reject(refreshError.response?.data || { message: 'Session expired' });
       }
     }
     return Promise.reject(error.response?.data || { message: 'API Request Failed' });
@@ -139,15 +144,7 @@ export function getData() {
  * @returns {Promise} - API response
  */
 export function saveModuleProgress(userId, moduleId, score) {
-  const apiClient = window.axios || require('axios').create({
-    baseURL: process.env.VUE_APP_API_URL || 'https://cybersecurity-learning-platform.onrender.com',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    timeout: 5000 // Add a timeout
-  });
-  
-  return apiClient.post('/progress', {
+  return apiClient.post('/api/progress', {
     user_id: userId,
     module_id: moduleId,
     status: 'completed',

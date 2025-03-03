@@ -15,6 +15,7 @@ export function saveModuleProgress(userId, moduleId, score) {
     headers: {
       'Content-Type': 'application/json',
     },
+    timeout: 5000  // Add a timeout
   });
   
   return apiClient.post('/progress', {
