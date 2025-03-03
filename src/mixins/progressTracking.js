@@ -10,13 +10,8 @@ import { getModuleIdFromRoute, getCourseIdFromModuleId } from '@/utils/moduleMap
  * @returns {Promise} - API response
  */
 export function saveModuleProgress(userId, moduleId, score) {
-  const apiClient = window.axios || require('axios').create({
-    baseURL: process.env.VUE_APP_API_URL || 'https://cybersecurity-learning-platform.onrender.com',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    timeout: 5000  // Add a timeout
-  });
+  // Use api client from services/api.js instead of creating a new one
+  const { apiClient } = require('@/services/api');
   
   return apiClient.post('/progress', {
     user_id: userId,
