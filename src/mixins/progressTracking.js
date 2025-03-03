@@ -181,8 +181,53 @@ export default {
         // Save back to localStorage
         localStorage.setItem('moduleProgress', JSON.stringify(localProgress));
         console.log('Progress saved locally', { moduleId, score });
+        
+        // Add this to sync local progress when connection is restored
+        this.scheduleSyncProgress(userId);
       } catch (e) {
         console.error('Error saving progress locally', e);
+      }
+    },
+
+    // Add this method to attempt syncing local progress when online
+    scheduleSyncProgress(userId) {
+      // Only set up sync once
+      if (this._syncScheduled) return;
+      this._syncScheduled = true;
+      
+      // Try to sync when online
+      window.addEventListener('online', () => {
+        console.log('Connection restored, syncing progress...');
+        this.syncLocalProgress(userId);
+      });
+    },
+
+    // Add this method to sync local progress with the server
+    async syncLocalProgress(userId) {
+      try {
+        const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+        const userProgress = localProgress[userId];
+        
+        if (!userProgress) return;
+        
+        // Try to sync each module's progress
+        for (const [moduleId, data] of Object.entries(userProgress)) {
+          try {
+            await this.saveModuleProgress(userId, Number(moduleId), data.score);
+            console.log(`Synced module ${moduleId} progress`);
+            
+            // Remove from local storage after successful sync
+            delete userProgress[moduleId];
+          } catch (err) {
+            console.log(`Failed to sync module ${moduleId} progress`, err);
+          }
+        }
+        
+        // Update local storage
+        localProgress[userId] = userProgress;
+        localStorage.setItem('moduleProgress', JSON.stringify(localProgress));
+      } catch (err) {
+        console.error('Error syncing local progress', err);
       }
     }
   }
