@@ -139,6 +139,14 @@ export function getData() {
  * @returns {Promise} - API response
  */
 export function saveModuleProgress(userId, moduleId, score) {
+  const apiClient = window.axios || require('axios').create({
+    baseURL: process.env.VUE_APP_API_URL || 'https://cybersecurity-learning-platform.onrender.com',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    timeout: 5000 // Add a timeout
+  });
+  
   return apiClient.post('/progress', {
     user_id: userId,
     module_id: moduleId,

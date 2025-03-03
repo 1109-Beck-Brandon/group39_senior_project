@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from ..models import Progress, db
 from datetime import datetime
 
-progress_bp = Blueprint('progress', __name__)
+progress_bp = Blueprint('progress', __name__, url_prefix='/progress')
 
 @progress_bp.route('/', methods=['POST', 'OPTIONS'])
 def save_progress():
@@ -45,3 +45,10 @@ def save_progress():
     
     db.session.commit()
     return jsonify({'message': 'Progress saved successfully'}), 200
+
+@progress_bp.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')  # Or limit to your domains
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
