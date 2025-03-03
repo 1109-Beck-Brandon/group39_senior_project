@@ -109,7 +109,7 @@ export function updateGradebook(userId, data) {
 }
 
 export function getCourses() {
-  return apiClient.get('/api/courses');
+  return apiClient.get('/courses');
 }
 
 export function getCourse(courseId) {
@@ -121,11 +121,11 @@ export function enrollCourse(userId, courseId) {
 }
 
 export function getReviews(courseId) {
-  return apiClient.get(`/api/courses/${courseId}/reviews`);
+  return apiClient.get(`/courses/${courseId}/reviews`);
 }
 
 export function postReview(courseId, reviewData) {
-  return apiClient.post(`/api/courses/${courseId}/reviews`, reviewData);
+  return apiClient.post(`/courses/${courseId}/reviews`, reviewData);
 }
 
 export function resetPassword(payload) {
@@ -144,7 +144,7 @@ export function getData() {
  * @returns {Promise} - API response
  */
 export function saveModuleProgress(userId, moduleId, score) {
-  return apiClient.post('/api/progress', {
+  return apiClient.post('/progress', {  // Remove 'api/' prefix
     user_id: userId,
     module_id: moduleId,
     status: 'completed',
