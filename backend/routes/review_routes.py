@@ -31,3 +31,18 @@ def post_review(course_id):
     db.session.add(review)
     db.session.commit()
     return jsonify({'message': 'Review submitted successfully'}), 201
+
+@review_bp.route('/courses/<int:course_id>/reviews', methods=['OPTIONS'])
+def options_courses_reviews(course_id):
+    response = jsonify({})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    return response
+
+@review_bp.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    return response

@@ -2,6 +2,7 @@ from flask import Flask
 from .config import Config
 from .models import User
 from .extensions import db, migrate, cors, bcrypt, login_manager, mail
+from .routes.data_routes import data_bp
 from .routes.auth_routes import auth_bp
 from .routes.profile_routes import profile_bp
 from .routes.teacher_routes import teacher_bp
@@ -36,6 +37,7 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    app.register_blueprint(data_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(teacher_bp)

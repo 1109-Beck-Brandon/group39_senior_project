@@ -104,7 +104,7 @@ export function updateGradebook(userId, data) {
 }
 
 export function getCourses() {
-  return apiClient.get('/courses');
+  return apiClient.get('/api/courses');
 }
 
 export function getCourse(courseId) {
@@ -116,11 +116,11 @@ export function enrollCourse(userId, courseId) {
 }
 
 export function getReviews(courseId) {
-  return apiClient.get(`/courses/${courseId}/reviews`);
+  return apiClient.get(`/api/courses/${courseId}/reviews`);
 }
 
 export function postReview(courseId, reviewData) {
-  return apiClient.post(`/courses/${courseId}/reviews`, reviewData);
+  return apiClient.post(`/api/courses/${courseId}/reviews`, reviewData);
 }
 
 export function resetPassword(payload) {
