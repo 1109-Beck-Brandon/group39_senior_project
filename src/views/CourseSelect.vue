@@ -38,8 +38,8 @@
       return {
         courses: [
           { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
-          { name: "Sample Course 202", description: "This is a sample course to test the slide bar", progress: 0 },
-          { name: "Sample Course 303", description: "This is a sample course to test the slide bar", progress: 0 },
+          { name: "NIST Cybersecurity Framework", description: "Learn about the NIST Cybersecurity Framework", progress: 0 },
+          { name: "Digital Forensics Fundamentals", description: "Learn the fundamentals of Digital Forensics", progress: 0 },
           // Add more courses as needed
         ],
       };
