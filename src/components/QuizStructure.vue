@@ -88,7 +88,7 @@
 </template>
   
 <script>
-import { progressTracking } from '@/mixins/progressTracking.js';
+import progressTracking from '@/mixins/progressTracking.js';
 
 export default {
   name: "QuizStructure",

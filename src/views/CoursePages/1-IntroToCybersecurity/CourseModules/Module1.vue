@@ -77,7 +77,19 @@
       </v-row>
 
       <!-- Add Quiz Component -->
-      <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+      <QuizStructure 
+        :quizQuestions="quizQuestions" 
+        v-model:showQuizDialog="showQuizDialog"
+        :moduleId="1"
+      />
+
+      <!-- Success Message -->
+      <v-snackbar v-model="showProgressSavedMessage" :timeout="3000" color="success">
+        Progress saved successfully!
+        <template v-slot:action="{ attrs }">
+          <v-btn text v-bind="attrs" @click="showProgressSavedMessage = false">Close</v-btn>
+        </template>
+      </v-snackbar>
 
   </v-container>
 </template>
@@ -85,10 +97,11 @@
 <script>
 
 import QuizStructure from '@/components/QuizStructure.vue';
+import progressTracking from '@/mixins/progressTracking.js';
 
   export default {
     name: "CourseWithQuizPage",
-    
+    mixins: [progressTracking],  // Add this line
     components: {
       QuizStructure,
     },
@@ -98,6 +111,7 @@ import QuizStructure from '@/components/QuizStructure.vue';
         courseTitle: "The CIA Triad",
         currentSlide: 0,
         showQuizDialog: false,
+        showProgressSavedMessage: false, // Add this line
 
         //Items for CIA Triad Stepper
         CIATriadItems: [
@@ -185,5 +199,5 @@ import QuizStructure from '@/components/QuizStructure.vue';
     border-radius: 8px;
     margin-bottom: 30px;
   }
-</style>  
+</style>
 
