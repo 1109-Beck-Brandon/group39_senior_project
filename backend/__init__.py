@@ -1,6 +1,7 @@
 from flask import Flask
 from .config import Config
-from .extensions import db, migrate, cors, bcrypt, login_manager
+from .models import User
+from .extensions import db, migrate, cors, bcrypt, login_manager, mail
 from .routes.auth_routes import auth_bp
 from .routes.profile_routes import profile_bp
 from .routes.teacher_routes import teacher_bp
@@ -9,6 +10,7 @@ from .routes.course_routes import course_bp
 from .routes.review_routes import review_bp
 from .routes.password_reset_routes import password_reset_bp
 from .routes.enrollment_routes import enrollment_bp
+from .routes.progress_routes import progress_bp
 
 def create_app():
     app = Flask(__name__)
@@ -16,6 +18,7 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+    mail.init_app(app)
 
     cors.init_app(app, resources={
         r"/*": {
@@ -29,8 +32,6 @@ def create_app():
     bcrypt.init_app(app)
     login_manager.init_app(app)
 
-    from .models import User
-
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
@@ -43,5 +44,6 @@ def create_app():
     app.register_blueprint(review_bp)
     app.register_blueprint(password_reset_bp)
     app.register_blueprint(enrollment_bp)
+    app.register_blueprint(progress_bp, url_prefix='/progress')
 
     return app
