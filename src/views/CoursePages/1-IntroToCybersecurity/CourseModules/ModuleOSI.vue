@@ -1,14 +1,12 @@
 <template>
-
   <!-- Back Button -->
-  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray;" @click="goBack">
+  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray; z-index: 10;" @click="goBack">
     <v-icon>mdi-arrow-left</v-icon>
   </v-btn>
 
-  <v-container fluid>
-    <!-- Full Page Content -->
-    <v-row justify="center" align="center" style="min-height: 100vh;">
-      <!-- Text Section -->
+  <v-container fluid class="main-container">
+    <!-- Header -->
+    <v-row justify="center" align="center">
       <v-col cols="12" md="8" class="text-center">
         <h2 class="table-theme">The OSI Model</h2>
         <p class="table-description">
@@ -19,113 +17,175 @@
           layer shows the path the data travels across the networking system and how it is transformed during each step.
         </p>
       </v-col>
-
-      <!-- Table Section -->
-      <v-col cols="12" md="8">
-        <div class="table-box">
-          <!-- Scrollable Table -->
-          <div class="table-scroll">
-            <v-table>
-              <thead>
-                <tr>
-                  <th>Number</th>
-                  <th>Layer</th>
-                  <th>Description</th>
-                  <th>TCP Layer</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(layer, index) in layers2" :key="index">
-                  <td>{{ layer.number }}</td>
-                  <td>{{ layer.layer }}</td>
-                  <td>{{ layer.description }}</td>
-                  <td>{{ layer.tcp }}</td>
-                </tr>
-              </tbody>
-            </v-table>
-          </div>
-        </div>
-      </v-col>
-      <v-col cols="12" md="8">
-        <p class="text-below">
-          The following layers are a representation of network data path.
-          So, what are they exactly? It is important that we go from the top to bottom, since the closest layer to us, humans, is:
-        </p>
-        <ul class="text-below-list">
-          <li><strong>Application Layer:</strong> The closest layer for the human to understand. Data is represented and shown as understandable pieces of data.</li>
-          <li><strong>Presentation Layer:</strong> Translates, encrypts, and compresses data before sending it to the Application layer.</li>
-          <li><strong>Session Layer:</strong> Manages sessions (authentication, authorization, start/close) and connections between devices.</li>
-          <li><strong>Transport Layer:</strong> Ensures reliable data delivery using TCP and UDP, keeping data in order and avoiding duplication.</li>
-          <li><strong>Network Layer:</strong> Routes data packets and determines paths across the network.</li>
-          <li><strong>Data Link Layer:</strong> Handles reliable data transmission over a physical link and manages MAC addresses.</li>
-          <li><strong>Physical Layer:</strong> Processes raw binary data and handles the physical connection between devices.</li>
-        </ul>
-        <p class="text-below">
-          Don't worry if it is hard or doesn't make sense. We will go deeper into the OSI model later. For now, it is important to understand the basic concept.
-        </p>
-      </v-col>
-      <!-- Quiz Section -->
-      <v-row>
-        <v-col cols="12">
-          <h2 class="quiz-title">Module Quiz</h2>
-          <div class="quiz-container">
-            <div
-              v-for="(question, index) in quizQuestions"
-              :key="index"
-              class="quiz-question"
-            >
-              <p class="question-text">{{ question.text }}</p>
-  
-              <!-- Multiple Choice -->
-              <div v-if="question.type === 'multiple-choice'" class="answer-options">
-                <v-radio-group v-model="userAnswers[index]" row>
-                  <v-radio
-                    v-for="(option, optIndex) in question.options"
-                    :key="optIndex"
-                    :label="option"
-                    :value="option"
-                  ></v-radio>
-                </v-radio-group>
-              </div>
-  
-              <!-- Fill in the Blank -->
-              <div v-else-if="question.type === 'fill-in-the-blank'" class="answer-input">
-                <v-text-field
-                  v-model="userAnswers[index]"
-                  label="Your Answer"
-                  outlined
-                ></v-text-field>
-              </div>
-  
-              <!-- Feedback -->
-              <p
-                v-if="feedback[index]"
-                :class="feedback[index].correct ? 'feedback-correct' : 'feedback-wrong'"
-              >
-                {{ feedback[index].message }}
-              </p>
-            </div>
-          </div>
-          <v-btn color="primary" @click="submitQuiz">Submit Quiz</v-btn>
-        </v-col>
-      </v-row>
     </v-row>
+
+    <!-- Text-only Carousel Section -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="9">
+        <v-carousel
+          v-model="currentSlide"
+          height="300"
+          hide-delimiter-background
+          show-arrows="hover"
+          :continuous="false"
+        >
+          <v-carousel-item v-for="(layer, index) in layers2" :key="index">
+            <v-card class="carousel-card h-100" elevation="4">
+              <v-container fluid>
+                <v-row>
+                  <v-col cols="12" class="pa-4">
+                    <div class="layer-content text-center">
+                      <h3 class="layer-title text-h4 mb-2">Layer {{ layer.number }}: {{ layer.layer }}</h3>
+                      <div class="layer-subtitle mb-4">TCP/IP Equivalent: {{ layer.tcp }}</div>
+                      <div class="layer-description">{{ layer.description }}</div>
+                      <div class="layer-details mt-4">
+                        <div class="example-text">{{ layer.example }}</div>
+                        <div class="protocols mt-2" v-if="layer.protocols">
+                          <strong>Key Protocols/Technologies:</strong> {{ layer.protocols }}
+                        </div>
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-carousel-item>
+        </v-carousel>
+
+        <!-- Progress Bar -->
+        <v-card class="mt-4 mb-6" elevation="2">
+          <v-card-text class="pa-2">
+            <div class="progress-text d-flex justify-space-between mb-1">
+              <span>Layer {{ layers2[currentSlide].number }}: {{ layers2[currentSlide].layer }}</span>
+              <span>{{ currentSlide + 1 }} of {{ layers2.length }}</span>
+            </div>
+            <v-progress-linear
+              :value="((currentSlide + 1) / layers2.length) * 100"
+              height="12"
+              color="primary"
+              rounded
+              striped
+            ></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Summary Section -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="3" class="pa-4 mb-6">
+          <h3 class="text-h5 mb-4">OSI Model Summary</h3>
+          <p class="text-below">
+            The following layers are a representation of network data path.
+            So, what are they exactly? It is important that we go from the top to bottom, since the closest layer to us, humans, is:
+          </p>
+          <ul class="text-below-list">
+            <li><strong>Application Layer:</strong> The closest layer for the human to understand. Data is represented and shown as understandable pieces of data.</li>
+            <li><strong>Presentation Layer:</strong> Translates, encrypts, and compresses data before sending it to the Application layer.</li>
+            <li><strong>Session Layer:</strong> Manages sessions (authentication, authorization, start/close) and connections between devices.</li>
+            <li><strong>Transport Layer:</strong> Ensures reliable data delivery using TCP and UDP, keeping data in order and avoiding duplication.</li>
+            <li><strong>Network Layer:</strong> Routes data packets and determines paths across the network.</li>
+            <li><strong>Data Link Layer:</strong> Handles reliable data transmission over a physical link and manages MAC addresses.</li>
+            <li><strong>Physical Layer:</strong> Processes raw binary data and handles the physical connection between devices.</li>
+          </ul>
+          <p class="text-below">
+            Don't worry if it is hard or doesn't make sense. We will go deeper into the OSI model later. For now, it is important to understand the basic concept.
+          </p>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Quiz Section -->
+    <v-row>
+      <v-col cols="12">
+        <h1>Module Quiz</h1>
+        <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
+        <br><br><br><br><br>
+      </v-col>
+    </v-row>
+
+    <!-- Add Quiz Component -->
+    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+
+    
   </v-container>
 </template>
+
 <script>
+
+import QuizStructure from '@/components/QuizStructure.vue';
+
 export default {
-  name: "OSITable",
+  name: "OSICarousel",
+
+  components: {
+    QuizStructure,
+  },
+
   data() {
     return {
-      // Static data for the table (Layers)
+      currentSlide: 0,
+
+      showQuizDialog: false,
+
       layers2: [
-        { number: "7", layer: "Application Layer", description: "The closest layer to the end user, allowing interaction with the network through applications.", tcp: "Application Layer" },
-        { number: "6", layer: "Presentation Layer", description: "Prepares data for the application layer by ensuring it is in a readable format.", tcp: "Application Layer" },
-        { number: "5", layer: "Session Layer", description: "Manages sessions or connections between applications.", tcp: "Application Layer" },
-        { number: "4", layer: "Transport Layer", description: "Ensures reliable data transfer between devices, providing error recovery and flow control.", tcp: "Transport Layer" },
-        { number: "3", layer: "Network Layer", description: "Handles routing and addressing of data to ensure it reaches the correct destination across multiple networks.", tcp: "Network/Internet Layer" },
-        { number: "2", layer: "Data Link Layer", description: "Ensures reliable data transfer between two devices on the same network.", tcp: "Data Link/Link Layer" },
-        { number: "1", layer: "Physical Layer", description: "Deals with the physical connection between devices and the transmission of raw binary data (0s and 1s).", tcp: "Physical/Link Layer" },
+        { 
+          number: "7", 
+          layer: "Application Layer", 
+          description: "The closest layer to the end user, allowing interaction with the network through applications.", 
+          tcp: "Application Layer",
+          example: "This layer directly interacts with software applications. Examples include web browsers, email clients, and file transfer tools.",
+          protocols: "HTTP, HTTPS, FTP, SMTP, DNS, DHCP, SSH, Telnet"
+        },
+        { 
+          number: "6", 
+          layer: "Presentation Layer", 
+          description: "Prepares data for the application layer by ensuring it is in a readable format.", 
+          tcp: "Application Layer",
+          example: "This layer is responsible for data translation, encryption, and compression. It converts data from application format to network format and vice versa.",
+          protocols: "SSL/TLS, JPEG, GIF, MPEG, ASCII, EBCDIC"
+        },
+        { 
+          number: "5", 
+          layer: "Session Layer", 
+          description: "Manages sessions or connections between applications.", 
+          tcp: "Application Layer",
+          example: "This layer establishes, maintains, and terminates communication sessions between devices. It handles authentication and authorization.",
+          protocols: "NetBIOS, RPC, PPTP, SAP, SQL"
+        },
+        { 
+          number: "4", 
+          layer: "Transport Layer", 
+          description: "Ensures reliable data transfer between devices, providing error recovery and flow control.", 
+          tcp: "Transport Layer",
+          example: "This layer manages end-to-end communication, ensuring data arrives complete and in the right order. TCP provides reliability while UDP offers speed.",
+          protocols: "TCP, UDP, SCTP, DCCP"
+        },
+        { 
+          number: "3", 
+          layer: "Network Layer", 
+          description: "Handles routing and addressing of data to ensure it reaches the correct destination across multiple networks.", 
+          tcp: "Network/Internet Layer",
+          example: "This layer determines the optimal path for data to travel across networks. IP addressing and routing happens here.",
+          protocols: "IP, ICMP, IGMP, RIP, OSPF, BGP"
+        },
+        { 
+          number: "2", 
+          layer: "Data Link Layer", 
+          description: "Ensures reliable data transfer between two devices on the same network.", 
+          tcp: "Data Link/Link Layer",
+          example: "This layer handles node-to-node communication and error detection. It includes the MAC and LLC sublayers, managing physical addressing.",
+          protocols: "Ethernet, PPP, HDLC, Frame Relay, ATM, ARP"
+        },
+        { 
+          number: "1", 
+          layer: "Physical Layer", 
+          description: "Deals with the physical connection between devices and the transmission of raw binary data (0s and 1s).", 
+          tcp: "Physical/Link Layer",
+          example: "This layer transmits bits over a physical medium. It deals with hardware aspects such as cables, hubs, and network interface cards.",
+          protocols: "USB, Ethernet physical layer, Bluetooth, IEEE 802.11, DSL, ISDN"
+        },
       ],
       // Quiz data
       quizQuestions: [
@@ -139,7 +199,6 @@ export default {
           ],
           answer: "Application Layer",
         },
-
         {
           text: "Consider your data is at the stage of being encrypted. What layer might that be?",
           type: "multiple-choice",
@@ -150,54 +209,44 @@ export default {
           ],
           answer: "Presentation Layer",
         },
-
         {
-          text: "Name three closests layers to the human (Try this one without looking at the table!)",
-          type: "fill-in-the-blank",
-          answer: "Application, Presentation, Session",
+          text: "Name three closest layers to the human (do NOT include the word 'layer' after each name)",
+          type: "fill-in-the-blank-multiple",
+          answers: ["Application", "Presentation", "Session"],
         },
       ],
-      userAnswers: [],
-      feedback: [],
     };
   },
   methods: {
-
-    //Back Button
+    // Back Button
     goBack() {
-      this.$router.go(-1); 
-    },
-
-    submitQuiz() {
-      this.feedback = this.quizQuestions.map((question, index) => {
-        const userAnswer = this.userAnswers[index];
-        const isCorrect =
-          question.type === "multiple-choice"
-            ? userAnswer === question.answer
-            : userAnswer?.trim().toLowerCase() ===
-              question.answer.toLowerCase();
-        return {
-          correct: isCorrect,
-          message: isCorrect
-            ? "Correct! Great job!"
-            : `Incorrect. The correct answer is: ${question.answer}`,
-        };
-      });
+      this.$router.go(-1);
     },
   },
 };
-
 </script>
 
 <style scoped>
 html,
 body,
 #app {
-  background-color: white;
-  height: 100%;
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+}
+
+.main-container {
+  position: relative;
+  background-color: #f8f9fa;
+  background-image: 
+    linear-gradient(rgba(173, 216, 230, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(173, 216, 230, 0.3) 1px, transparent 1px),
+    radial-gradient(circle, rgba(100, 149, 237, 0.1) 2px, transparent 2px);
+  background-size: 50px 50px, 50px 50px, 40px 40px;
+  background-position: 0 0, 0 0, 20px 20px;
+  min-height: 100vh;
+  padding-top: 20px;
+  padding-bottom: 60px;
 }
 
 .text-center {
@@ -205,57 +254,75 @@ body,
   margin-bottom: 30px;
 }
 
-.table-box {
-  padding: 20px;
-  border: 2px solid #42b983; 
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
 .table-theme {
-  font-size: 1.8em;
-  color: #000000;
+  font-size: 2.2em;
+  color: #2c3e50;
   margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .table-description {
   font-size: 1.2em;
-  color: #000000;
+  color: #34495e;
   margin-bottom: 20px;
+  line-height: 1.6;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.carousel-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 100%;
+  max-width: 100%;
+  border-left: 5px solid #3498db;
+}
+
+.layer-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.layer-title {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.layer-subtitle {
+  color: #7f8c8d;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.layer-description {
+  font-size: 1.1em;
+  color: #2c3e50;
+  line-height: 1.6;
+  max-width: 800px;
   margin: 0 auto;
 }
 
-th,
-td {
-  padding: 10px;
-  border: 1px solid #000000;
-  text-align: left;
+.layer-details {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-th {
-  background-color: #ffffff;
-  font-weight: bold;
+.example-text {
+  font-size: 1em;
+  color: #34495e;
+  line-height: 1.5;
 }
 
-tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-tr:hover {
-  background-color: #f1f1f1;
+.protocols {
+  font-size: 0.95em;
+  color: #34495e;
 }
 
 .text-below {
-  font-size: 1em;
-  color: #000000;
+  font-size: 1.1em;
+  color: #2c3e50;
   text-align: left;
-  list-style: none;
   margin-top: 20px;
   line-height: 1.6;
 }
@@ -264,13 +331,22 @@ tr:hover {
   margin-top: 10px;
   margin-left: 20px;
   text-align: left;
-  list-style: none;
-  color: #000000; 
-  font-size: 1em;
+  list-style-type: disc;
+  color: #2c3e50;
+  font-size: 1.1em;
   line-height: 1.6;
 }
 
 .text-below-list li {
   margin-bottom: 10px;
+}
+
+.progress-text {
+  font-size: 0.9em;
+  color: #2c3e50;
+}
+
+.h-100 {
+  height: 100%;
 }
 </style>

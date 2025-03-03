@@ -70,68 +70,34 @@
       <!-- Quiz Section -->
       <v-row>
         <v-col cols="12">
-          <h2 class="quiz-title">Module Quiz</h2>
-          <div class="quiz-container">
-            <div
-              v-for="(question, index) in quizQuestions"
-              :key="index"
-              class="quiz-question"
-            >
-              <p class="question-text">{{ question.text }}</p>
-  
-              <!-- Multiple Choice -->
-              <div v-if="question.type === 'multiple-choice'" class="answer-options">
-                <v-radio-group v-model="userAnswers[index]" row>
-                  <v-radio
-                    v-for="(option, optIndex) in question.options"
-                    :key="optIndex"
-                    :label="option"
-                    :value="option"
-                  ></v-radio>
-                </v-radio-group>
-              </div>
-  
-              <!-- Fill in the Blank -->
-              <div v-else-if="question.type === 'fill-in-the-blank'" class="answer-input">
-                <v-text-field
-                  v-model="userAnswers[index]"
-                  label="Your Answer"
-                  outlined
-                ></v-text-field>
-              </div>
-  
-              <!-- Feedback -->
-              <p
-                v-if="feedback[index]"
-                :class="feedback[index].correct ? 'feedback-correct' : 'feedback-wrong'"
-              >
-                {{ feedback[index].message }}
-              </p>
-            </div>
-          </div>
-          <v-btn color="primary" @click="submitQuiz">Submit Quiz</v-btn>
-          <div v-if="showProgressSavedMessage" class="progress-saved-message">
-            Progress saved successfully! Your score: {{ Math.round((correctAnswers / quizQuestions.length) * 100) }}%
-          </div>
+          <h1>Module Quiz</h1>
+          <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
+          <br><br><br><br><br>
         </v-col>
       </v-row>
-    </v-container>
+
+      <!-- Add Quiz Component -->
+      <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+
+  </v-container>
 </template>
   
 <script>
-  // Import the module mapping and progress tracking function
-  //import { getModuleIdFromRoute } from '@/utils/moduleMap';
-  //import { saveModuleProgress } from '@/services/api';
-  import ProgressTracking from '@/mixins/progressTracking';
+
+import QuizStructure from '@/components/QuizStructure.vue';
 
   export default {
     name: "CourseWithQuizPage",
-    mixins: [ProgressTracking],
+    
+    components: {
+      QuizStructure,
+    },
+
     data() {
       return {
         courseTitle: "The CIA Triad",
-
         currentSlide: 0,
+        showQuizDialog: false,
 
         //Items for CIA Triad Stepper
         CIATriadItems: [
@@ -165,6 +131,11 @@
         //Add quiz questions to this
         quizQuestions: [
           {
+            text: "What are the three main components of the CIA Triad? (Check your spelling!)",
+            type: "fill-in-the-blank-multiple",
+            answers: ["Confidentiality", "Integrity", "Availability"],
+          },
+          {
             text: "Which part of the CIA Triad ensures that specific data can only be accessed by those who are allowed to?",
             type: "multiple-choice",
             options: ["Confidentiality", "Integrity", "Availability", "Non-repudiation"],
@@ -188,10 +159,6 @@
             answer: "Authenticity",
           },
         ],
-        userAnswers: {}, // Stores user's answers
-        feedback: {}, // Stores feedback for each question
-        showProgressSavedMessage: false, // To show progress saved message
-        correctAnswers: 0, // To store the number of correct answers
       };
     },
     methods: {
@@ -200,21 +167,6 @@
       goBack() {
       this.$router.go(-1); 
       },
-
-      //Quiz Logic
-      async submitQuiz() {
-        // Call the mixin method instead of handling quiz logic directly
-        const result = await this.submitQuizWithTracking();
-        
-        // You can do additional things with the result
-        console.log(`Quiz completed! Score: ${result.score}%`);
-        
-        // You might want to redirect after a delay
-        setTimeout(() => {
-          // Optional: redirect to course page or next module
-          this.$router.push('/courseSelect');
-        }, 5000);
-      }
     },
   };
 </script>
@@ -233,47 +185,5 @@
     border-radius: 8px;
     margin-bottom: 30px;
   }
-  
-  .quiz-title {
-    text-align: center;
-    font-size: 2em;
-    margin-top: 30px;
-    font-weight: bold;
-  }
-  
-  .quiz-container {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-  }
-  
-  .quiz-question {
-    margin-bottom: 20px;
-  }
-  
-  .question-text {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-  }
-  
-  .answer-options {
-    margin-left: 20px;
-  }
-  
-  .answer-input {
-    margin-left: 20px;
-    width: 300px;
-  }
-  
-  .feedback-correct {
-    color: green;
-    font-weight: bold;
-    margin-top: 10px;
-  }
-  
-  .feedback-wrong {
-    color: red;
-    font-weight: bold;
-    margin-top: 10px;
-  }
-</style>
+</style>  
+
