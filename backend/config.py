@@ -15,6 +15,13 @@ class Config:
     SESSION_COOKIE_SAMESITE = "None"
     SESSION_COOKIE_SECURE = True
 
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+
 if os.environ.get('FLASK_ENV') == 'development':
     print(f"SQLALCHEMY_DATABASE_URI: {Config.SQLALCHEMY_DATABASE_URI}")
     print(f"Loaded .env file: {os.getenv('DATABASE_URL') is not None}")
