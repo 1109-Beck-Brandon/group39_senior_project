@@ -1,95 +1,93 @@
 <template>
-
-    <v-container fluid>
-      <h2 class="page-title">Select a Course</h2>
-      <div class="course-scroll">
-        <v-row class="course-row" no-gutters>
-          <v-col
-            v-for="course in courses"
-            :key="course.name"
-            class="course-square"
-            cols="auto"
-          >
-            <div class="course-content">
-              <h3>{{ course.name }}</h3>
-              <p>{{ course.description }}</p>
-              <div class="progress-container">
-                <p class="progress-text">Progress: {{ course.progress }}%</p>
-                <v-progress-linear
-                  value="50"
-                  color="blue"
-                  height="20"
-                ></v-progress-linear>
-                <!-- New button to navigate to the course page -->
-                <v-btn color="primary" @click="goToCoursePage(course.name)">
-                  Go to Course
-                </v-btn>
-              </div>
+  <v-container fluid>
+    <h2 class="page-title">Select a Course</h2>
+    <div class="course-scroll">
+      <v-row class="course-row" no-gutters>
+        <v-col
+          v-for="course in courses"
+          :key="course.name"
+          class="course-square"
+          cols="auto"
+        >
+          <div class="course-content">
+            <h3>{{ course.name }}</h3>
+            <p>{{ course.description }}</p>
+            <div class="progress-container">
+              <p class="progress-text">Progress: {{ course.progress || 0 }}%</p>
+              <v-progress-linear
+                :value="course.progress || 0"
+                color="blue"
+                height="20"
+              ></v-progress-linear>
+              <v-btn color="primary" @click="goToCoursePage(course.name)">
+                Go to Course
+              </v-btn>
             </div>
-          </v-col>
-        </v-row>
-      </div>
-    </v-container>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
+  </v-container>
 </template>
-  
-<script>
-  export default {
-    data() {
-      return {
-        courses: [
-          { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
-          { name: "NIST Cybersecurity Framework", description: "Learn about the NIST Cybersecurity Framework", progress: 0 },
-          { name: "Digital Forensics Fundamentals", description: "Learn the fundamentals of Digital Forensics", progress: 0 },
-          // Add more courses as needed
-        ],
-      };
-    },
-    methods: {
-      goToCoursePage(courseName) {
-        const courseRoutes = {
-          "Introduction to Cybersecurity": "/course/intro-to-cybersecurity",
-          "Sample Course 202": "/course/sample-202",
-          "Sample Course 303": "/course/sample-303",
-          // More course routings
-        };
 
-        const route = courseRoutes[courseName];
-        if (route) {
-          this.$router.push(route);
-        } else {
-          console.error("No route defined for this course:", courseName);
-        }
-      },
+<script>
+export default {
+  data() {
+    return {
+      courses: [
+        { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
+        { name: "Sample Course 202", description: "This is a sample course to test the slide bar", progress: 0 },
+        { name: "Sample Course 303", description: "This is a sample course to test the slide bar", progress: 0 },
+        // Add more courses as needed
+      ],
+    };
+  },
+  methods: {
+    goToCoursePage(courseName) {
+      const courseRoutes = {
+        "Introduction to Cybersecurity": "/course/intro-to-cybersecurity",
+        "Sample Course 202": "/course/sample-202",
+        "Sample Course 303": "/course/sample-303",
+        // More course routings
+      };
+
+      const route = courseRoutes[courseName];
+      if (route) {
+        this.$router.push(route);
+      } else {
+        console.error("No route defined for this course:", courseName);
+      }
     },
-  };
+  },
+};
 </script>
-  
+
 <style scoped>
-  .page-title {
-    text-align: center;
-    font-size: 2em;
-    margin-top: -30px;
-    margin-bottom: 10px;
-  }
-  
-  .course-scroll {
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    padding: 10px;
-    position: absolute;
-    bottom: 10vh;
-    left: 0;
-    right: 0;
-  }
-  
-  .course-row {
-    display: flex;
-    flex-wrap: nowrap;
-  }
-  
-  .course-square {
+.page-title {
+  text-align: center;
+  font-size: 2em;
+  margin-top: -30px;
+  margin-bottom: 10px;
+}
+
+.course-scroll {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 10px;
+  position: absolute;
+  bottom: 10vh;
+  left: 0;
+  right: 0;
+}
+
+.course-row {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.course-square {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -143,6 +141,4 @@
   width: 80%;
   margin-top: 5px;
 }
-
 </style>
-  

@@ -118,6 +118,8 @@
 </template>
 
 <script>
+import { getTeacherDashboard } from '@/services/api';
+
 export default {
   name: 'ClassroomStudents',
   data() {
@@ -130,32 +132,27 @@ export default {
     };
   },
   created() {
-    // Retrieve the Classroom ID from query parameters
-    this.classroomId = this.$route.query.id || '';
-
-    if (this.classroomId) {
-      // Fetch the teacher's data from localStorage
-      const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
-      const userData = JSON.parse(localStorage.getItem('newUser')) || {};
-      const email = userData.email || 'No email provided';
-
-      const teacherData = teachersData[email] || {};
-
-      // fetch from teacherdata
+  // Instead of reading from localStorage, call the API
+  getTeacherDashboard()
+    .then(response => {
+      const teacherData = response.data;
+      // Update your component data
       this.classroomNames = teacherData.classroomNames || [];
       this.allStudents = teacherData.allStudents || {};
-
-      // find the classroom details using the Classroom ID
-      const classroom = this.classroomNames.find(c => c.id === this.classroomId);
-      this.classroomName = classroom ? classroom.name : 'Unknown Classroom';
-
-      // Fetch students for this classroom
-      this.students = this.allStudents[this.classroomId] || [];
-
-      console.log('Fetched Students:', this.students);
-    } else {
-      this.classroomName = 'No Classroom Selected';
-    }
+      // Retrieve the Classroom ID from query parameters
+      this.classroomId = this.$route.query.id || '';
+      if (this.classroomId) {
+        const classroom = this.classroomNames.find(c => c.id === this.classroomId);
+        this.classroomName = classroom ? classroom.name : 'Unknown Classroom';
+        this.students = this.allStudents[this.classroomId] || [];
+        console.log('Fetched Students:', this.students);
+      } else {
+        this.classroomName = 'No Classroom Selected';
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching teacher dashboard data:", error);
+    });
   },
   methods: {
     /**

@@ -83,6 +83,7 @@
 </template>
   
 <script>
+
 import QuizStructure from '@/components/QuizStructure.vue';
 
   export default {
@@ -166,7 +167,6 @@ import QuizStructure from '@/components/QuizStructure.vue';
       goBack() {
       this.$router.go(-1); 
       },
-      
     },
   };
 </script>
@@ -186,3 +186,4 @@ import QuizStructure from '@/components/QuizStructure.vue';
     margin-bottom: 30px;
   }
 </style>  
+
