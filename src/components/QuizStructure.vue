@@ -88,16 +88,23 @@
 </template>
   
 <script>
+import { progressTracking } from '@/mixins/progressTracking.js';
+
 export default {
   name: "QuizStructure",
+  mixins: [progressTracking],
   props: {
     quizQuestions: {
       type: Array,
       required: true,
     },
     showQuizDialog: {
-        type: Boolean,
-        required: true,
+      type: Boolean,
+      required: true,
+    },
+    moduleId: {
+      type: Number,
+      required: true,
     },
   },
   data() {
@@ -131,7 +138,7 @@ export default {
       });
       return answers;
     },
-    submitQuiz() {
+    async submitQuiz() {
       // Check if all questions are answered, if not then display snackbar warning
       const unansweredQuestions = this.quizQuestions.some((question, index) => {
         if (question.type === 'fill-in-the-blank-multiple') {
@@ -146,7 +153,8 @@ export default {
   
       this.feedback = {}; // Reset feedback
       this.correctAnswers = 0; // Reset correct answers
-
+  
+      // Check answers and populate feedback
       this.quizQuestions.forEach((question, index) => {
         // Different logic for fill in the blank questions with multiple answers
         if (question.type === 'fill-in-the-blank-multiple') {
@@ -193,6 +201,29 @@ export default {
       });
   
       this.quizSubmitted = true; // Track when submit quiz button is clicked
+  
+      // Calculate score percentage
+      const scorePercentage = Math.round((this.correctAnswers / this.quizQuestions.length) * 100);
+      
+      // Get user ID from localStorage
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId = user.user_id;
+  
+      // Save progress to backend
+      try {
+        if (userId && this.moduleId) {
+          await this.trackProgress(this.correctAnswers, this.quizQuestions.length);
+          this.$emit('progress-saved', {
+            score: scorePercentage,
+            correctAnswers: this.correctAnswers,
+            totalQuestions: this.quizQuestions.length
+          });
+        } else {
+          console.error('Missing userId or moduleId for progress tracking');
+        }
+      } catch (error) {
+        console.error('Failed to save quiz progress:', error);
+      }
     },
     exitQuiz() {
       this.localShowQuizDialog = false;
