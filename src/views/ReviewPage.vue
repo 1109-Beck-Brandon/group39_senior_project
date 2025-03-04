@@ -1,8 +1,11 @@
 <template>
+  <v-layout class="rounded rounded-md">
+    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
+  </v-layout>
   <div class="reviewPage">
     <h1>Review Page</h1>
 
-    <!-- Review Form (Add new review directly) -->
+    <!-- Review Form -->
     <form @submit.prevent="submitReview">
       <textarea v-model="newReview" placeholder="Write a review..." rows="5"></textarea>
       <button type="submit">Submit Review</button>
@@ -24,79 +27,79 @@
 </template>
 
 <script>
-import axios from 'axios';
-import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg';
+import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg'; // Path to your image
 
 export default {
   data() {
     return {
-      reviews: [],         // Will be populated from the API
-      newReview: '',       // For user input
-      imageSrc: squirrelImage,
-      error: '',           // For error messages
+      reviews: [
+        "Yooooooooo I finaly can hacck thanks guys."
+      ], // Store reviews here
+      newReview: '', // Store new review input here
+      imageSrc: squirrelImage, // Image source for the page
     };
   },
-  created() {
-    this.fetchReviews();
-  },
   methods: {
-    async fetchReviews() {
-      try {
-        const response = await axios.get('/api/reviews', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
-        });
-        this.reviews = response.data;
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-        this.error = 'Error fetching reviews';
-      }
-    },
-    async submitReview() {
-      if (!this.newReview.trim()) {
+    submitReview() {
+      const review = this.newReview.trim();
+      
+      // Validation and debugging messages
+      if (!review) {
+        console.log("Message cannot be blank!");
         return;
       }
-      // Retrieve the logged-in user from localStorage
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.user_id) {
-        this.error = 'User not logged in';
+      if (review.length <= 3) {
+        console.log("Message is less than 3 characters long!");
         return;
       }
-      try {
-        const payload = {
-          content: this.newReview.trim(),
-          user_id: user.user_id
-        };
-        const response = await axios.post('/api/reviews', payload, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-          }
-        });
-        // Option 1: Re-fetch all reviews
-        // await this.fetchReviews();
+      if (!/^[a-zA-Z0-9!?.,\s]+$/.test(review)) {
+        console.log("Message contains invalid special characters!");
+        return;
+      }
+      if (review.length > 20) {
+        console.log("Message exceeds the maximum length of 20 characters!");
+        return;
+      }
 
-        // Option 2: Prepend the new review to the reviews array for immediate feedback
-        this.reviews.unshift({
-          review_id: response.data.review_id,
-          content: payload.content,
-          author: {
-            user_id: user.user_id,
-            username: user.username
-          },
-          timestamp: new Date().toISOString()
-        });
-        this.newReview = '';
-      } catch (error) {
-        console.error('Error submitting review:', error);
-        this.error = 'Error submitting review';
-      }
+      // Add the validated review to the list
+      console.log("Review submitted successfully:", review);
+      this.reviews.push(review);
+      this.newReview = ''; // Clear the input field
     },
+
+    // Unit testing embedded in the code
+    runTests() {
+      const testCases = [
+        { input: "", expected: "Message cannot be blank!" },
+        { input: "Hi", expected: "Message is less than 3 characters long!" },
+        { input: "@#$%", expected: "Message contains invalid special characters!" },
+        { input: "This is a very long review message exceeding limits", expected: "Message exceeds the maximum length of 20 characters!" },
+        { input: "Perfect Review!", expected: "Review submitted successfully: Perfect Review!" },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        this.newReview = input;
+        console.log(`Test input: "${input}"`);
+        this.submitReview();
+        console.log(`Expected output: "${expected}"`);
+        console.log("-----------");
+      });
+    }
+  },
+  mounted() {
+    this.runTests(); // Run unit tests on component load
   },
 };
 </script>
 
 <style scoped>
+/* CSS styling remains the same */
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: black;
+}
 .reviewPage {
   padding: 20px;
 }
