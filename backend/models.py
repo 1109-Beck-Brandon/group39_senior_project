@@ -131,6 +131,7 @@ class Review(db.Model):
     content = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=True)  # Add this line
     
     def __repr__(self):
         return f'<Review {self.id}>'
@@ -139,7 +140,8 @@ class Review(db.Model):
         return {
             'id': self.id,
             'content': self.content,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat(),
+            'course_id': self.course_id
         }
 
 class Classroom(db.Model):

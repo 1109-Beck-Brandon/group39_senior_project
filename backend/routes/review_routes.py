@@ -11,7 +11,7 @@ def get_reviews():
     return jsonify([review.to_dict() for review in reviews])
 
 @review_bp.route('/', methods=['POST'])
-@login_required  # Optional: only allow logged-in users to post reviews
+@login_required
 def add_review():
     data = request.get_json()
     
@@ -20,7 +20,7 @@ def add_review():
         
     review_content = data['content'].strip()
     
-    # Apply the same validation rules as your frontend
+    # Validation logic remains the same
     if not review_content:
         return jsonify({'error': 'Message cannot be blank!'}), 400
     
@@ -36,6 +36,48 @@ def add_review():
     
     # Create and save the review
     review = Review(content=review_content)
+    if current_user.is_authenticated:
+        review.user_id = current_user.id
+    
+    db.session.add(review)
+    db.session.commit()
+    
+    return jsonify({'message': 'Review submitted successfully', 'review': review.to_dict()}), 201
+
+# Add these new routes to handle course-specific reviews
+@review_bp.route('/courses/<int:course_id>/reviews', methods=['GET'])
+def get_course_reviews(course_id):
+    course = Course.query.get_or_404(course_id)
+    reviews = Review.query.filter_by(course_id=course_id).order_by(Review.created_at.desc()).all()
+    return jsonify([review.to_dict() for review in reviews])
+
+@review_bp.route('/courses/<int:course_id>/reviews', methods=['POST'])
+@login_required
+def add_course_review(course_id):
+    course = Course.query.get_or_404(course_id)
+    data = request.get_json()
+    
+    if not data or 'content' not in data:
+        return jsonify({'error': 'Review content is required'}), 400
+        
+    review_content = data['content'].strip()
+    
+    # Same validation logic
+    if not review_content:
+        return jsonify({'error': 'Message cannot be blank!'}), 400
+    
+    if len(review_content) <= 3:
+        return jsonify({'error': 'Message is less than 3 characters long!'}), 400
+    
+    import re
+    if not re.match(r'^[a-zA-Z0-9!?.,\s]+$', review_content):
+        return jsonify({'error': 'Message contains invalid special characters!'}), 400
+    
+    if len(review_content) > 20:
+        return jsonify({'error': 'Message exceeds the maximum length of 20 characters!'}), 400
+    
+    # Create and save the course review
+    review = Review(content=review_content, course_id=course_id)
     if current_user.is_authenticated:
         review.user_id = current_user.id
     
