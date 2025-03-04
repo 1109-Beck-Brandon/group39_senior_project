@@ -27,23 +27,37 @@
 </template>
 
 <script>
-import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg'; // Path to your image
+import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg';
+import { apiClient } from '@/services/api'; // Import your API client
 
 export default {
   data() {
     return {
-      reviews: [
-        "Yooooooooo I finaly can hacck thanks guys."
-      ], // Store reviews here
-      newReview: '', // Store new review input here
-      imageSrc: squirrelImage, // Image source for the page
+      reviews: [],
+      newReview: '',
+      imageSrc: squirrelImage,
+      loading: false,
+      error: null,
     };
   },
   methods: {
-    submitReview() {
+    async fetchReviews() {
+      try {
+        this.loading = true;
+        const response = await apiClient.get('/reviews');
+        this.reviews = response.data.map(review => review.content);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+        this.error = 'Failed to load reviews';
+      } finally {
+        this.loading = false;
+      }
+    },
+    
+    async submitReview() {
       const review = this.newReview.trim();
       
-      // Validation and debugging messages
+      // Client-side validation
       if (!review) {
         console.log("Message cannot be blank!");
         return;
@@ -61,12 +75,17 @@ export default {
         return;
       }
 
-      // Add the validated review to the list
-      console.log("Review submitted successfully:", review);
-      this.reviews.push(review);
-      this.newReview = ''; // Clear the input field
+      try {
+        // Send to backend
+        await apiClient.post('/reviews', { content: review });
+        console.log("Review submitted successfully:", review);
+        this.reviews.unshift(review); // Add to top of list
+        this.newReview = ''; // Clear input
+      } catch (error) {
+        console.error('Error submitting review:', error.response?.data?.error || error);
+      }
     },
-
+    
     // Unit testing embedded in the code
     runTests() {
       const testCases = [
@@ -87,7 +106,8 @@ export default {
     }
   },
   mounted() {
-    this.runTests(); // Run unit tests on component load
+    this.fetchReviews(); // Load reviews when component mounts
+    this.runTests(); // Run unit tests
   },
 };
 </script>

@@ -128,14 +128,19 @@ class Resource(db.Model):
 class Review(db.Model):
     __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)
-    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    rating = db.Column(db.Integer, nullable=True)  # Changed to nullable
-    comment = db.Column(db.Text, nullable=False)   # Comment is required
+    content = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    
     def __repr__(self):
-        return f'<Review Course:{self.course_id} Rating:{self.rating}>'
+        return f'<Review {self.id}>'
+        
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'created_at': self.created_at.isoformat()
+        }
 
 class Classroom(db.Model):
     __tablename__ = 'classrooms'
