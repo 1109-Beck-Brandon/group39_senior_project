@@ -78,10 +78,7 @@ const routes = [
   //Add Review Page
   { path: '/reviewPage', 
     name: 'ReviewPage', 
-    component: () => import('../views/ReviewPage.vue'),
-    props: route => ({ 
-      courseId: route.query.courseId ? Number(route.query.courseId) : 1 
-    })
+    component: ReviewPage 
   },
   //Add Profile View Page
   {
