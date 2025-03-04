@@ -215,8 +215,6 @@
 </template>
 
 <script>
-import { getTeacherDashboard, addStudentToClassroom } from '@/services/api';
-
 export default {
   name: 'NewTeacherView',
   data() {
@@ -226,50 +224,68 @@ export default {
       role: '',
       firstName: '',
       lastName: '',
+      // classroomName: '',
+      // classId: '',
       gradeLevel: '',
       phoneNumber: '',
       schoolName: '',
       preferredContactMethod: '',
+      //
       classroomNames: [],
       allStudents: {},
 
-      // For the Add Students Modal
+      //For the Add Students Modal
       showAddStudentsModal: false,
-      selectedClassroom: null, // ID of selected class
+      selectedClassroom: null, //ID of selected class
       newStudent: {
         firstName: '',
         lastName: '',
         email: '',
       },
 
-      // For the snackbar alerts
+      //For the snackbar ui alerts
       snackbar: false,
       snackbarMessage: '',
     };
   },
   created() {
-    // Instead of reading from localStorage, fetch teacher data from the backend.
-    getTeacherDashboard()
-      .then(response => {
-        const teacherData = response.data;
-        this.email = teacherData.email || 'No email provided';
-        this.username = teacherData.username || 'No username provided';
-        this.firstName = teacherData.firstName || '';
-        this.role = teacherData.role || '';
-        this.gradeLevel = teacherData.gradeLevel || '';
-        this.phoneNumber = teacherData.phoneNumber || '';
-        this.schoolName = teacherData.schoolName || '';
-        this.preferredContactMethod = teacherData.preferredContactMethod || '';
-        this.classroomNames = teacherData.classroomNames || [];
-        this.allStudents = teacherData.allStudents || {};
-      })
-      .catch(error => {
-        console.error("Error fetching teacher dashboard data:", error);
-      });
+    const userData = JSON.parse(localStorage.getItem('newUser')) || {};
+    this.email = userData.email || 'No email provided';
+
+    // fetch the teacher's data using the email from 'teachersData' in localStorage
+    const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
+    const teacherData = teachersData[this.email] || {};
+
+    // populate from teacherData if available
+    this.username = teacherData.username || 'No username provided';
+    this.firstName = teacherData.firstName || 'No first name provided';
+    this.role = teacherData.role || 'No role provided';
+
+    this.gradeLevel = teacherData.gradeLevel || 'No grade level';
+    this.phoneNumber = teacherData.phoneNumber || 'No phone number';
+    this.schoolName = teacherData.schoolName || 'No school name';
+    this.preferredContactMethod = teacherData.preferredContactMethod || 'No contact method';
+    //
+    this.classroomNames = teacherData.classroomNames || [];
+    this.allStudents = teacherData.allStudents || {};
+    console.log('Classroom Names Array:', this.classroomNames);
   },
   methods: {
+    /**
+
+     * @param {Object} classroom 
+     */
     selectClassroom(classroom) {
-      // Optionally, update local data if needed
+
+      if (!this.allStudents[classroom.id]) {
+        this.allStudents[classroom.id] = [];
+      }
+
+      const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
+      if (teachersData[this.email]) {
+        teachersData[this.email].allStudents = this.allStudents;
+        localStorage.setItem('teachersData', JSON.stringify(teachersData));
+      }
       this.$router.push({ path: '/classroom-students', query: { id: classroom.id } });
     },
     openAddStudentsModal() {
@@ -283,6 +299,10 @@ export default {
         lastName: '',
         email: '',
       };
+    },
+    getClassroomId(classroomId) {
+      const classroom = this.classroomNames.find(c => c.id === classroomId);
+      return classroom ? classroom.id : '...';
     },
     addStudent() {
       if (!this.selectedClassroom) {
@@ -298,36 +318,38 @@ export default {
         alert('Please enter a valid email address.');
         return;
       }
-      // Call the backend API to add the student.
-      addStudentToClassroom(this.selectedClassroom, this.newStudent)
-        .then(() => {
-          // Refresh the teacher dashboard data
-          return getTeacherDashboard();
-        })
-        .then(response => {
-          const teacherData = response.data;
-          this.allStudents = teacherData.allStudents || {};
-          this.classroomNames = teacherData.classroomNames || [];
-          this.closeAddStudentsModal();
-          this.snackbarMessage = 'Student added successfully!';
-          this.snackbar = true;
-        })
-        .catch(error => {
-          console.error("Error adding student:", error);
-        });
+      const student = {
+        firstName: this.newStudent.firstName,
+        lastName: this.newStudent.lastName,
+        email: this.newStudent.email,
+      };
+      //adds student to select classroom's student array
+      if (!this.allStudents[this.selectedClassroom]) {
+        this.allStudents[this.selectedClassroom] = [];
+      }
+      this.allStudents[this.selectedClassroom].push(student);
+
+      // persist the updated allStudents object to localStorage
+      const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
+      if (teachersData[this.email]) {
+        teachersData[this.email].allStudents = this.allStudents;
+        localStorage.setItem('teachersData', JSON.stringify(teachersData));
+      }
+
+      this.closeAddStudentsModal();
+      this.snackbarMessage = 'Student added successfully!';
+      this.snackbar = true;
+
     },
     manuallyAddStudents() {
       this.openAddStudentsModal();
     },
     redirectToCourses() {
-      // Implement redirection to courses page as needed.
-      this.$router.push('/courseSelect');
+      alert('redirecting');
     }
   }
 };
 </script>
-
-
 
 <style scoped>
 .dashboard-header {

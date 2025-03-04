@@ -108,17 +108,47 @@
     </v-row>
 
     <!-- Quiz Section -->
-    <v-row>
-      <v-col cols="12">
-        <h1>Module Quiz</h1>
-        <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
-        <br><br><br><br><br>
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="4" class="quiz-card">
+          <v-card-title class="quiz-title">Module Quiz</v-card-title>
+          <v-card-text>
+            <div class="quiz-container">
+              <div
+                v-for="(question, index) in quizQuestions"
+                :key="index"
+                class="quiz-question mb-6"
+              >
+                <p class="question-text font-weight-bold mb-3">{{ index + 1 }}. {{ question.text }}</p>
+      
+                <!-- Multiple Choice -->
+                <div v-if="question.type === 'multiple-choice'" class="answer-options">
+                  <v-radio-group v-model="userAnswers[index]" row>
+                    <v-radio
+                      v-for="(option, optIndex) in question.options"
+                      :key="optIndex"
+                      :label="option"
+                      :value="option"
+                    ></v-radio>
+                  </v-radio-group>
+                </div>
+      
+                <!-- Feedback -->
+                <v-alert
+                  v-if="feedback[index]"
+                  :type="feedback[index].correct ? 'success' : 'error'"
+                  dense
+                  class="mt-2"
+                >
+                  {{ feedback[index].message }}
+                </v-alert>
+              </div>
+            </div>
+            <v-btn color="primary" @click="submitQuiz" class="mt-4">Submit Quiz</v-btn>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
-
-    <!-- Add Quiz Component -->
-    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
-
   </v-container>
 </template>
 
@@ -132,22 +162,12 @@ import zeroDayImage from "@/assets/Zero-Day-Attack.png";
 import dnsTunnelingImage from "@/assets/how-dns-tunneling-works.webp";
 import phishingImage from "@/assets/phishing.webp";
 
-import QuizStructure from '@/components/QuizStructure.vue';
-
 export default {
   name: "CyberAttacksCarousel",
-
-  components: {
-    QuizStructure,
-  },
-
   data() {
     return {
       headerImage,
       currentSlide: 0,
-
-      showQuizDialog: false,
-
       attacks: [
         {
           name: "Malware",
@@ -220,12 +240,26 @@ export default {
           answer: "Vishing",
         },
       ],
+      userAnswers: [],
+      feedback: [],
     };
   },
   methods: {
     // Back Button
     goBack() {
       this.$router.go(-1);
+    },
+    submitQuiz() {
+      this.feedback = this.quizQuestions.map((question, index) => {
+        const userAnswer = this.userAnswers[index];
+        const isCorrect = userAnswer === question.answer;
+        return {
+          correct: isCorrect,
+          message: isCorrect
+            ? "Correct! Great job!"
+            : `Incorrect. The correct answer is: ${question.answer}`,
+        };
+      });
     },
   },
 };
@@ -332,6 +366,29 @@ body,
 .attack-image {
   max-height: 300px;
   padding: 10px;
+}
+
+.quiz-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+.quiz-title {
+  font-size: 1.8em;
+  color: #2c3e50;
+  padding: 20px;
+  background-color: #ecf0f1;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.quiz-container {
+  padding: 20px;
+}
+
+.question-text {
+  font-size: 1.2em;
+  color: #2c3e50;
 }
 
 .text-below {

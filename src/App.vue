@@ -16,32 +16,35 @@
 </template>
 
 <script>
-import { getData } from '@/services/api';
+import api from './services/api';
 import AppNavBar from '@/components/AppNavBar.vue';
 
 export default {
-  name: 'App',
+
   components: {
     AppNavBar,
   },
+
   data() {
     return {
-      message: '',
+      message: ''
     };
   },
+
   mounted() {
     this.fetchData();
   },
+  
   methods: {
     async fetchData() {
       try {
-        const response = await getData();
+        const response = await api.getData();
         this.message = response.data.message;
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

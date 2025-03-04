@@ -162,34 +162,57 @@
       <!-- Quiz Section -->
       <v-row>
         <v-col cols="12">
-          <h1>Module Quiz</h1>
-          <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
-          <br><br><br><br><br>
+          <h2 class="quiz-title">Basic Unix Command Lab Module Quiz</h2>
+          <div class="quiz-container">
+            <div
+              v-for="(question, index) in quizQuestions"
+              :key="index"
+              class="quiz-question"
+            >
+              <p class="question-text">{{ question.text }}</p>
+  
+              <!-- Multiple Choice -->
+              <div v-if="question.type === 'multiple-choice'" class="answer-options">
+                <v-radio-group v-model="userAnswers[index]" row>
+                  <v-radio
+                    v-for="(option, optIndex) in question.options"
+                    :key="optIndex"
+                    :label="option"
+                    :value="option"
+                  ></v-radio>
+                </v-radio-group>
+              </div>
+  
+              <!-- Fill in the Blank -->
+              <div v-else-if="question.type === 'fill-in-the-blank'" class="answer-input">
+                <v-text-field
+                  v-model="userAnswers[index]"
+                  label="Your Answer"
+                  outlined
+                ></v-text-field>
+              </div>
+  
+              <!-- Feedback -->
+              <p
+                v-if="feedback[index]"
+                :class="feedback[index].correct ? 'feedback-correct' : 'feedback-wrong'"
+              >
+                {{ feedback[index].message }}
+              </p>
+            </div>
+          </div>
+          <v-btn color="primary" @click="submitQuiz">Submit Quiz</v-btn>
         </v-col>
       </v-row>
-
-      <!-- Add Quiz Component -->
-      <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
-      
     </v-container>
   </template>
   
   <script>
-
-  import QuizStructure from '@/components/QuizStructure.vue';
-
   export default {
     name: "LinuxTerminalPage",
-
-    components: {
-      QuizStructure,
-    },
-
     data() {
       return {
         courseTitle: "Unix Basic Commands Lab",
-
-        showQuizDialog: false,
 
         //Add quiz questions to this
         quizQuestions: [
@@ -224,6 +247,8 @@
             answer: "mkdir test",
           },
         ],
+        userAnswers: {}, // Stores user's answers
+        feedback: {}, // Stores feedback for each question
       };
     },
     methods: {
@@ -233,6 +258,28 @@
       this.$router.go(-1); 
       },
       
+      submitQuiz() {
+        this.feedback = {}; // Reset feedback
+  
+        this.quizQuestions.forEach((question, index) => {
+          //Ensures that fill in the blank questions are not case sensitive
+          const userAnswer = this.userAnswers[index]?.trim()?.toLowerCase();
+          const correctAnswer = question.answer.toLowerCase();
+          
+          //Checks for correct answer
+          if (userAnswer === correctAnswer) {
+            this.feedback[index] = {
+              correct: true,
+              message: `Correct! The answer is "${question.answer}".`,
+            };
+          } else {
+            this.feedback[index] = {
+              correct: false,
+              message: `Incorrect. The correct answer is "${question.answer}".`,
+            };
+          }
+        });
+      },
     },
   };
   </script>
@@ -274,5 +321,47 @@
     margin-bottom: 20px;
   }
 
+  .quiz-title {
+    text-align: center;
+    font-size: 2em;
+    margin-top: 30px;
+    font-weight: bold;
+  }
+  
+  .quiz-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .quiz-question {
+    margin-bottom: 20px;
+  }
+  
+  .question-text {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+  
+  .answer-options {
+    margin-left: 20px;
+  }
+  
+  .answer-input {
+    margin-left: 20px;
+    width: 300px;
+  }
+  
+  .feedback-correct {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .feedback-wrong {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+  }
   </style>
   
