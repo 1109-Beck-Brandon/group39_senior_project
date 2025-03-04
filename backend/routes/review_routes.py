@@ -1,18 +1,20 @@
 # review_routes.py
 from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
+from flask_login import current_user, login_required
+import re
 from ..models import db, Review, Course
 
 review_bp = Blueprint('reviews', __name__, url_prefix='/reviews')
 
 @review_bp.route('/', methods=['GET'])
 def get_reviews():
+    """Get all reviews, ordered by most recent first"""
     reviews = Review.query.order_by(Review.created_at.desc()).all()
     return jsonify([review.to_dict() for review in reviews])
 
 @review_bp.route('/', methods=['POST'])
-@login_required
 def add_review():
+    """Add a new review with validation matching the frontend"""
     data = request.get_json()
     
     if not data or 'content' not in data:
@@ -20,14 +22,13 @@ def add_review():
         
     review_content = data['content'].strip()
     
-    # Validation logic remains the same
+    # Apply the same validation rules as the frontend
     if not review_content:
         return jsonify({'error': 'Message cannot be blank!'}), 400
     
     if len(review_content) <= 3:
         return jsonify({'error': 'Message is less than 3 characters long!'}), 400
     
-    import re
     if not re.match(r'^[a-zA-Z0-9!?.,\s]+$', review_content):
         return jsonify({'error': 'Message contains invalid special characters!'}), 400
     
@@ -36,13 +37,18 @@ def add_review():
     
     # Create and save the review
     review = Review(content=review_content)
+    
+    # If user is logged in, associate the review with them
     if current_user.is_authenticated:
         review.user_id = current_user.id
     
     db.session.add(review)
     db.session.commit()
     
-    return jsonify({'message': 'Review submitted successfully', 'review': review.to_dict()}), 201
+    return jsonify({
+        'message': 'Review submitted successfully', 
+        'review': review.to_dict()
+    }), 201
 
 # Add these new routes to handle course-specific reviews
 @review_bp.route('/courses/<int:course_id>/reviews', methods=['GET'])

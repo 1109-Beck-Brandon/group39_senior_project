@@ -134,7 +134,7 @@ class Review(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=True)  # Add this line
     
     def __repr__(self):
-        return f'<Review {self.id}>'
+        return f'<Review {self.id}: {self.content[:20]}>'
         
     def to_dict(self):
         return {
