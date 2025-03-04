@@ -1,74 +1,55 @@
 <template>
   <div class="reviewPage">
-    <h1>Course Reviews</h1>
+    <h1>Community Feedback</h1>
     
     <!-- Debug information - always visible -->
     <div class="debug-panel">
       <p>Debug Info:</p>
       <ul>
         <li>Loading: {{ loading }}</li>
-        <li>Selected Course ID: {{ selectedCourseId }}</li>
-        <li>Courses Count: {{ courses.length }}</li>
         <li>Reviews Count: {{ reviews.length }}</li>
         <li>User logged in: {{ isUserLoggedIn }}</li>
       </ul>
-      <button @click="forceRefresh" class="primary-button">Reload Courses</button>
-    </div>
-
-    <!-- Course Selection -->
-    <div v-if="!selectedCourseId" class="course-selection">
-      <h2>Select a Course to Review</h2>
-      <div v-if="loading">Loading courses...</div>
-      <div v-else-if="courses.length === 0" class="error">
-        No courses available. Please try again later.
-      </div>
-      <select v-else v-model="selectedCourseId" @change="onCourseSelected">
-        <option disabled value="">Choose a course</option>
-        <option v-for="course in courses" :key="course.id" :value="course.id">
-          {{ course.title }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Course Details when selected -->
-    <div v-if="selectedCourseId" class="selected-course">
-      <h2>{{ selectedCourseName }}</h2>
-      <button @click="clearSelection" class="secondary-button">Change Course</button>
+      <button @click="refreshReviews" class="primary-button">Refresh Reviews</button>
     </div>
 
     <!-- Review Form - Only show if logged in -->
-    <div v-if="selectedCourseId" class="review-form">
-      <h3>Write a Review</h3>
+    <div class="review-form">
+      <h3>Share Your Thoughts</h3>
       <div v-if="!isUserLoggedIn" class="login-prompt">
-        <p>Please <router-link to="/login">log in</router-link> to submit a review.</p>
+        <p>Please <router-link to="/login">log in</router-link> to submit feedback.</p>
       </div>
       <form v-else @submit.prevent="submitReview">
-        <textarea v-model="newReview" placeholder="Write your review..." rows="5"></textarea>
+        <textarea v-model="newReview" placeholder="Write your feedback here..." rows="5"></textarea>
+        <!-- Rating is optional -->
         <div class="rating-selection">
-          <label>Rating:</label>
+          <label>Rating (Optional):</label>
           <select v-model="newRating">
-            <option disabled value="">Select a rating</option>
+            <option value="">No Rating</option>
             <option v-for="n in 5" :key="n" :value="n">{{ n }} Stars</option>
           </select>
         </div>
-        <button type="submit">Submit Review</button>
+        <button type="submit">Submit Feedback</button>
       </form>
     </div>
 
     <p v-if="error" class="error">{{ error }}</p>
 
     <!-- Reviews List -->
-    <div v-if="selectedCourseId" class="reviews">
-      <h3>Reviews</h3>
-      <div v-if="loading">Loading reviews...</div>
+    <div class="reviews">
+      <h3>All Feedback</h3>
+      <div v-if="loading">Loading feedback...</div>
       <div v-else-if="reviews.length === 0" class="no-reviews">
-        <p>No reviews yet. Be the first to review this course!</p>
+        <p>No feedback yet. Be the first to share your thoughts!</p>
       </div>
       <div v-else>
         <div v-for="(review, index) in reviews" :key="index" class="review-item">
           <img :src="review.userImage || imageSrc" alt="User" class="review-thumbnail" />
           <div class="review-content">
-            <p><strong>{{ review.userName }}</strong> - <span class="rating">{{ review.rating }} Stars</span></p>
+            <p>
+              <strong>{{ review.userName }}</strong>
+              <span v-if="review.rating" class="rating"> - {{ review.rating }} Stars</span>
+            </p>
             <p class="comment">{{ review.comment }}</p>
           </div>
         </div>
@@ -78,27 +59,19 @@
 </template>
 
 <script>
-import { getReviews, postReview, getCourses } from '@/services/api';
+import { getReviews, postReview } from '@/services/api';
 import squirrelImage from '@/assets/cartoon-squirrel-drawing-v0-z8txear3x4hb1.jpg';
 
 export default {
-  props: {
-    courseId: {
-      type: Number,
-      required: false,
-    },
-  },
   data() {
     return {
-      selectedCourseId: this.courseId || null,
-      selectedCourseName: '',
-      courses: [],
       reviews: [],        
       newReview: '',      
       newRating: null,    
       imageSrc: squirrelImage,
       error: '',
       loading: false,
+      defaultCourseId: 1 // We'll use this for API calls that require a course ID
     };
   },
   computed: {
@@ -106,107 +79,42 @@ export default {
       return !!localStorage.getItem('user');
     }
   },
-  async created() {
-    console.log('ReviewPage created with courseId:', this.courseId);
-    if (!this.selectedCourseId) {
-      this.fetchCourses();
-    } else {
-      await this.fetchReviews();
-      this.updateSelectedCourseName();
-    }
-  },
   mounted() {
-    console.log('ReviewPage mounted');
-    this.initialize();
+    this.fetchReviews();
   },
   methods: {
-    async initialize() {
-      // Check for courseId in route params/query
-      const routeId = this.$route.params.courseId || this.$route.query.courseId;
-      if (routeId) {
-        this.selectedCourseId = Number(routeId);
-      }
-      
-      console.log('Selected course ID from route:', this.selectedCourseId);
-      
-      // Always fetch courses for the dropdown regardless
-      await this.fetchCourses();
-      
-      if (this.selectedCourseId) {
-        await this.fetchReviews();
-        this.updateSelectedCourseName();
-      }
-    },
-    async fetchCourses() {
-      this.loading = true;
-      try {
-        const response = await getCourses();
-        console.log('Courses raw response:', response); // Log the raw response
-        
-        // Handle different possible API response structures
-        if (response && response.data) {
-          if (Array.isArray(response.data)) {
-            // If API returns array directly
-            this.courses = response.data;
-          } else if (response.data.courses && Array.isArray(response.data.courses)) {
-            // If API returns {courses: [...]}
-            this.courses = response.data.courses;
-          } else {
-            // Convert object to array if needed
-            this.courses = Object.values(response.data).filter(item => item.id);
-          }
-        } else {
-          this.courses = [];
-        }
-        
-        console.log('Processed courses:', this.courses);
-        
-        if (this.courses.length === 0) {
-          // Add a sample course for testing if none are returned
-          this.courses = [{ 
-            id: 1, 
-            title: 'Test Course (No courses found in API)',
-            description: 'This is a test course for UI debugging'
-          }];
-          this.error = 'No courses available from API - using test data';
-        }
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-        this.error = 'Failed to load courses. Please try again later.';
-        
-        // Add test data for UI debugging
-        this.courses = [{ 
-          id: 1, 
-          title: 'Test Course (API Error)',
-          description: 'This is a test course for UI debugging'
-        }];
-      } finally {
-        this.loading = false;
-      }
-    },
     async fetchReviews() {
       this.loading = true;
       this.error = '';
       try {
-        const response = await getReviews(this.selectedCourseId);
+        // Get all reviews for the default course ID
+        const response = await getReviews(this.defaultCourseId);
         this.reviews = response.data.reviews.map(review => ({
           userName: `User ${review.user_id}`,
-          rating: review.rating,
+          rating: review.rating || null, // Handle optional rating
           comment: review.comment,
           userImage: review.userImage || this.imageSrc,
         }));
       } catch (error) {
         console.error('Error fetching reviews:', error);
-        this.error = 'Error loading reviews';
+        this.error = 'Error loading feedback';
+        
+        // Add sample reviews for UI testing if API fails
+        this.reviews = [
+          { userName: 'User 1', rating: 5, comment: 'This is a great platform!', userImage: this.imageSrc },
+          { userName: 'User 2', comment: 'I learned a lot from this course.', userImage: this.imageSrc }
+        ];
       } finally {
         this.loading = false;
       }
     },
+    
     async submitReview() {
-      if (!this.newReview.trim() || this.newRating === null) {
-        this.error = 'Please provide both a rating and a comment';
+      if (!this.newReview.trim()) {
+        this.error = 'Please provide feedback';
         return;
       }
+      
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user.user_id) {
         this.error = 'User not logged in';
@@ -216,9 +124,9 @@ export default {
       
       this.loading = true;
       try {
-        await postReview(this.selectedCourseId, {
+        await postReview(this.defaultCourseId, {
           comment: this.newReview.trim(),
-          rating: this.newRating,
+          rating: this.newRating || 0, // Use 0 for no rating
           user_id: user.user_id,
         });
         this.error = '';
@@ -227,38 +135,16 @@ export default {
         await this.fetchReviews();
       } catch (error) {
         console.error('Error submitting review:', error);
-        this.error = 'Error submitting review';
+        this.error = 'Error submitting feedback';
       } finally {
         this.loading = false;
       }
     },
-    onCourseSelected() {
-      if (this.selectedCourseId) {
-        this.fetchReviews();
-        this.updateSelectedCourseName();
-      }
-    },
-    updateSelectedCourseName() {
-      const selectedCourse = this.courses.find(c => c.id === this.selectedCourseId);
-      this.selectedCourseName = selectedCourse ? selectedCourse.title : 'Selected Course';
-    },
-    clearSelection() {
-      this.selectedCourseId = null;
-      this.reviews = [];
-      this.error = '';
-    },
-    navigateToReviewPage(courseIdValue) {
-      this.$router.push({ 
-        name: 'ReviewPage',
-        query: { courseId: courseIdValue }  // If you have a course ID
-      });
-    },
-    forceRefresh() {
-      this.loading = false;
-      this.error = '';
-      this.fetchCourses();
-    },
-  },
+    
+    refreshReviews() {
+      this.fetchReviews();
+    }
+  }
 };
 </script>
 
@@ -323,7 +209,7 @@ select {
   border-radius: 4px;
 }
 
-.rating-selection {
+rating-selection {
   margin: 10px 0;
 }
 

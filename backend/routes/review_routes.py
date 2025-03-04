@@ -23,10 +23,10 @@ def get_reviews(course_id):
 def post_review(course_id):
     Course.query.get_or_404(course_id)
     data = request.get_json()
-    rating = data.get('rating')
+    rating = data.get('rating', 0)  # Default to 0 if not provided
     comment = data.get('comment')
-    if rating is None:
-        return jsonify({'error': 'Rating is required'}), 400
+    if not comment:
+        return jsonify({'error': 'Comment is required'}), 400
     review = Review(course_id=course_id, user_id=current_user.id, rating=rating, comment=comment)
     db.session.add(review)
     db.session.commit()

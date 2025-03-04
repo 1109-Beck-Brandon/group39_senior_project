@@ -130,8 +130,8 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
-    comment = db.Column(db.Text)
+    rating = db.Column(db.Integer, nullable=True)  # Changed to nullable
+    comment = db.Column(db.Text, nullable=False)   # Comment is required
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
