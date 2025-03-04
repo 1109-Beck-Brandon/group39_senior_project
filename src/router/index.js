@@ -78,7 +78,8 @@ const routes = [
   //Add Review Page
   { path: '/reviewPage', 
     name: 'ReviewPage', 
-    component: ReviewPage 
+    component: ReviewPage,
+    props: route => ({ courseId: route.query.courseId ? Number(route.query.courseId) : null })
   },
   //Add Profile View Page
   {
@@ -162,6 +163,20 @@ const routes = [
     path: '/classroom-students',
     name: 'ClassroomStudents',
     component: ClassroomStudents,
+  },
+
+  {
+    path: "/course/:courseId/reviews",
+    name: "ReviewPage",
+    component: ReviewPage,
+    props: route => ({ courseId: Number(route.params.courseId) })
+  },
+
+  // Add or update this route
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/UserProfile.vue')
   }
 
 ]

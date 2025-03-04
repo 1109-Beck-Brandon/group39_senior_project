@@ -105,46 +105,18 @@
       </v-col>
     </v-row>
 
-    <v-row justify="center" align="center">
-      <v-col cols="12" md="8">
-        <v-card elevation="4" class="quiz-card">
-          <v-card-title class="quiz-title">Test Your Cybersecurity Knowledge</v-card-title>
-          <v-card-text>
-            <div class="quiz-container">
-              <div
-                v-for="(question, index) in quizQuestions"
-                :key="index"
-                class="quiz-question mb-6"
-              >
-                <p class="question-text font-weight-bold mb-3 text-white">{{ index + 1 }}. {{ question.text }}</p>
-      
-                <div class="answer-options">
-                  <v-radio-group v-model="userAnswers[index]" row class="text-white">
-                    <v-radio
-                      v-for="(option, optIndex) in question.options"
-                      :key="optIndex"
-                      :label="option"
-                      :value="option"
-                      class="text-white"
-                    ></v-radio>
-                  </v-radio-group>
-                </div>
-      
-                <v-alert
-                  v-if="feedback[index]"
-                  :type="feedback[index].correct ? 'success' : 'error'"
-                  dense
-                  class="mt-2"
-                >
-                  {{ feedback[index].message }}
-                </v-alert>
-              </div>
-            </div>
-            <v-btn color="primary" @click="submitQuiz" class="mt-4">Submit Quiz</v-btn>
-          </v-card-text>
-        </v-card>
+    <!-- Quiz Section -->
+    <v-row>
+      <v-col cols="12">
+        <h1>Module Quiz</h1>
+        <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
+        <br><br><br><br><br>
       </v-col>
     </v-row>
+
+    <!-- Add Quiz Component -->
+    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+
   </v-container>
 </template>
 
@@ -155,12 +127,22 @@ import penetrationTesterImage from "@/assets/How-to-become-penetration-tester-sk
 import incidentResponderImage from "@/assets/logo.webp";
 import consultantImage from "@/assets/5db715334d39bc64c600f95d_cyber-security-consultant.jpg";
 
+import QuizStructure from '@/components/QuizStructure.vue';
+
 export default {
   name: "JobsAtCyber",
+
+  components: {
+    QuizStructure,
+  },
+
   data() {
     return {
       headerImage,
       currentRole: 0,
+
+      showQuizDialog: false,
+
       careerRoles: [
         {
           title: "Security Analyst",
@@ -225,26 +207,11 @@ export default {
           answer: "Communication",
         },
       ],
-      userAnswers: [],
-      feedback: [],
     };
   },
   methods: {
     goBack() {
       this.$router.go(-1);
-    },
-
-    submitQuiz() {
-      this.feedback = this.quizQuestions.map((question, index) => {
-        const userAnswer = this.userAnswers[index];
-        const isCorrect = userAnswer === question.answer;
-        return {
-          correct: isCorrect,
-          message: isCorrect
-            ? "Correct! Great job!"
-            : `Incorrect. The correct answer is: ${question.answer}`,
-        };
-      });
     },
   },
 };
@@ -358,24 +325,6 @@ body,
 }
 
 .skill-description {
-  color: #ffffff;
-}
-
-.quiz-title {
-  font-size: 1.8em;
-  color: #64ffda;
-  padding: 20px;
-  background-color: #233554;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-.quiz-container {
-  padding: 20px;
-}
-
-.question-text {
-  font-size: 1.2em;
   color: #ffffff;
 }
 
