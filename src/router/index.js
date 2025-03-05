@@ -76,10 +76,10 @@ const routes = [
     component: TeacherView
   },
   //Add Review Page
-  { path: '/reviewPage', 
-    name: 'ReviewPage', 
-    component: ReviewPage,
-    props: route => ({ courseId: route.query.courseId ? Number(route.query.courseId) : null })
+  {
+    path: '/reviewPage',
+    name: 'ReviewPage',
+    component: ReviewPage
   },
   //Add Profile View Page
   {
@@ -167,7 +167,7 @@ const routes = [
 
   {
     path: "/course/:courseId/reviews",
-    name: "ReviewPage",
+    name: "CourseReviewPage",
     component: ReviewPage,
     props: route => ({ courseId: Number(route.params.courseId) })
   },
