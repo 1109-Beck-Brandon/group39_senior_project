@@ -10,27 +10,7 @@
       <!-- Left Section - Classrooms -->
       <v-col cols="3"> 
         <v-card class="classroom-card"> 
-          <h3>Classrooms</h3>
-          
-          <!-- Classroom Buttons Loop -->
-          <v-row class="classrooms-row">
-            <v-btn
-              v-for="classroom in classroomNames"
-              :key="classroom.id"
-              class="classroom-button"
-              block
-              color="cyan-darken-2"
-              @click="selectClassroom(classroom)"
-            >
-              {{ classroom.name }}
-            </v-btn>
-          </v-row>
-          
-          <!-- New Class Button -->
-          <v-btn rounded class="classroom-button">
-            <v-icon block left class="class-icon">mdi-plus</v-icon>
-            New Class
-          </v-btn>                
+          <h3>Classroom: {{ classroomName }}</h3>
         </v-card>
       </v-col>
 
@@ -55,14 +35,10 @@
 
           <v-row>
           <v-list class="students-list">
-            <v-list-item class="student-item" variant="tonal" rounded v-for="(student, index) in students" :key="index">
-              <v-list-item-content>
-                <!-- Display First and Last Name -->
-
-                <v-icon color="cyan-darken-3"> mdi-account</v-icon>
-                  <v-list-item-title>{{ student.firstName }} {{ student.lastName }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ student.email }}</v-list-item-subtitle>                  
-
+            <v-list-item class="student-item" rounded v-for="(student, index) in students" :key="index">
+              <v-list-item-content >
+                  <v-list-item-title><v-icon left color="cyan-darken-3"> mdi-account</v-icon> {{ student.firstName }} {{ student.lastName }}</v-list-item-title>
+                  <!-- <v-list-item-subtitle>{{ student.email }}</v-list-item-subtitle>                   -->
               </v-list-item-content>
             </v-list-item>
 
@@ -255,7 +231,9 @@ h6 {
   padding: 35px;
   color: rgb(88, 88, 88);
   height: auto;
-  margin-bottom: 5px;
+  align-content: center;
+  align-items: center;
+  align-self: center;
   /* background-color: darkgrey; */
 }
 
@@ -271,11 +249,10 @@ h6 {
 
 .classroom-button {
   color: rgb(61, 61, 61);
-  /* outline-style: dashed; */
   outline-style: solid;
   outline-width: 1px;
   outline-color: rgb(118, 131, 118);
-  margin-top: 0px;
+  margin-bottom:20px;
   text-transform: capitalize;
 
 }
@@ -303,6 +280,7 @@ h6 {
   margin-top: 10px;
   margin-bottom: 10px;
   padding: 5px;
+  
 }
 
 .add-students-dialog {
@@ -330,6 +308,9 @@ h6 {
 
 .student-item {
   margin-bottom: 10px;
+  outline-style:groove;
+  outline-width: 2px;
+  outline-color: rgba(50, 160, 184, 0.096);
 }
 
 </style>

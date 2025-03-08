@@ -21,17 +21,17 @@
           <h3>Classrooms</h3>
           <!--class buttons loop-->
           <v-row class="classrooms-row">
-          <v-btn v-for="classroom in classroomNames"
-          :key="classroom.id"
-          class="classroom-button"
-          block
+            <v-btn v-for="classroom in classroomNames"
+            :key="classroom.id"
+            class="classroom-button"
+            block
 
-          @click="selectClassroom(classroom)"
-          >
-            {{ classroom.name }}
-          </v-btn>
+            @click="selectClassroom(classroom)"
+            >
+              {{ classroom.name }}
+            </v-btn>
           </v-row>
-          <v-btn rounded class = "classroom-button">
+          <v-btn rounded class = "classroom-button" @click="openNewClassModal">
             <v-icon block left class="class-icon"> mdi-plus</v-icon>
               New Class
           </v-btn>                
@@ -136,38 +136,46 @@
                 :items="classroomNames"
                 item-title="name"
                 item-value="id"
-                label="Classroom: "
-                required
+                label="Classrooms"
+                :rules="[requiredRule]"
               ></v-select>
             </v-col>
             <v-divider></v-divider>
             <v-col cols="12">
-              <h5>Add students by full name and email</h5>
+              <h5>Manually add students </h5>
               <!-- <p><strong>Classroom ID:</strong> {{ getClassroomId(selectedClassroom) }}</p> -->
             </v-col>
-            <v-col cols="12" sm="6">
+            <v-col cols="12">
               <v-text-field
                 v-model="newStudent.firstName"
-                label="First Name"
-                required
-                outlined
+                label="Enter first name"
+                placeholder="Becka"
+                rounded
+                variant="outlined"
+                color="cyan-darken-4"
+                :rules="[requiredRule]"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="6">
+            <v-col cols="12">
               <v-text-field
                 v-model="newStudent.lastName"
-                label="Last Name"
-                required
-                outlined
+                label="Enter last name"
+                placeholder="Smith"
+                rounded
+                variant="outlined"
+                color="cyan-darken-4"
+                :rules="[requiredRule]"
               ></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
                 v-model="newStudent.email"
-                label="Email"
+                label="Enter email"
                 type="email"
-                required
-                outlined
+                rounded
+                variant="outlined"
+                color="cyan-darken-4"
+                :rules="[requiredRule, emailFormatRule]"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -176,35 +184,118 @@
         <v-card-actions>
         <v-col cols="12"> 
           <v-spacer></v-spacer>
-          <v-btn class="students-list-button" text> Or, copy and paste your students list </v-btn>
-          <v-btn color="blue darken-1" text @click="closeAddStudentsModal">Cancel</v-btn>
+          <v-btn class="students-list-button" text @click="openExcelModal"> Or, copy and paste your students list </v-btn>
+          <v-btn text @click="closeAddStudentsModal">Cancel</v-btn>
           <v-btn color="blue darken-1" text @click="addStudent">Add</v-btn>
         </v-col>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
+    <!-- Modal Dialog for Pasting Students List -->
+    <v-dialog transition="dialog-bottom-transition" class="paste-excel-dialog" v-model="showExcelModal" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Paste From Excel</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-row class="excel-dialog-row">
+            <v-col cols="12">
+              <h5>Choose your class </h5> 
+            </v-col>
+            <v-col cols="12">             
+              <v-select
+                class="dialog-list"
+                variant="outlined"
+                color="cyan-darken-4"
+                v-model="selectedClassroom"
+                :items="classroomNames"
+                item-title="name"
+                item-value="id"
+                label="classrooms"
+                :rules="[requiredRule]"
+              ></v-select>
+            </v-col> 
+            <v-divider></v-divider>
+            <v-col cols="12">
+              <h5>Paste your student list</h5>              
+            </v-col>
+            <v-col cols="12">
+              <h4 class="center-h4">
+                Copy from your excel sheet and paste here!
+              </h4>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea class="excel-text-area"
+                v-model="excelData"
+                label="FirstName............ LastName............... Email.................."
+                rounded
+                color="cyan-darken-5"
+                rows="10"
+              ></v-textarea>              
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn text @click="closeExcelModal">Go Back</v-btn>
+          <v-btn color="blue darken-1" text @click="processExcelData">Add Students</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+      <!-- Modal Dialog for Creating a New Class -->
+      <v-dialog transition="dialog-bottom-transition" v-model="showNewClassModal" max-width="600px">
+        <v-card>
+          <v-icon block size="large" class="apple-icon"> mdi-white-balance-sunny</v-icon>
+          <v-icon block size="large" class="desk-icon"> mdi-book-open-page-variant</v-icon>
+          <v-card-title class="create-class-headline">Create New Class</v-card-title>
+          <v-card-text>
+            <v-row class="create-class-row">
+              <v-col cols="12">
+                <h5 class="create-class-headings">Class name</h5>
+                <v-text-field rounded class="new-class-fields" v-model="newClassName" label="Enter classroom name" required outlined></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <h5 class="create-class-headings">Grade</h5>
+                <v-select rounded class="new-class-fields" v-model="newGradeLevel" :items="grades" label="Choose grade level" required outlined></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field rounded class="new-class-fields" :value="newClassId" label="This is your new Classroom ID" readonly outlined></v-text-field>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn text @click="closeNewClassModal">Cancel</v-btn>
+            <v-btn color="blue darken-1" text @click="saveNewClass">Create Class</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
     <!-- Display for debugging, temporary -->
-    <!-- <v-row>
+   <!-- <v-row>
       <v-spacer> </v-spacer>
       <v-col cols="12" class="text-center">
+
         <p>For debugging, i'll delete this later</p>
-        <p>Username: {{ username }}!</p>
+
+        <v-btn @click="testAddStudent">Test addStudent</v-btn>        
+        <p>Username: {{ username }}</p>
         <p>First Name: {{ firstName }}</p>
+        <p>Last Name: {{ lastName }}</p>
         <p>Email: {{ email }}</p>
         <p>Role: {{ role }}</p>
         <p>Classrooms: {{ classroomNames }}</p>
-        <p>Students: {{ allStudents }}</p> -->
-        <!-- <p>Grade Level: {{ gradeLevel }}</p> -->
-        <!-- <p>Phone Number: {{ phoneNumber }}</p>
+        <p>Students: {{ allStudents }}</p>
+         <p>Grade Level: {{ gradeLevel }}</p>
+        <p>Phone Number: {{ phoneNumber }}</p>
         <p>School Name: {{ schoolName }}</p>
         <p>Preferred Contact Method: {{ preferredContactMethod }}</p>
       </v-col>
     </v-row> -->
 
     <!-- v-snackbar ui components (the little alert messages)-->
-    <v-snackbar text v-model="snackbar" :timeout="3000" top right>
+    <v-snackbar text rounded transition="dialog-top-transition" v-model="snackbar" :timeout="1500" top right>
       {{ snackbarMessage }}
       <v-btn text @click="snackbar = false">
         Close
@@ -219,13 +310,15 @@ export default {
   name: 'NewTeacherView',
   data() {
     return {
+      //rules
+      requiredRule: v=> !!v || 'This field is required',
+      emailFormatRule: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Please enter a valid email address',
+
       username: '',
       email: '',
       role: '',
       firstName: '',
       lastName: '',
-      // classroomName: '',
-      // classId: '',
       gradeLevel: '',
       phoneNumber: '',
       schoolName: '',
@@ -243,6 +336,17 @@ export default {
         email: '',
       },
 
+      //For the Show Excel and Paste Modal
+      showExcelModal: false,
+      excelData: '', //Data from user pasting from excel sheet
+
+      //For the Add New Class modal
+      newClassName: '', 
+      newGradeLevel: '',  
+      newClassId: this.generateClassId(),  // new classroom ID (randomly generated)
+      grades: ['9th grade', '10th grade', '11th grade', '12th grade'],  // available grade levels
+      showNewClassModal: false, 
+
       //For the snackbar ui alerts
       snackbar: false,
       snackbarMessage: '',
@@ -259,6 +363,7 @@ export default {
     // populate from teacherData if available
     this.username = teacherData.username || 'No username provided';
     this.firstName = teacherData.firstName || 'No first name provided';
+    this.lastName = teacherData.lastName || 'No first name provided';
     this.role = teacherData.role || 'No role provided';
 
     this.gradeLevel = teacherData.gradeLevel || 'No grade level';
@@ -269,6 +374,7 @@ export default {
     this.classroomNames = teacherData.classroomNames || [];
     this.allStudents = teacherData.allStudents || {};
     console.log('Classroom Names Array:', this.classroomNames);
+
   },
   methods: {
     /**
@@ -346,7 +452,117 @@ export default {
     },
     redirectToCourses() {
       alert('redirecting');
-    }
+    },
+    openExcelModal(){
+      this.showExcelModal = true;
+    },
+    processExcelData() {
+      // Taking pasted info from user
+      const students = this.excelData.split('\n').map((line) => {
+        const [firstName, lastName, email] = line.split('\t');
+        return { firstName, lastName, email };
+      });
+
+      // Check if a classroom is selected and that there are students
+      if (this.selectedClassroom && students.length > 1) {
+        // Add students to the selected classroom
+        if (!this.allStudents[this.selectedClassroom]) {
+          this.allStudents[this.selectedClassroom] = []; // Create an array for this classroom if it doesn't exist
+        }
+
+        // Add each student to the classroom
+        students.forEach((student) => {
+          this.allStudents[this.selectedClassroom].push(student);
+        });
+
+        // Persist the updated allStudents object to localStorage
+        const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
+        if (teachersData[this.email]) {
+          teachersData[this.email].allStudents = this.allStudents;
+          localStorage.setItem('teachersData', JSON.stringify(teachersData));
+        }
+
+        // Provide feedback to the user
+        this.snackbarMessage = 'Students added successfully!';
+        this.snackbar = true;
+        this.closeExcelModal();
+        this.closeAddStudentsModal();
+      } else {
+        // Show an error message if no classroom is selected or if no students were pasted
+        this.snackbarMessage = 'Please select a classroom and paste valid data.';
+        this.snackbar = true;
+      }
+    },
+    closeExcelModal(){
+      this.showExcelModal = false;
+      this.excelData = '';
+    },
+    generateClassId() {
+      return 'CLS' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    },
+    openNewClassModal() {
+      this.showNewClassModal = true;
+    },
+    closeNewClassModal() {
+      this.showNewClassModal = false;
+      this.newClassName = '';
+      this.newGradeLevel = '';
+      this.newClassId = this.generateClassId();
+    },
+    saveNewClass() {
+      if (this.newClassName && this.newGradeLevel) {
+        // Create new class object
+        const newClass = {
+          name: this.newClassName,
+          gradeLevel: this.newGradeLevel,
+          id: this.newClassId,
+        };
+
+        // Add the new class to the list of classrooms in localStorage
+        const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
+        const teacherData = teachersData[this.email] || {};
+        teacherData.classroomNames.push(newClass);
+
+        // Save updated data in localStorage
+        teachersData[this.email] = teacherData;
+        localStorage.setItem('teachersData', JSON.stringify(teachersData));
+
+        // Update the classroom names in the current session
+        this.classroomNames.push(newClass);
+
+        // Close the modal and reset fields
+        this.closeNewClassModal();
+
+        // Show feedback message
+        this.snackbarMessage = 'Class created successfully!';
+        this.snackbar = true;
+      } else {
+        this.snackbarMessage = 'Please fill in all fields.';
+        this.snackbar = true;
+      }
+    },
+
+    testAddStudent() {   
+      //checking for classrooms 
+      if (this.classroomNames.length === 0) {
+        const testClass = { id: 'TEST123', name: 'Test Classroom' };
+        this.classroomNames.push(testClass);
+        this.selectedClassroom = testClass.id;
+      } else {
+        
+        this.selectedClassroom = this.classroomNames[0].id;
+      }
+      //test student info
+      this.newStudent.firstName = 'Test';
+      this.newStudent.lastName = 'Student';
+      this.newStudent.email = 'test@student.com';
+      
+      this.addStudent();
+
+      console.log('After addStudent, allStudents:', this.allStudents);
+      this.snackbarMessage = 'Student added successfully!';
+    },
+
   }
 };
 </script>
@@ -385,7 +601,7 @@ h4 {
 h5 {
   font-weight: bolder;
   font-size: medium;
-  color:rgb(99, 135, 156)
+  color:rgb(50, 79, 96)
 }
 
 .classroom-card {
@@ -409,11 +625,10 @@ h5 {
 
 .classroom-button {
   color: rgb(61, 61, 61);
-  /* outline-style: dashed; */
   outline-style: solid;
   outline-width: 1px;
-  outline-color: rgb(118, 131, 118);
-  margin-top: 0px;
+  outline-color: rgba(118, 131, 118, 0.756);
+  margin-bottom:20px;
   text-transform: capitalize;
 
 }
@@ -444,12 +659,12 @@ h5 {
 }
 
 .add-students-dialog {
-  
-  background-color: rgba(87, 186, 214, 0.111);
+  align-items: center;
+  /* background-color: rgba(87, 186, 214, 0.111); */
 }
 
 .dialog-list {
-  color: rgb(37, 78, 107);
+  color: rgb(18, 51, 75);
 }
 
 .students-list-button {
@@ -459,4 +674,55 @@ h5 {
   
 }
 
+.paste-excel-dialog {
+  align-items: center;
+  background-color: rgba(124, 160, 181, 0.749);
+}
+
+.center-h4 {
+  font-weight:bolder;
+  font-size: small;
+  color: rgb(81, 91, 96);
+}
+
+.excel-dialog-row {
+  align-content: center;
+  text-align: left;
+  padding:5px;
+}
+
+.excel-text-area {
+  color:rgb(18, 59, 79);
+}
+
+.create-class-headline {
+  text-align: center;
+}
+
+.create-class-row {
+  align-content: center;
+  text-align: center;
+}
+
+.desk-icon {
+  align-self: center;
+  color: rgb(107, 84, 42);
+}
+
+.apple-icon {
+  align-self: center;
+  color: rgb(179, 169, 66);
+  margin-top: 20px;
+}
+
+.new-class-fields {
+  padding: 10px;
+  align-self: center;
+  color: rgb(3, 22, 56);
+}
+
+.create-class-headings {
+  margin-left: 20px;
+  text-align: left;
+}
 </style>
