@@ -8,7 +8,7 @@
         <!-- Form Column on the left side -->
         <v-col cols="12" md="6">
         <v-card class="card-style"> 
-          <h2>Complete Your Teacher Account</h2>
+          <h2>Finish Creating Your Teacher Account</h2>
   
           <!-- Teacher's first name -->
           <v-text-field
@@ -29,7 +29,7 @@
           <v-text-field
             v-model="phoneNumber"
             label="Phone Number"
-            placeholder="xxx-xxxx"
+            placeholder="(xxx)xxx-xxxx"
             variant="outlined"
             color="cyan-darken-2" 
             class="hover-color"
@@ -131,7 +131,12 @@
     name: 'NewTeacherOnboarding',
     data() {
       return {
-        // ... your existing data properties ...
+        //rules
+        requiredRule: v=> !!v || 'This field is required',
+        phoneFormatRule: v => /^\(\d{3}\)\d{3}-\d{4}$/.test(v) || 'Phone Number must be in (xxx)xxx-xxxx format',
+        // phoneFormatRule: v => /^\d{3}-\d{4}$/.test(v) || 'Phone Number must be in xxx-xxxx format',
+        alphanumericRule: v => /^[a-zA-Z0-9]+$/.test(v) || 'ID must be alphanumeric',
+        //
         username: '',
         email: '',
         role: '',
