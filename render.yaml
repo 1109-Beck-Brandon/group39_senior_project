@@ -5,7 +5,7 @@ services:
     plan: free
     buildCommand: |
       pip install -r backend/requirements.txt
-      npm install
-      npm run build
+      npm install --prefix frontend
+      npm run build --prefix frontend
       flask db upgrade
     startCommand: gunicorn "backend:create_app()"

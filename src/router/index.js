@@ -76,10 +76,16 @@ const routes = [
     component: TeacherView
   },
   //Add Review Page
+<<<<<<< HEAD
   {
     path: '/reviewPage',
     name: 'ReviewPage',
     component: ReviewPage
+=======
+  { path: '/reviewPage', 
+    name: 'ReviewPage', 
+    component: ReviewPage 
+>>>>>>> b6ee74d (Revert "Merge branch 'BrandonV2' into daemon")
   },
   //Add Profile View Page
   {
@@ -163,6 +169,7 @@ const routes = [
     path: '/classroom-students',
     name: 'ClassroomStudents',
     component: ClassroomStudents,
+<<<<<<< HEAD
   },
 
   {
@@ -177,6 +184,8 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('../views/UserProfile.vue')
+=======
+>>>>>>> b6ee74d (Revert "Merge branch 'BrandonV2' into daemon")
   }
 
 ]
