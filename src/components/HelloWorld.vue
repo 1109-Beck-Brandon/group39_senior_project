@@ -1,4 +1,5 @@
 <template>
+
   <div class="home">
     <!-- Terminal Background -->
     <div class="terminal-background">
@@ -6,90 +7,101 @@
         {{ line }}
       </div>
     </div>
-    
-    <v-container>
-      <v-row class="align-items-end mt-5">
-        <v-col class="text-left" cols="6">
-          <h1 class="display-2 font-weight-bold mb-3 gradient-text space-grotesk">
-            Welcome to the Cybersecurity<br>Learning Platform
-          </h1>
-          <p class="subheading font-weight-regular grey-text">
-            This website is here to help educators and individuals who want<br>to learn more about the field of cybersecurity!
-          </p>
-        </v-col>
+   
+  <v-container>
+    <v-row class="align-items-end mt-5">
+      <v-col class="text-left" cols="6">
+        <h1 class="display-2 font-weight-bold mb-3 gradient-text space-grotesk">
+          Welcome to the Cybersecurity<br>Learning Platform
+        </h1>
+        <p class="subheading font-weight-regular grey-text">
+          This website is here to help educators and individuals who want<br>to learn more about the field of cybersecurity!
+        </p>
+      </v-col>
 
-        <v-col class="text-right" cols="6">
-          <v-img
-            :src="require('../assets/1_0tfkWrWCeG5gR2tGozNrHg.gif')"
-            class="my-3"
-            contain
-            height="325"
-          />
-        </v-col>
-      </v-row>
+      <v-col class="text-right" cols="6">
+        <v-img
+          :src="require('../assets/1_0tfkWrWCeG5gR2tGozNrHg.gif')"
+          class="my-3"
+          contain
+          height="325"
+        />
+      </v-col>
+    </v-row>
 
-      <v-divider class="gradient-line mt-5"></v-divider>
+    <v-divider class="gradient-line mt-5"></v-divider>
 
-      <v-row class="text-center mt-5">
-        <!-- Sliding Photos Section -->
-        <v-col cols="12">
-          <v-carousel
-            class="my-carousel"
-            show-arrows
-            hide-delimiters
-            cycle
-            :interval="3000"
-          >
-            <v-carousel-item
-              v-for="(photo, index) in photos"
-              :key="index"
-            >
-              <v-container class="text-center">
-                <v-img 
-                  :src="photo.src" 
-                  :alt="photo.alt" 
-                  class="photo-slide" 
-                />
-                <p class="photo-name mt-3">{{ photo.alt }}</p>
-              </v-container>
-            </v-carousel-item>
-          </v-carousel>
-        </v-col>
-      </v-row>
+    <v-row class="text-center mt-5">
 
-      <!-- New Section -->
-      <v-row class="mt-6">
-        <v-col class="text-left" cols="6">
-          <h3 class="subheading font-weight-bold gradient-text mb-3 space-grotesk">Learn from Experts</h3>
-          <p class="grey-text">
-            Join our cybersecurity professional website to gain knowledge on securing digital infrastructures, protecting sensitive data, and preventing cyber threats.
-          </p>
-        </v-col>
-        <v-col class="text-right" cols="6">
-          <v-img
-            :src="require('../assets/1584115837673.jpg')"
-            class="my-3"
-            contain
-            height="250"
-          />
-        </v-col>
-      </v-row>
-
-      <v-divider class="gradient-line mt-5"></v-divider>
-
-      <v-row justify="center" class="mt-6">
-        <v-btn
-          class="gradient-button"
-          rounded
-          large
-          href="#"
-          @click="redirectToLogin"
+      <!-- Sliding Photos Section -->
+      <v-col cols="12">
+        <v-carousel
+          class="my-carousel"
+          show-arrows
+          hide-delimiters
+          cycle
+          :interval="3000"
         >
-          Start journey now!
-        </v-btn>
-      </v-row>
+          <v-carousel-item
+            v-for="(photo, index) in photos"
+            :key="index"
+          >
+            <v-container class="text-center">
+              <v-img 
+                :src="photo.src" 
+                :alt="photo.alt" 
+                class="photo-slide" 
+              />
+              <p class="photo-name mt-3">{{ photo.alt }}</p>
+            </v-container>
+          </v-carousel-item>
+        </v-carousel>
+      </v-col>
+    </v-row>
 
-      <!-- New Section: 3 -->
+    <!-- New Section -->
+    <v-row class="mt-6">
+      <v-col class="text-left" cols="6">
+        <h3 class="subheading font-weight-bold gradient-text mb-3 space-grotesk">Learn from Experts</h3>
+        <p class="grey-text">
+          Join our cybersecurity professional website to gain knowledge on securing digital infrastructures, protecting sensitive data, and preventing cyber threats.
+        </p>
+      </v-col>
+      <v-col class="text-right" cols="6">
+        <v-img
+          :src="require('../assets/1584115837673.jpg')"
+          class="my-3"
+          contain
+          height="250"
+        />
+      </v-col>
+    </v-row>
+
+    <v-divider class="gradient-line mt-5"></v-divider>
+
+    <!-- Modify the Start Journey button to show different options based on login status -->
+    <v-row justify="center" class="mt-6">
+      <v-btn
+        v-if="!isLoggedIn"
+        class="gradient-button"
+        rounded
+        large
+        @click="redirectToLogin"
+      >
+        Start journey now!
+      </v-btn>
+      <v-btn
+        v-else
+        class="gradient-button"
+        rounded
+        large
+        @click="goToDashboard"
+      >
+        Go to your dashboard
+      </v-btn>
+    </v-row>
+
+    <!-- New Section: 3 -->
       <v-container>
         <!-- Section Heading -->
         <v-row justify="center" class="mt-6">
@@ -200,9 +212,18 @@ export default {
     ],
   }),
 
+  computed: {
+    isLoggedIn() {
+      return !!localStorage.getItem('user');
+    }
+  },
+
   methods: { 
     redirectToLogin() { 
       this.$router.push('/login');
+    },
+    goToDashboard() { // Add this method
+      this.$router.push('/dashboard');
     }
   },
   
@@ -296,6 +317,7 @@ export default {
 
 .gradient-text {
   background: linear-gradient(to right, rgb(225, 119, 5), #d514b2, purple);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
