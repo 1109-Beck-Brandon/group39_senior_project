@@ -1,90 +1,97 @@
 <template>
-    <v-container class="pa-5">
-        
-        <h2>For the new Create a Profile, I replaced it with a button and floating UI on the homepage, Which
-            takes you to the /onboarding
-        </h2>
-        
-        <!-- Temporary Form Submission Until Database is Ready -->
-        <v-form @submit.prevent="handleSubmit">
-            
-            <!-- Username Input -->
-            <v-text-field
-                label="Create Username"
-                v-model="formData.username"
-                required
-            ></v-text-field>
+  <v-container class="pa-5">
+      <h2>Create Your Profile</h2>
+      <v-form @submit.prevent="handleSubmit">
+          <v-text-field
+              label="First Name"
+              v-model="formData.first_name"
+              required
+          ></v-text-field>
 
-            <!-- Email Address Input -->
-            <v-text-field
-                label="Email Address"
-                v-model="formData.email"
-                type="email"
-                required
-            ></v-text-field>
+          <v-text-field
+              label="Last Name"
+              v-model="formData.last_name"
+              required
+          ></v-text-field>
 
-            <!-- Password Input -->
-            <v-text-field
-                label="Password"
-                v-model="formData.password"
-                type="password"
-                required
-            ></v-text-field>
+          <v-text-field
+              label="Email Address"
+              v-model="formData.email"
+              type="email"
+              required
+          ></v-text-field>
 
-            <!-- Profile Role Selection -->
-            <v-select
-                label="Role"
-                :items="roles"
-                v-model="formData.role"
-                required
-            ></v-select>
+          <v-text-field
+              label="Password"
+              v-model="formData.password"
+              type="password"
+              required
+          ></v-text-field>
 
-            <v-btn color="primary" type="submit">Submit</v-btn>
+          <v-select
+              label="Role"
+              :items="roles"
+              v-model="formData.role"
+              required
+          ></v-select>
 
-        </v-form>
-    </v-container>
+          <v-btn color="primary" type="submit">Submit</v-btn>
+      </v-form>
+      <p v-if="message" class="message">{{ message }}</p>
+  </v-container>
 </template>
 
 <script>
-
-import api from '@/services/api';
+import { register } from '@/services/api';
 
 export default {
-    data() {
-        return {
-            formData: {
-                username: '',
-                email: '',
-                password: '',
-                role: '',
-                first_name: '',
-                last_name: '',
-            },
-            roles: ['Student', 'Teacher', 'Individual'],
-        };
+  data() {
+    return {
+      formData: {
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        role: '',
+      },
+      roles: ['Student', 'Teacher', 'Individual'],
+      message: ''
+    };
+  },
+  methods: {
+    async handleSubmit() {
+      console.log('formData:', this.formData);
+      const payload = {
+        first_name: this.formData.first_name,
+        last_name: this.formData.last_name,
+        email: this.formData.email,
+        password: this.formData.password,
+        role: this.formData.role
+      };
+      try {
+        const response = await register(payload);
+        this.message = response.data.message;
+        console.log('Profile Created:', response.data);
+        this.$router.push('/login');
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          this.message = 'Email already exists';
+        } else {
+          this.message = error.response?.data?.error || 'Error creating profile';
+        }
+        console.error('Error creating profile:', error);
+      }
     },
-    methods: {
-        async handleSubmit() {
-            try {
-                const response = await api.createProfile(this.formData);
-                this.message = response.data.message;
-                console.log('Profile Created:', response.data);
-                this.$router.push('/login');
-            } catch (error) {
-                if (error.response && error.response.status === 409) {
-                    console.error('Username or Email already exists:', error);
-                } else {
-                    console.error('Error creating profile:', error);
-                }
-                console.error('Error creating profile:', error);
-            }
-        },
-    },
+  },
 };
 </script>
 
 <style scoped>
 .pa-5 {
-    padding:40px;
+  padding:40px;
+}
+.message {
+  margin-top: 10px;
+  color: red;
 }
 </style>

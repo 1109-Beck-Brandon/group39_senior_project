@@ -306,6 +306,8 @@
 </template>
 
 <script>
+import { getTeacherDashboard, addStudentToClassroom } from '@/services/api';
+
 export default {
   name: 'NewTeacherView',
   data() {
@@ -319,26 +321,22 @@ export default {
       role: '',
       firstName: '',
       lastName: '',
-      // classroomName: '',
-      // classId: '',
       gradeLevel: '',
       phoneNumber: '',
       schoolName: '',
       preferredContactMethod: '',
-      //
       classroomNames: [],
       allStudents: {},
 
-      //For the Add Students Modal
+      // For the Add Students Modal
       showAddStudentsModal: false,
-      selectedClassroom: null, //ID of selected class
+      selectedClassroom: null, // ID of selected class
       newStudent: {
         firstName: '',
         lastName: '',
         email: '',
       },
 
-<<<<<<< HEAD
       //For the Show Excel and Paste Modal
       showExcelModal: false,
       excelData: '', //Data from user pasting from excel sheet
@@ -350,15 +348,12 @@ export default {
       grades: ['9th grade', '10th grade', '11th grade', '12th grade'],  // available grade levels
       showNewClassModal: false, 
 
-=======
->>>>>>> b6ee74d (Revert "Merge branch 'BrandonV2' into daemon")
       //For the snackbar ui alerts
       snackbar: false,
       snackbarMessage: '',
     };
   },
   created() {
-<<<<<<< HEAD
     // Instead of reading from localStorage, fetch teacher data from the backend.
     getTeacherDashboard()
       .then(response => {
@@ -402,45 +397,8 @@ export default {
       this.allStudents = teacherData.allStudents || {};
       console.log('Classroom Names Array:', this.classroomNames);
     },
-=======
-    const userData = JSON.parse(localStorage.getItem('newUser')) || {};
-    this.email = userData.email || 'No email provided';
-
-    // fetch the teacher's data using the email from 'teachersData' in localStorage
-    const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
-    const teacherData = teachersData[this.email] || {};
-
-    // populate from teacherData if available
-    this.username = teacherData.username || 'No username provided';
-    this.firstName = teacherData.firstName || 'No first name provided';
-    this.role = teacherData.role || 'No role provided';
-
-    this.gradeLevel = teacherData.gradeLevel || 'No grade level';
-    this.phoneNumber = teacherData.phoneNumber || 'No phone number';
-    this.schoolName = teacherData.schoolName || 'No school name';
-    this.preferredContactMethod = teacherData.preferredContactMethod || 'No contact method';
-    //
-    this.classroomNames = teacherData.classroomNames || [];
-    this.allStudents = teacherData.allStudents || {};
-    console.log('Classroom Names Array:', this.classroomNames);
-  },
-  methods: {
-    /**
-
-     * @param {Object} classroom 
-     */
->>>>>>> b6ee74d (Revert "Merge branch 'BrandonV2' into daemon")
     selectClassroom(classroom) {
-
-      if (!this.allStudents[classroom.id]) {
-        this.allStudents[classroom.id] = [];
-      }
-
-      const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
-      if (teachersData[this.email]) {
-        teachersData[this.email].allStudents = this.allStudents;
-        localStorage.setItem('teachersData', JSON.stringify(teachersData));
-      }
+      // Optionally, update local data if needed
       this.$router.push({ path: '/classroom-students', query: { id: classroom.id } });
     },
     openAddStudentsModal() {
@@ -454,10 +412,6 @@ export default {
         lastName: '',
         email: '',
       };
-    },
-    getClassroomId(classroomId) {
-      const classroom = this.classroomNames.find(c => c.id === classroomId);
-      return classroom ? classroom.id : '...';
     },
     addStudent() {
       if (!this.selectedClassroom) {
@@ -473,35 +427,29 @@ export default {
         alert('Please enter a valid email address.');
         return;
       }
-      const student = {
-        firstName: this.newStudent.firstName,
-        lastName: this.newStudent.lastName,
-        email: this.newStudent.email,
-      };
-      //adds student to select classroom's student array
-      if (!this.allStudents[this.selectedClassroom]) {
-        this.allStudents[this.selectedClassroom] = [];
-      }
-      this.allStudents[this.selectedClassroom].push(student);
-
-      // persist the updated allStudents object to localStorage
-      const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
-      if (teachersData[this.email]) {
-        teachersData[this.email].allStudents = this.allStudents;
-        localStorage.setItem('teachersData', JSON.stringify(teachersData));
-      }
-
-      this.closeAddStudentsModal();
-      this.snackbarMessage = 'Student added successfully!';
-      this.snackbar = true;
-
+      // Call the backend API to add the student.
+      addStudentToClassroom(this.selectedClassroom, this.newStudent)
+        .then(() => {
+          // Refresh the teacher dashboard data
+          return getTeacherDashboard();
+        })
+        .then(response => {
+          const teacherData = response.data;
+          this.allStudents = teacherData.allStudents || {};
+          this.classroomNames = teacherData.classroomNames || [];
+          this.closeAddStudentsModal();
+          this.snackbarMessage = 'Student added successfully!';
+          this.snackbar = true;
+        })
+        .catch(error => {
+          console.error("Error adding student:", error);
+        });
     },
     manuallyAddStudents() {
       this.openAddStudentsModal();
     },
     redirectToCourses() {
       alert('redirecting');
-<<<<<<< HEAD
     },
     openExcelModal(){
       this.showExcelModal = true;
@@ -613,12 +561,11 @@ export default {
       this.snackbarMessage = 'Student added successfully!';
     },
 
-=======
-    }
->>>>>>> b6ee74d (Revert "Merge branch 'BrandonV2' into daemon")
   }
 };
 </script>
+
+
 
 <style scoped>
 .dashboard-header {
