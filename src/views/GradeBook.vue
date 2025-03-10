@@ -1,17 +1,26 @@
 <template>
   <v-container fluid>
-    <v-btn class="ma-2" color="blue" @click="navigateToTeacherView">
+    <!-- Back Button -->
+    <v-btn
+      class="ma-2"
+      color="blue"
+      @click="navigateToTeacherView"
+    >
       <v-icon start>mdi-arrow-left</v-icon>
       Back
     </v-btn>
 
     <v-row>
+      <!-- Left Section: Classroom Dropdown and Students List -->
       <v-col cols="12" md="6">
         <v-card class="pa-4 student-card" elevation="5">
           <v-card-title>
             <h3 class="title-text">Select Classroom</h3>
           </v-card-title>
+
           <v-divider></v-divider>
+
+          <!-- Classroom Dropdown -->
           <v-select
             v-model="selectedClassroom"
             :items="classrooms"
@@ -21,19 +30,23 @@
             @change="loadStudents"
             outlined
           ></v-select>
+
+          <!-- Students List -->
           <v-list>
             <v-list-item-group v-if="students.length" color="primary">
               <v-list-item
-                v-for="student in students"
-                :key="student.id"
+                v-for="(student, index) in students"
+                :key="index"
                 class="student-item"
                 @click="openStudentDetails(student)"
               >
                 <v-list-item-content>
                   <v-list-item-title class="student-title">
                     <v-icon start>mdi-account-circle</v-icon>
-                    {{ student.name }}
-                    <span class="student-info"> : {{ student.grade }}% </span>
+                    {{ student.firstName }} {{ student.lastName }}
+                    <span class="student-info">
+                      : {{ student.grade }}%
+                    </span>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -44,12 +57,16 @@
           </v-list>
         </v-card>
       </v-col>
+
+      <!-- Right Section: Class Performance -->
       <v-col cols="12" md="6">
         <v-card class="pa-4 assignments-card" elevation="5">
           <v-card-title>
             <h3 class="title-text">Overall Performance</h3>
           </v-card-title>
           <v-divider></v-divider>
+
+          <!-- Class Grade Display -->
           <v-row class="d-flex justify-center">
             <v-col cols="auto">
               <div class="class-grade">
@@ -57,17 +74,15 @@
               </div>
             </v-col>
           </v-row>
+
+          <!-- Assignments List -->
           <v-divider></v-divider>
           <h3 class="title-text">Current Assignments:</h3>
           <v-list>
-            <v-list-item v-for="assignment in assignments" :key="assignment.id">
+            <v-list-item v-for="(assignment, index) in assignments" :key="index">
               <v-list-item-content>
-                <v-list-item-title class="assignment-title">
-                  {{ assignment.title }}
-                </v-list-item-title>
-                <v-list-item-subtitle class="assignment-desc">
-                  {{ assignment.description }}
-                </v-list-item-subtitle>
+                <v-list-item-title class="assignment-title">{{ assignment.title }}</v-list-item-title>
+                <v-list-item-subtitle class="assignment-desc">{{ assignment.description }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -75,17 +90,18 @@
       </v-col>
     </v-row>
 
+    <!-- Student Details Modal -->
     <v-dialog v-model="showStudentDetailsModal" max-width="600px">
       <v-card>
         <v-card-title class="headline">Student Details</v-card-title>
         <v-card-text>
-          <p><strong>Name:</strong> {{ selectedStudent.name }}</p>
-          <p><strong>Classroom:</strong> {{ selectedStudent.classroom }}</p>
+          <p><strong>Name:</strong> {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}</p>
+          <p><strong>Classroom:</strong> {{ selectedStudent.classroomId }}</p>
           <p><strong>Assignments:</strong></p>
           <v-list>
             <v-list-item
-              v-for="assignment in studentAssignments"
-              :key="assignment.id"
+              v-for="(assignment, index) in studentAssignments"
+              :key="index"
             >
               <v-list-item-content>
                 <v-list-item-title>{{ assignment.title }}</v-list-item-title>
@@ -94,9 +110,7 @@
           </v-list>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="secondary" text @click="showStudentDetailsModal = false">
-            Close
-          </v-btn>
+          <v-btn color="secondary" text @click="showStudentDetailsModal = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -104,7 +118,7 @@
 </template>
 
 <script>
-import { getClassrooms, getAssignments, getStudentsByClassroom } from '@/services/api';
+import axios from 'axios';
 
 export default {
   name: "GradeBook",
@@ -113,36 +127,41 @@ export default {
       classrooms: [],
       selectedClassroom: null,
       students: [],
-      selectedStudent: {},
+      selectedStudent: null,
       showStudentDetailsModal: false,
-      assignments: [],
+      assignments: [],         // Will be fetched from API instead of hard-coded
       studentAssignments: [],
-      classGrade: 0,
+      classGrade: 0,           // This might also be dynamically calculated
       error: '',
     };
   },
-  computed: {
-    isTeacher() {
-      const user = JSON.parse(localStorage.getItem("user"));
-      return user && user.role === "Teacher";
-    },
-  },
   async created() {
-    const user = localStorage.getItem("user");
-    if (!user) {
-      this.$router.push("/login");
-      return;
-    }
-    if (!this.isTeacher) {
-      this.$router.push("/dashboard");
-      return;
-    }
     try {
-      const classroomsResponse = await getClassrooms();
+      // Fetch teacher's classrooms from the API
+      const classroomsResponse = await axios.get('/api/classrooms', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }
+      });
       this.classrooms = classroomsResponse.data;
-      this.selectedClassroom = this.classrooms[0]?.id || null;
+      
+      // For consistency, assume each classroom object has a property "classroom_id" and "email"
+      // Adjust filtering logic accordingly
+      const userData = JSON.parse(localStorage.getItem("newUser")) || {};
+      this.classrooms = this.classrooms.filter(
+        classroom => classroom.email === userData.email
+      );
+      this.selectedClassroom = this.classrooms[0]?.classroom_id || null;
+      
+      // Fetch students for the selected classroom
       await this.loadStudents();
-      const assignmentsResponse = await getAssignments();
+      
+      // Optionally fetch assignments if available from the backend
+      const assignmentsResponse = await axios.get('/api/assignments', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }
+      });
       this.assignments = assignmentsResponse.data;
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -153,7 +172,12 @@ export default {
     async loadStudents() {
       if (this.selectedClassroom) {
         try {
-          const studentsResponse = await getStudentsByClassroom(this.selectedClassroom);
+          // Fetch students associated with the selected classroom
+          const studentsResponse = await axios.get(`/api/classrooms/${this.selectedClassroom}/students`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+            }
+          });
           this.students = studentsResponse.data;
         } catch (error) {
           console.error("Error loading students:", error);
@@ -163,6 +187,7 @@ export default {
     },
     openStudentDetails(student) {
       this.selectedStudent = student;
+      // Link the assignments to the selected student; you may want to fetch these details from an API instead
       this.studentAssignments = this.assignments;
       this.showStudentDetailsModal = true;
     },
@@ -172,6 +197,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Your existing styles remain unchanged */
+</style>
+
+
 
 <style scoped>
 .student-item {
@@ -216,17 +247,17 @@ export default {
 }
 
 .title-text {
-  color: #1976d2;
+  color: #1976d2; /* Blue text for titles */
 }
 
 .assignments-card {
-  background-color: #fafafa;
+  background-color: #fafafa; /* Light background for assignment cards */
   border-radius: 8px;
 }
 
 .student-card {
   background-color: #ffffff;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Light shadow effect */
   border-radius: 8px;
 }
 
@@ -240,8 +271,9 @@ export default {
 }
 
 .class-grade {
-  font-size: 48px;
+  font-size: 48px; /* Large text for grade */
   font-weight: bold;
+  color: #388e3c; /* Green color for class grade */
   text-align: center;
 }
 </style>

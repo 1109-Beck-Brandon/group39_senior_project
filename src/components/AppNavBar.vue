@@ -20,36 +20,22 @@
 </template>
 
 <script>
-import { logout as apiLogout } from '@/services/api.js';
-
-export default {
-  data() {
-    return {
-      showLogoutDialog: false,
-    };
-  },
-  methods: {
-    goToLoginPage(route) {
-      this.$router.push(route);
+  export default {
+    data() {
+      return {
+        showLogoutDialog: false,
+      };
     },
-    logout() {
-      this.showLogoutDialog = false;
-      // Call the backend logout API
-      apiLogout()
-        .then(() => {
-          // Clear any local authentication tokens if needed
-          localStorage.removeItem('user');
-          // Redirect to the login page after successful logout
-          this.$router.push('/login');
-        })
-        .catch(error => {
-          console.error('Logout error:', error);
-          // Clear any local authentication tokens if needed
-          localStorage.removeItem('user');
-          // Redirect to the login page if logout fails
-          this.$router.push('/login');
-        });
+    methods: {
+      goToLoginPage(route) {
+        this.$router.push(route);
+      },
+      logout() {
+        this.showLogoutDialog = false;
+        //Add logic for logging out a user here
+        //For now, just redirect to the login page
+        this.$router.push('/login');
+      },
     },
-  },
-};
+  };
 </script>
