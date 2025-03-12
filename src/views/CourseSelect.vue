@@ -36,8 +36,8 @@ export default {
     return {
       courses: [
         { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
-        { name: "Sample Course 202", description: "This is a sample course to test the slide bar", progress: 0 },
-        { name: "Sample Course 303", description: "This is a sample course to test the slide bar", progress: 0 },
+        { name: "NIST Cybersecurity Framework", description: "Learn about the National Institute for Science and Technology's Cybersecurity Framework", progress: 0 },
+        { name: "Digital Forensics Fundamentals", description: "Learn about the basics to Digtial Forensics", progress: 0 },
         // Add more courses as needed
       ],
     };
@@ -46,8 +46,8 @@ export default {
     goToCoursePage(courseName) {
       const courseRoutes = {
         "Introduction to Cybersecurity": "/course/intro-to-cybersecurity",
-        "Sample Course 202": "/course/sample-202",
-        "Sample Course 303": "/course/sample-303",
+        "NIST Cybersecurity Framework": "/course/nist-framework",
+        "Digital Forensics Fundamentals": "/course/digital-forensics-fund",
         // More course routings
       };
 

@@ -21,8 +21,19 @@ import Course1QuizLab from '../views/CoursePages/1-IntroToCybersecurity/CourseMo
 import Course1Jobs from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/JobsAtCyber.vue'
 import Course1FinalQuiz from '../views/CoursePages/1-IntroToCybersecurity/CourseModules/FinalExam.vue'
 
-import CourseSample202 from '../views/CoursePages/2-SampleCourse202/SampleCourse2.vue'
-import CourseSample303 from '../views/CoursePages/3-SampleCourse303/SampleCourse3.vue'
+//Course 2 Content: NIST CYBERSECURITY FRAMEWORK
+import CourseNISTFramework from '../views/CoursePages/2-NISTFramework/NISTFrameworkCoursePage.vue'
+import NISTCourseIntro from '../views/CoursePages/2-NISTFramework/CourseModules/NISTIntro.vue'
+import NISTCourseGovern from '../views/CoursePages/2-NISTFramework/CourseModules/NISTGovernModule.vue'
+import NISTCourseIdentify from '../views/CoursePages/2-NISTFramework/CourseModules/NISTIdentifyModule.vue'
+import NISTCourseProtect from '../views/CoursePages/2-NISTFramework/CourseModules/NISTProtectModule.vue'
+import NISTCourseDetect from '../views/CoursePages/2-NISTFramework/CourseModules/NISTDetectModule.vue'
+import NISTCourseRespond from '../views/CoursePages/2-NISTFramework/CourseModules/NISTRespondModule.vue'
+import NISTCourseRecover from '../views/CoursePages/2-NISTFramework/CourseModules/NISTRecoverModule.vue'
+import NISTCourseFinal from '../views/CoursePages/2-NISTFramework/CourseModules/NISTFinal.vue'
+
+//Course 3 Content: DIGITAL FORENSICS FUNDAMENTALS
+import CourseDigitalForensics from '../views/CoursePages/3-DigitalForensicsFund/DigitalForensicsFundCoursePage.vue'
 
 
 import TeacherOnboarding from "@/views/OnboardingPages/TeacherOnboarding.vue";
@@ -93,8 +104,8 @@ const routes = [
   },
   //These will be all of the course pages
   { path: "/course/intro-to-cybersecurity", name: "IntroToCybersecurity", component: CourseIntroToCybersecurity },
-  { path: "/course/sample-202", name: "Sample202", component: CourseSample202 },
-  { path: "/course/sample-303", name: "Sample303", component: CourseSample303 },
+  { path: "/course/nist-framework", name: "NISTFramework", component: CourseNISTFramework },
+  { path: "/course/digital-forensics-fund", name: "DigitalForensicsFund", component: CourseDigitalForensics },
   // Add more course routes here
 
   //Course 1 Module Components
@@ -107,6 +118,19 @@ const routes = [
   { path: "/course/intro-to-cybersecurity/quizLab", component: Course1QuizLab}, //Course 1 Lab Module 3
   { path: "/course/intro-to-cybersecurity/Jobsmodule", component: Course1Jobs}, //Course 1 Jobs Module
   { path: "/course/intro-to-cybersecurity/FinalQuiz", component: Course1FinalQuiz}, //Final Quiz for Intro to Cybersecurity
+
+  //Course 2 Module Components
+  { path: "/course/nist-framework/introModule", component: NISTCourseIntro}, //NIST Course Intro Module
+  { path: "/course/nist-framework/governModule", component: NISTCourseGovern}, //NIST Course Govern Module
+  { path: "/course/nist-framework/identifyModule", component: NISTCourseIdentify}, //NIST Course Identify Module
+  { path: "/course/nist-framework/protectModule", component: NISTCourseProtect}, //NIST Course Protect Module
+  { path: "/course/nist-framework/detectModule", component: NISTCourseDetect}, //NIST Course Detect Module
+  { path: "/course/nist-framework/respondModule", component: NISTCourseRespond}, //NIST Course Respond Module
+  { path: "/course/nist-framework/recoverModule", component: NISTCourseRecover}, //NIST Course Recover Module
+  { path: "/course/nist-framework/finalModule", component: NISTCourseFinal}, //NIST Course Final Module
+
+  //Course 3 Module Components
+
 
   //new path to teacher's Onboarding Page
   {

@@ -53,6 +53,12 @@
       Document 4: <a href="https://docs.google.com/document/d/1lPMA9hvPBuiMhkkt9URFCxpu42rIrE3kV2k7P-SgbII/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Project Prototype</a>
       <br>
       Document 5: <a href="https://docs.google.com/document/d/1eH8cneEGaBXOg5pZnMEDBLSA7mgX7C7rcEXhcTLy9sM/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Revised Concept and Project Management</a>
+      <br>
+      Document 6: <a href="https://docs.google.com/document/d/1NkeG3YIuuocRe--qigBlc4PPqTrmZN9TqwjecF0b_Ig/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Revised Specification and Design</a>
+      <br>
+      Document 7: <a href="https://docs.google.com/document/d/1SfnZ-Ux-6uaXrAoyHiVRhoH5KEo-ZZKZN7MyharQVAA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Acceptance Criteria and Testing Strategy Plan</a>
+      <br>
+      Document 8: <a href="https://docs.google.com/document/d/10UGfL3qiXzUzT0ptSY0n9GLCMwz2v5H9K3z1Yb47KQY/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Progress Demo</a>
     </p>
 
     <br>
@@ -74,6 +80,8 @@
       <h3>Future Courses</h3>
       <p>
         - Digital Forensics Fundamentals
+        <br>
+        - NIST Cybersecurity Framework
       </p>
       <br>
       <br>
