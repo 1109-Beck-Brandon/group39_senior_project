@@ -8,41 +8,48 @@
     <!-- Header -->
     <v-row justify="center" align="center">
       <v-col cols="12" md="8" class="text-center">
-        <h2 class="table-theme">The OSI Model</h2>
-        <p class="table-description">
-          The overview of the work of the internet has always been practiced by understanding the theory behind it. Today, we are going to talk about the
-          OSI Model and why it is important. 
-          To start, let's understand what OSI is. OSI stands for Open System Interconnection model. This is a conceptual framework used for understanding 
-          how communication systems works. The networking process, which is the main process in the OSI model, is divided in several layers, and each
-          layer shows the path the data travels across the networking system and how it is transformed during each step.
-        </p>
+        <h1 class="header-title">Common Network Threats</h1>
+        <img :src="headerImage" alt="Network Security Threats" class="header-image" />
       </v-col>
     </v-row>
 
-    <!-- Text-only Carousel Section -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8" class="text-center">
+        <v-card elevation="3" class="intro-card pa-4 mb-6">
+          <h2 class="section-title">Understanding Network Threats</h2>
+          <p class="section-description">
+            In today's interconnected world, network security is more critical than ever. Organizations and individuals 
+            face a growing array of threats that continuously evolve in sophistication. Understanding these threats is 
+            the first step toward effective protection. This module explores common network threats that every 
+            cybersecurity professional should be familiar with.
+          </p>
+        </v-card>
+      </v-col>
+    </v-row>
+
     <v-row justify="center" align="center">
       <v-col cols="12" md="9">
+        <h2 class="section-title text-center">Major Network Threats</h2>
+        
         <v-carousel
-          v-model="currentSlide"
+          v-model="currentThreat"
           height="300"
           hide-delimiter-background
           show-arrows="hover"
           :continuous="false"
+          delimiter-icon="mdi-circle"
+          class="threat-carousel"
         >
-          <v-carousel-item v-for="(layer, index) in layers2" :key="index">
+          <v-carousel-item v-for="(threat, index) in networkThreats" :key="index">
             <v-card class="carousel-card h-100" elevation="4">
               <v-container fluid>
                 <v-row>
                   <v-col cols="12" class="pa-4">
-                    <div class="layer-content text-center">
-                      <h3 class="layer-title text-h4 mb-2">Layer {{ layer.number }}: {{ layer.layer }}</h3>
-                      <div class="layer-subtitle mb-4">TCP/IP Equivalent: {{ layer.tcp }}</div>
-                      <div class="layer-description">{{ layer.description }}</div>
-                      <div class="layer-details mt-4">
-                        <div class="example-text">{{ layer.example }}</div>
-                        <div class="protocols mt-2" v-if="layer.protocols">
-                          <strong>Key Protocols/Technologies:</strong> {{ layer.protocols }}
-                        </div>
+                    <div class="threat-content text-center">
+                      <h3 class="threat-title text-h4 mb-2">{{ threat.title }}</h3>
+                      <div class="threat-description">{{ threat.description }}</div>
+                      <div class="threat-protocols mt-4" v-if="threat.protocols">
+                        <strong>Common Protection Methods:</strong> {{ threat.protocols }}
                       </div>
                     </div>
                   </v-col>
@@ -52,15 +59,14 @@
           </v-carousel-item>
         </v-carousel>
 
-        <!-- Progress Bar -->
         <v-card class="mt-4 mb-6" elevation="2">
           <v-card-text class="pa-2">
             <div class="progress-text d-flex justify-space-between mb-1">
-              <span>Layer {{ layers2[currentSlide].number }}: {{ layers2[currentSlide].layer }}</span>
-              <span>{{ currentSlide + 1 }} of {{ layers2.length }}</span>
+              <span>{{ networkThreats[currentThreat].title }}</span>
+              <span>{{ currentThreat + 1 }} of {{ networkThreats.length }}</span>
             </div>
             <v-progress-linear
-              :value="((currentSlide + 1) / layers2.length) * 100"
+              :value="((currentThreat + 1) / networkThreats.length) * 100"
               height="12"
               color="primary"
               rounded
@@ -71,27 +77,26 @@
       </v-col>
     </v-row>
 
-    <!-- Summary Section -->
     <v-row justify="center" align="center">
       <v-col cols="12" md="8">
-        <v-card elevation="3" class="pa-4 mb-6">
-          <h3 class="text-h5 mb-4">OSI Model Summary</h3>
-          <p class="text-below">
-            The following layers are a representation of network data path.
-            So, what are they exactly? It is important that we go from the top to bottom, since the closest layer to us, humans, is:
+        <v-card elevation="3" class="defense-card pa-4 mb-6">
+          <h2 class="section-title">Essential Defense Strategies</h2>
+          <p class="defense-description">
+            Protecting against network threats requires a multi-layered security approach:
           </p>
-          <ul class="text-below-list">
-            <li><strong>Application Layer:</strong> The closest layer for the human to understand. Data is represented and shown as understandable pieces of data.</li>
-            <li><strong>Presentation Layer:</strong> Translates, encrypts, and compresses data before sending it to the Application layer.</li>
-            <li><strong>Session Layer:</strong> Manages sessions (authentication, authorization, start/close) and connections between devices.</li>
-            <li><strong>Transport Layer:</strong> Ensures reliable data delivery using TCP and UDP, keeping data in order and avoiding duplication.</li>
-            <li><strong>Network Layer:</strong> Routes data packets and determines paths across the network.</li>
-            <li><strong>Data Link Layer:</strong> Handles reliable data transmission over a physical link and manages MAC addresses.</li>
-            <li><strong>Physical Layer:</strong> Processes raw binary data and handles the physical connection between devices.</li>
-          </ul>
-          <p class="text-below">
-            Don't worry if it is hard or doesn't make sense. We will go deeper into the OSI model later. For now, it is important to understand the basic concept.
-          </p>
+          <v-row>
+            <v-col cols="12" md="6" v-for="(strategy, index) in defenseStrategies" :key="index">
+              <v-card class="strategy-item pa-3 mb-3" outlined>
+                <div class="d-flex align-center">
+                  <v-icon color="primary" size="36" class="mr-3">{{ strategy.icon }}</v-icon>
+                  <div>
+                    <div class="font-weight-bold text-white">{{ strategy.title }}</div>
+                    <div class="strategy-description text-white">{{ strategy.description }}</div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -107,17 +112,14 @@
 
     <!-- Add Quiz Component -->
     <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
-
-    
   </v-container>
 </template>
 
 <script>
-
 import QuizStructure from '@/components/QuizStructure.vue';
 
 export default {
-  name: "OSICarousel",
+  name: "NetworkThreats",
 
   components: {
     QuizStructure,
@@ -125,100 +127,80 @@ export default {
 
   data() {
     return {
-      currentSlide: 0,
-
+      headerImage: "/api/placeholder/800/400", // Placeholder for network security threats image
+      currentThreat: 0,
       showQuizDialog: false,
 
-      layers2: [
-        { 
-          number: "7", 
-          layer: "Application Layer", 
-          description: "The closest layer to the end user, allowing interaction with the network through applications.", 
-          tcp: "Application Layer",
-          example: "This layer directly interacts with software applications. Examples include web browsers, email clients, and file transfer tools.",
-          protocols: "HTTP, HTTPS, FTP, SMTP, DNS, DHCP, SSH, Telnet"
+      networkThreats: [
+        {
+          title: "Malware",
+          description: "Malware includes viruses, worms, trojans, ransomware, and spyware designed to damage systems or steal data. Modern malware is often sophisticated, using encryption and obfuscation techniques to avoid detection. Ransomware attacks have become particularly prevalent, encrypting victims' data and demanding payment for decryption keys.",
+          protocols: "Antivirus, EDR, Sandboxing, Regular Updates"
         },
-        { 
-          number: "6", 
-          layer: "Presentation Layer", 
-          description: "Prepares data for the application layer by ensuring it is in a readable format.", 
-          tcp: "Application Layer",
-          example: "This layer is responsible for data translation, encryption, and compression. It converts data from application format to network format and vice versa.",
-          protocols: "SSL/TLS, JPEG, GIF, MPEG, ASCII, EBCDIC"
+        {
+          title: "Phishing Attacks",
+          description: "Phishing attacks use deceptive emails, websites, or messages that appear legitimate to trick users into revealing sensitive information or installing malware. Spear phishing targets specific individuals with personalized content, while whaling attacks focus on high-value targets like executives.",
+          protocols: "Email Filtering, User Training, Link Scanning, DMARC"
         },
-        { 
-          number: "5", 
-          layer: "Session Layer", 
-          description: "Manages sessions or connections between applications.", 
-          tcp: "Application Layer",
-          example: "This layer establishes, maintains, and terminates communication sessions between devices. It handles authentication and authorization.",
-          protocols: "NetBIOS, RPC, PPTP, SAP, SQL"
+        {
+          title: "Man-in-the-Middle (MitM)",
+          description: "In MitM attacks, hackers position themselves between a user and an application to intercept or alter communications. This can happen on unsecured public Wi-Fi, compromised routers, or through malware. Once positioned, attackers can steal credentials, redirect traffic, or inject malicious content.",
+          protocols: "TLS/SSL, Certificate Validation, VPN, HTTPS"
         },
-        { 
-          number: "4", 
-          layer: "Transport Layer", 
-          description: "Ensures reliable data transfer between devices, providing error recovery and flow control.", 
-          tcp: "Transport Layer",
-          example: "This layer manages end-to-end communication, ensuring data arrives complete and in the right order. TCP provides reliability while UDP offers speed.",
-          protocols: "TCP, UDP, SCTP, DCCP"
-        },
-        { 
-          number: "3", 
-          layer: "Network Layer", 
-          description: "Handles routing and addressing of data to ensure it reaches the correct destination across multiple networks.", 
-          tcp: "Network/Internet Layer",
-          example: "This layer determines the optimal path for data to travel across networks. IP addressing and routing happens here.",
-          protocols: "IP, ICMP, IGMP, RIP, OSPF, BGP"
-        },
-        { 
-          number: "2", 
-          layer: "Data Link Layer", 
-          description: "Ensures reliable data transfer between two devices on the same network.", 
-          tcp: "Data Link/Link Layer",
-          example: "This layer handles node-to-node communication and error detection. It includes the MAC and LLC sublayers, managing physical addressing.",
-          protocols: "Ethernet, PPP, HDLC, Frame Relay, ATM, ARP"
-        },
-        { 
-          number: "1", 
-          layer: "Physical Layer", 
-          description: "Deals with the physical connection between devices and the transmission of raw binary data (0s and 1s).", 
-          tcp: "Physical/Link Layer",
-          example: "This layer transmits bits over a physical medium. It deals with hardware aspects such as cables, hubs, and network interface cards.",
-          protocols: "USB, Ethernet physical layer, Bluetooth, IEEE 802.11, DSL, ISDN"
-        },
+        {
+          title: "Denial of Service (DoS)",
+          description: "DoS attacks overwhelm networks, servers, or services with traffic to render them unavailable. Distributed Denial of Service (DDoS) attacks use multiple compromised systems to launch the attack. Modern DDoS attacks can reach massive scales, with some exceeding terabits per second of malicious traffic.",
+          protocols: "Traffic Filtering, Rate Limiting, CDN, DDoS Protection Services"
+        }
       ],
-      // Quiz data
+      
+      defenseStrategies: [
+        {
+          title: "Network Segmentation",
+          description: "Divide networks into isolated segments to contain breaches.",
+          icon: "mdi-lan"
+        },
+        {
+          title: "Multi-Factor Authentication",
+          description: "Require multiple verification methods to access resources.",
+          icon: "mdi-account-key"
+        },
+        {
+          title: "Regular Updates",
+          description: "Keep systems and software patched against known vulnerabilities.",
+          icon: "mdi-update"
+        },
+        {
+          title: "Security Monitoring",
+          description: "Implement continuous monitoring and threat detection.",
+          icon: "mdi-shield-search"
+        }
+      ],
+      
       quizQuestions: [
         {
-          text: "Which layer is closest to the user?",
+          text: "Which attack type primarily relies on social engineering?",
           type: "multiple-choice",
-          options: [
-            "Physical Layer",
-            "Application Layer",
-            "Transport Layer",
-          ],
-          answer: "Application Layer",
+          options: ["DoS Attack", "Phishing Attack", "Man-in-the-Middle"],
+          answer: "Phishing Attack",
         },
         {
-          text: "Consider your data is at the stage of being encrypted. What layer might that be?",
+          text: "What type of attack overwhelms systems with excessive traffic?",
           type: "multiple-choice",
-          options: [
-            "Data Link Layer",
-            "Presentation Layer",
-            "Network Layer",
-          ],
-          answer: "Presentation Layer",
+          options: ["Ransomware", "Denial of Service", "Spyware"],
+          answer: "Denial of Service",
         },
         {
-          text: "Name three closest layers to the human (do NOT include the word 'layer' after each name)",
-          type: "fill-in-the-blank-multiple",
-          answers: ["Application", "Presentation", "Session"],
-        },
+          text: "Which defense strategy involves verifying identity through multiple methods?",
+          type: "multiple-choice",
+          options: ["Network Segmentation", "Regular Updates", "Multi-Factor Authentication"],
+          answer: "Multi-Factor Authentication",
+        }
       ],
     };
   },
+  
   methods: {
-    // Back Button
     goBack() {
       this.$router.go(-1);
     },
@@ -237,116 +219,120 @@ body,
 
 .main-container {
   position: relative;
-  background-color: #f8f9fa;
+  background-color: #0a192f;
   background-image: 
-    linear-gradient(rgba(173, 216, 230, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(173, 216, 230, 0.3) 1px, transparent 1px),
-    radial-gradient(circle, rgba(100, 149, 237, 0.1) 2px, transparent 2px);
-  background-size: 50px 50px, 50px 50px, 40px 40px;
-  background-position: 0 0, 0 0, 20px 20px;
+    radial-gradient(rgba(73, 216, 230, 0.1) 1px, transparent 1px),
+    radial-gradient(rgba(0, 149, 237, 0.05) 2px, transparent 2px);
+  background-size: 50px 50px, 70px 70px;
+  background-position: 0 0, 25px 25px;
   min-height: 100vh;
   padding-top: 20px;
   padding-bottom: 60px;
+  color: #e6f1ff;
 }
 
-.text-center {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.table-theme {
-  font-size: 2.2em;
-  color: #2c3e50;
+.header-title {
+  font-size: 2.5rem;
   margin-bottom: 20px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  color: #64ffda;
+  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
 }
 
-.table-description {
-  font-size: 1.2em;
-  color: #34495e;
+.header-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.section-title {
+  font-size: 1.8rem;
+  margin: 20px 0;
+  color: #64ffda;
+}
+
+.intro-card, .defense-card, .carousel-card {
+  background-color: #172a46;
+  border-radius: 12px;
+  border-left: 5px solid #64ffda;
+}
+
+.section-description,
+.defense-description {
+  font-size: 1.2rem;
   margin-bottom: 20px;
   line-height: 1.6;
+  color: #ffffff;
 }
 
-.carousel-card {
-  background-color: white;
+.threat-carousel {
   border-radius: 12px;
   overflow: hidden;
-  height: 100%;
-  max-width: 100%;
-  border-left: 5px solid #3498db;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
 }
 
-.layer-content {
+.threat-content {
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 0 20px;
 }
 
-.layer-title {
-  color: #2c3e50;
+.threat-title {
+  color: #64ffda;
   font-weight: 600;
 }
 
-.layer-subtitle {
-  color: #7f8c8d;
+.threat-description {
   font-size: 1.1em;
-  font-weight: 500;
-}
-
-.layer-description {
-  font-size: 1.1em;
-  color: #2c3e50;
   line-height: 1.6;
+  color: #ffffff;
   max-width: 800px;
   margin: 0 auto;
 }
 
-.layer-details {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.example-text {
-  font-size: 1em;
-  color: #34495e;
-  line-height: 1.5;
-}
-
-.protocols {
+.threat-protocols {
   font-size: 0.95em;
-  color: #34495e;
-}
-
-.text-below {
-  font-size: 1.1em;
-  color: #2c3e50;
-  text-align: left;
-  margin-top: 20px;
-  line-height: 1.6;
-}
-
-.text-below-list {
-  margin-top: 10px;
-  margin-left: 20px;
-  text-align: left;
-  list-style-type: disc;
-  color: #2c3e50;
-  font-size: 1.1em;
-  line-height: 1.6;
-}
-
-.text-below-list li {
-  margin-bottom: 10px;
+  color: #a8b2d1;
+  margin-top: 15px;
 }
 
 .progress-text {
   font-size: 0.9em;
-  color: #2c3e50;
+  color: #ffffff;
+}
+
+.strategy-item {
+  background-color: #233554;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #64ffda;
+}
+
+.strategy-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.strategy-description {
+  color: #ffffff;
 }
 
 .h-100 {
   height: 100%;
+}
+
+.v-progress-linear {
+  background: #233554 !important;
+}
+
+.v-progress-linear__determinate {
+  background: #64ffda !important;
+}
+
+.text-white {
+  color: #ffffff !important;
 }
 </style>
