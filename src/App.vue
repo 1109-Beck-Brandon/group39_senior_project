@@ -2,15 +2,8 @@
   <div id="app">
 
     <AppNavBar />
-
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/courseSelect">Select Course</router-link> |
-      <router-link to="/profileView">View Profile</router-link> |
-      <router-link to="/teacherView">Teacher View</router-link> |
-      <router-link to="/reviewPage">Reviews</router-link>
-    </nav>
+    <!-- Spacer so that AppNavBar does not cover page content -->
+    <br><br><br>
     <router-view/>
   </div>
 </template>
