@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { updateLoginState } from '@/eventBus';
 import { login } from '@/services/api';
 
 export default {
@@ -56,7 +57,7 @@ export default {
             }
             
             localStorage.setItem('user', JSON.stringify(user));
-            window.dispatchEvent(new Event('storage'));
+            updateLoginState();
             this.$router.push('/dashboard');
           } else {
             this.error = 'Login failed: Invalid credentials.';

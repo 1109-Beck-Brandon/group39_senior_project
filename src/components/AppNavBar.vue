@@ -45,6 +45,7 @@
 
 <script>
 import { logout as apiLogout } from '@/services/api.js';
+import { loginState, updateLoginState } from '@/eventBus.js';
 
 export default {
   data() {
@@ -62,19 +63,13 @@ export default {
     };
   },
   computed: {
-    // Check for user data in localStorage
+    // Get login status from eventBus file
     isLoggedIn() {
-      const loggedIn = !!localStorage.getItem('user');
-      // Test if loggedIn value is working correctly
-      console.log('isLoggedIn:', loggedIn);
-      return loggedIn;
+      return loginState.isLoggedIn;
     },
-    // Get username from the localStorage
+    // Get username status from eventBus file
     username() {
-      const user = JSON.parse(localStorage.getItem('user'));
-      // Test if user variable is working correctly
-      console.log('username:', user ? user.email : '');
-      return user ? user.email : '';
+      return loginState.username;
     },
   },
   mounted() {
@@ -98,8 +93,8 @@ export default {
         .then(() => {
           // Clear any local authentication tokens if needed
           localStorage.removeItem('user');
-          // Create logout event
-          window.dispatchEvent(new Event('storage'));
+          // Update login state after logout
+          updateLoginState();
           // Redirect to the login page after successful logout
           this.$router.push('/login');
         })
@@ -107,8 +102,8 @@ export default {
           console.error('Logout error:', error);
           // Clear any local authentication tokens if needed
           localStorage.removeItem('user');
-          // Create event to update login state
-          window.dispatchEvent(new Event('storage'));
+          // Update login state after logout failure
+          updateLoginState();
           // Redirect to the login page if logout fails
           this.$router.push('/login');
         });
