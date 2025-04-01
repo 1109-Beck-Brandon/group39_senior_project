@@ -64,15 +64,30 @@ export default {
   computed: {
     // Check for user data in localStorage
     isLoggedIn() {
-      return !!localStorage.getItem('user');
+      const loggedIn = !!localStorage.getItem('user');
+      // Test if loggedIn value is working correctly
+      console.log('isLoggedIn:', loggedIn);
+      return loggedIn;
     },
     // Get username from the localStorage
     username() {
       const user = JSON.parse(localStorage.getItem('user'));
+      // Test if user variable is working correctly
+      console.log('username:', user ? user.email : '');
       return user ? user.email : '';
     },
   },
+  mounted() {
+    window.addEventListener('storage', this.updateLoginState);
+  },
+  beforeDestroy() {
+    window.removeEventListener('storage', this.updateLoginState);
+  },
   methods: {
+    // Detect login state changes
+    updateLoginState() {
+      this.$forceUpdate();
+    },
     goToLoginPage(route) {
       this.$router.push(route);
     },

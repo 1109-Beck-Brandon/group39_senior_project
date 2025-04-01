@@ -56,6 +56,7 @@ export default {
             }
             
             localStorage.setItem('user', JSON.stringify(user));
+            window.dispatchEvent(new Event('storage'));
             this.$router.push('/dashboard');
           } else {
             this.error = 'Login failed: Invalid credentials.';
