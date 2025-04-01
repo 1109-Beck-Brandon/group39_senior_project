@@ -98,6 +98,8 @@ export default {
         .then(() => {
           // Clear any local authentication tokens if needed
           localStorage.removeItem('user');
+          // Create logout event
+          window.dispatchEvent(new Event('storage'));
           // Redirect to the login page after successful logout
           this.$router.push('/login');
         })
@@ -105,6 +107,8 @@ export default {
           console.error('Logout error:', error);
           // Clear any local authentication tokens if needed
           localStorage.removeItem('user');
+          // Create event to update login state
+          window.dispatchEvent(new Event('storage'));
           // Redirect to the login page if logout fails
           this.$router.push('/login');
         });
