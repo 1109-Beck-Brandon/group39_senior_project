@@ -4,14 +4,23 @@
       <!-- Hamburger Menu -->
       <v-app-bar-nav-icon style="color: white;" @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <!-- Title -->
+      <!-- Spacers to keep proper alignment -->
       <v-spacer></v-spacer>
-      <v-toolbar-title style="margin-left: 150px; color: white;" >Cybersecurity Learning Platform</v-toolbar-title>
+
+      <!-- Title -->
+      <v-toolbar-title class="title">Cybersecurity Learning Platform</v-toolbar-title>
+
+      <!-- Spacers to keep proper alignment -->
       <v-spacer></v-spacer>
 
       <!-- Login / Logout Buttons -->
-      <v-btn color="white" class="login-button" @click="goToLoginPage('/login')"> Login </v-btn>
-      <v-btn color="white" class="logout-button" @click="showLogoutDialog = true"> Logout </v-btn>
+      <template v-if="isLoggedIn">
+        <span style="color: white; margin-right: 10px;">Welcome, {{ username }}</span>
+        <v-btn color="white" class="logout-button" @click="showLogoutDialog = true"> Logout </v-btn>
+      </template>
+      <template v-else>
+        <v-btn color="white" class="login-button" @click="goToLoginPage('/login')"> Login </v-btn>
+      </template>
     </v-app-bar>
 
     <!-- Hamburger Menu Functionality -->
@@ -40,6 +49,7 @@
 
 <script>
 import { logout as apiLogout } from '@/services/api.js';
+import { loginState, updateLoginState } from '@/eventBus.js';
 
 export default {
   data() {
@@ -56,7 +66,27 @@ export default {
       ],
     };
   },
+  computed: {
+    // Get login status from eventBus file
+    isLoggedIn() {
+      return loginState.isLoggedIn;
+    },
+    // Get username status from eventBus file
+    username() {
+      return loginState.username;
+    },
+  },
+  mounted() {
+    window.addEventListener('storage', this.updateLoginState);
+  },
+  beforeUnmount() {
+    window.removeEventListener('storage', this.updateLoginState);
+  },
   methods: {
+    // Detect login state changes
+    updateLoginState() {
+      this.$forceUpdate();
+    },
     goToLoginPage(route) {
       this.$router.push(route);
     },
@@ -67,6 +97,8 @@ export default {
         .then(() => {
           // Clear any local authentication tokens if needed
           localStorage.removeItem('user');
+          // Update login state after logout
+          updateLoginState();
           // Redirect to the login page after successful logout
           this.$router.push('/login');
         })
@@ -74,6 +106,8 @@ export default {
           console.error('Logout error:', error);
           // Clear any local authentication tokens if needed
           localStorage.removeItem('user');
+          // Update login state after logout failure
+          updateLoginState();
           // Redirect to the login page if logout fails
           this.$router.push('/login');
         });
@@ -89,7 +123,16 @@ export default {
 <style scoped>
 .main-bar {
   background-color: rgb(9, 32, 68);
+  display: flex;
+  align-items: center;
 }
+
+.title {
+  color: white;
+  text-align: center;
+  font-weight: bold;
+}
+
 .nav-list {
   background-color: rgb(9, 32, 68);
   padding-top: 0;
