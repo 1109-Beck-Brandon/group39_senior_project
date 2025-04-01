@@ -4,9 +4,13 @@
       <!-- Hamburger Menu -->
       <v-app-bar-nav-icon style="color: white;" @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <!-- Title -->
+      <!-- Spacers to keep proper alignment -->
       <v-spacer></v-spacer>
-      <v-toolbar-title style="margin-left: 150px; color: white;" >Cybersecurity Learning Platform</v-toolbar-title>
+
+      <!-- Title -->
+      <v-toolbar-title class="title">Cybersecurity Learning Platform</v-toolbar-title>
+
+      <!-- Spacers to keep proper alignment -->
       <v-spacer></v-spacer>
 
       <!-- Login / Logout Buttons -->
@@ -119,7 +123,16 @@ export default {
 <style scoped>
 .main-bar {
   background-color: rgb(9, 32, 68);
+  display: flex;
+  align-items: center;
 }
+
+.title {
+  color: white;
+  text-align: center;
+  font-weight: bold;
+}
+
 .nav-list {
   background-color: rgb(9, 32, 68);
   padding-top: 0;
