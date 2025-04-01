@@ -10,8 +10,13 @@
       <v-spacer></v-spacer>
 
       <!-- Login / Logout Buttons -->
-      <v-btn color="white" class="login-button" @click="goToLoginPage('/login')"> Login </v-btn>
-      <v-btn color="white" class="logout-button" @click="showLogoutDialog = true"> Logout </v-btn>
+      <template v-if="isLoggedIn">
+        <span style="color: white; margin-right: 10px;">Welcome, {{ username }}</span>
+        <v-btn color="white" class="logout-button" @click="showLogoutDialog = true"> Logout </v-btn>
+      </template>
+      <template v-else>
+        <v-btn color="white" class="login-button" @click="goToLoginPage('/login')"> Login </v-btn>
+      </template>
     </v-app-bar>
 
     <!-- Hamburger Menu Functionality -->
@@ -55,6 +60,17 @@ export default {
         { text: 'Reviews', route: '/reviewPage' },
       ],
     };
+  },
+  computed: {
+    // Check for user data in localStorage
+    isLoggedIn() {
+      return !!localStorage.getItem('user');
+    },
+    // Get username from the localStorage
+    username() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user ? user.email : '';
+    },
   },
   methods: {
     goToLoginPage(route) {
