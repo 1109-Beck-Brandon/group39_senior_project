@@ -80,7 +80,7 @@ export default {
   mounted() {
     window.addEventListener('storage', this.updateLoginState);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('storage', this.updateLoginState);
   },
   methods: {
