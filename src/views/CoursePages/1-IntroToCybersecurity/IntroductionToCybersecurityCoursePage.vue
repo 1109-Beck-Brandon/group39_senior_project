@@ -70,6 +70,7 @@
 </template>
   
 <script>
+import { enrollCourse } from '@/services/api';
 export default {
   props: ["courseName"],
   data() {

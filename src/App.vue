@@ -39,7 +39,7 @@ export default {
     // Listen for show-snackbar events from children
     this.$root.$on('show-snackbar', this.showSnackbar);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // Clean up event listener
     this.$root.$off('show-snackbar', this.showSnackbar);
   },
