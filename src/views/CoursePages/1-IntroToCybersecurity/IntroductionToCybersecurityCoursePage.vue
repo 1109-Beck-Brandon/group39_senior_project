@@ -2,6 +2,19 @@
   
   <v-container fluid>
     <h1 class="course-title">Introduction to Cybersecurity</h1>
+
+    <v-row justify="center" class="mb-4">
+      <v-btn 
+        color="success" 
+        class="enroll-button" 
+        @click="enrollInCourse"
+        :loading="isEnrolling"
+        :disabled="isEnrolled"
+      >
+        {{ enrollButtonText }}
+      </v-btn>
+    </v-row>
+
     <v-row>
       <!-- Course Description Section with Background Box -->
       <v-col cols="12" md="6">
@@ -103,8 +116,23 @@ export default {
         "/course/intro-to-cybersecurity/Jobsmodule", 
         "/course/intro-to-cybersecurity/FinalQuiz"
       ],
+      isEnrolled: false,
+      isEnrolling: false,
+      courseId: 1,
     };
   },
+
+  computed: {
+    enrollButtonText() {
+      return this.isEnrolled ? 'Enrolled' : 'Enroll in Course';
+    },
+    
+    userId() {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.user_id;
+    }
+  },
+
   methods: {
     showPopup(index) {
       this.activeModule = index;
@@ -116,7 +144,49 @@ export default {
     goToModulePage(route) {
       this.$router.push(route);
     },
+
+
+    async enrollInCourse() {
+      if (!this.userId) {
+        // Redirect to login if user is not logged in
+        this.$router.push('/login?redirect=' + encodeURIComponent(this.$route.fullPath));
+        return;
+      }
+      
+      try {
+        this.isEnrolling = true;
+        await enrollCourse(this.userId, this.courseId);
+        this.isEnrolled = true;
+        // Show success message
+        this.$emit('show-snackbar', 'Successfully enrolled in the course');
+      } catch (error) {
+        console.error('Error enrolling in course:', error);
+        // Show error message
+        this.$emit('show-snackbar', 'Failed to enroll in course: ' + (error.response?.data?.error || 'Unknown error'));
+      } finally {
+        this.isEnrolling = false;
+      }
+    },
+    
+    // Check if user is already enrolled
+    async checkEnrollmentStatus() {
+      if (!this.userId) return;
+      
+      try {
+        const response = await this.$axios.get(`/users/${this.userId}/courses`);
+        const enrolledCourses = response.data.courses || [];
+        this.isEnrolled = enrolledCourses.some(course => course.id === this.courseId);
+      } catch (error) {
+        console.error('Error checking enrollment status:', error);
+      }
+    }
   },
+  
+  created() {
+    // Check enrollment status when component is created
+    this.checkEnrollmentStatus();
+  }
+
 };
 </script>
   
@@ -149,4 +219,12 @@ export default {
   font-style: italic;
   color: #666;
 }
+
+.enroll-button {
+  min-width: 200px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
 </style>
