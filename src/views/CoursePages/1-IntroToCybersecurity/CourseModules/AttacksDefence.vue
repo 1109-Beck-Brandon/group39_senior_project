@@ -117,7 +117,11 @@
     </v-row>
 
     <!-- Add Quiz Component -->
-    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+    <QuizStructure 
+      :quizQuestions="quizQuestions" 
+      v-model:showQuizDialog="showQuizDialog"
+      @quiz-completed="handleQuizCompleted"
+    />
 
   </v-container>
 </template>
@@ -133,6 +137,7 @@ import dnsTunnelingImage from "@/assets/how-dns-tunneling-works.webp";
 import phishingImage from "@/assets/phishing.webp";
 
 import QuizStructure from '@/components/QuizStructure.vue';
+import progressTracking from '@/mixins/progressTracking.js';
 
 export default {
   name: "CyberAttacksCarousel",
@@ -141,11 +146,14 @@ export default {
     QuizStructure,
   },
 
+  mixins: [progressTracking],
+
   data() {
     return {
       headerImage,
       currentSlide: 0,
-
+      moduleId: 2,
+      moduleName: "Attacks and Defense",
       showQuizDialog: false,
 
       attacks: [
@@ -227,6 +235,24 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    async handleQuizCompleted(result) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.user_id) {
+        console.error('User not logged in. Progress not saved.');
+        return;
+      }
+      
+      try {
+        // Save progress using the mixin method
+        await this.trackProgress(result.correctAnswers, result.totalQuestions);
+        
+        // Show feedback to the user
+        this.$root.$emit('show-snackbar', 'Your progress has been saved!', 'success');
+      } catch (error) {
+        console.error('Error saving progress:', error);
+        this.$root.$emit('show-snackbar', 'Failed to save progress', 'error');
+      }
+    }
   },
 };
 </script>
