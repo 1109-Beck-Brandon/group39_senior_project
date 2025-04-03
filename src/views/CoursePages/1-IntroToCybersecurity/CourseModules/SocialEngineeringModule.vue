@@ -1,125 +1,234 @@
 <template>
+  <!-- Back Button -->
+  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray; z-index: 10;" @click="goBack">
+    <v-icon>mdi-arrow-left</v-icon>
+  </v-btn>
 
-    <!-- Back Button -->
-    <v-btn icon class="position-absolute" style="left: 16px; background-color: gray;" @click="goBack">
-      <v-icon>mdi-arrow-left</v-icon>
-    </v-btn>
+  <v-container fluid class="main-container">
+    <!-- Header -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8" class="text-center">
+        <h1 class="header-title">{{ courseTitle }}</h1>
+        <img :src="headerImage" alt="Social Engineering Threats" class="header-image" />
+      </v-col>
+    </v-row>
 
-    <v-container fluid>
-      <!-- Top Section: Course Content -->
-      <v-row>
-        <v-col cols="12">
-          <h1 class="page-title">{{ courseTitle }}</h1>
-          <div class="content-section">
-            <p>
-                In this module, you'll learn what Social Engineering is, what types of Social Engineering attacks there are, and how to be more aware of these attacks and defend against them.
-                <br><br>
-                Social Engineering is the process of convincing an individual to give up sensitive information about them through deceptive practices.
-                Unlike viruses and malware, Social Engineering attacks are targeted toward the people of a computing environment. 
-                <br><br>
-            </p>
-            
-            <h2>Why does Social Engineering work?</h2>
-            <p class="formatted-description">
-                - Cialdini's Social Influence Theory: Attackers trick victims through six fundamental principles of influence: Reciprocity, Consistency and Commitment, Social Proof, Liking, Authority, and Scarcity. 
-                <br>
-                - Truth Default Theory: Assume that communication is honest unless proven otherwise. 
-                <br><br>
-            </p>
-            <h2>Defenses</h2>
-            <p class="formatted-description">
-                - Awareness and Training: Learn about the different types of Social Engineering attacks, so that you can learn to detect them as they happen
-                <br>
-                - For impersonation-related social engineering attacks, it would be best to have a system in place where an employee ID badge needs to be presented if they are not personally known
-                <br>
-                - Other strong defenses include Multi-Factor Authentication (MFA) and constant monitoring
-                <br><br>
-            </p>
-            <h2 class="SE-Types-Title">Types of Social Engineering Attacks</h2>
-            <v-container>
-              <v-row>
-                <v-col>
-                  <v-carousel show-arrows>
-                    <v-carousel-item
-                      v-for="(attack, index) in socialEngineeringTypes"
-                      :key="index"
-                    >
-                      <v-row>
-                        <v-col cols="4">
-                          <v-img
-                            :src="attack.image"
-                            :alt="attack.name"
-                            class="rounded"
-                            style="height: 400px; width: 100%; object-fit: cover; margin-left: 80px"
-                          ></v-img>
-                        </v-col>
-                        <v-col cols="6" style="margin-left: 80px;">
-                          <br>
-                          <h3>{{ attack.name }}</h3>
-                          <p>{{ attack.description }}</p>
-                        </v-col>
-                      </v-row>
-                    </v-carousel-item>
-                  </v-carousel>
-                </v-col>
-              </v-row>
-            </v-container>
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8" class="text-center">
+        <v-card elevation="3" class="intro-card pa-4 mb-6">
+          <h2 class="section-title">Introduction to Social Engineering</h2>
+          <p class="section-description">
+            In this module, you'll learn what Social Engineering is, what types of Social Engineering attacks there are, and how to be more aware of these attacks and defend against them.
+            <br><br>
+            Social Engineering is the process of convincing an individual to give up sensitive information about them through deceptive practices.
+            Unlike viruses and malware, Social Engineering attacks are targeted toward the people of a computing environment.
+          </p>
+        </v-card>
+      </v-col>
+    </v-row>
 
-            <h2>Phishing IQ Activity</h2>
-            <p>
-                The following links will take you to websites where you can practice identifying phishing emails by determining if the presented 
-                <br> email is legitimate or a phishing email. You may use a fake name and a fake email address to use the quizzes.
-                <br>
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="3" class="defense-card pa-4 mb-6">
+          <h2 class="section-title">Why does Social Engineering work?</h2>
+          <v-row>
+            <v-col cols="12">
+              <v-card class="strategy-item pa-3 mb-3" outlined>
+                <div class="d-flex align-center">
+                  <v-icon color="primary" size="36" class="mr-3">mdi-brain</v-icon>
+                  <div>
+                    <div class="font-weight-bold text-white">Cialdini's Social Influence Theory</div>
+                    <div class="strategy-description text-white">
+                      Attackers trick victims through six fundamental principles of influence: Reciprocity, Consistency and Commitment, Social Proof, Liking, Authority, and Scarcity.
+                    </div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+            <v-col cols="12">
+              <v-card class="strategy-item pa-3 mb-3" outlined>
+                <div class="d-flex align-center">
+                  <v-icon color="primary" size="36" class="mr-3">mdi-account-check</v-icon>
+                  <div>
+                    <div class="font-weight-bold text-white">Truth Default Theory</div>
+                    <div class="strategy-description text-white">
+                      Assume that communication is honest unless proven otherwise.
+                    </div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
 
-                <v-menu>
-                  <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" color="primary">Activity Quizzes</v-btn>
-                  </template>
-                  <v-list>
-                    <v-list-item>
-                      <a href="https://www.sonicwall.com/phishing-iq-test" target="_blank"> Phishing Activity 1 </a>
-                    </v-list-item>
-                    <v-list-item>
-                      <a href="https://phishingquiz.withgoogle.com/" target="_blank"> Phishing Activity 2 </a>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-            </p>
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="3" class="defense-card pa-4 mb-6">
+          <h2 class="section-title">Defenses</h2>
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-card class="strategy-item pa-3 mb-3" outlined>
+                <div class="d-flex align-center">
+                  <v-icon color="primary" size="36" class="mr-3">mdi-school</v-icon>
+                  <div>
+                    <div class="font-weight-bold text-white">Awareness and Training</div>
+                    <div class="strategy-description text-white">
+                      Learn about the different types of Social Engineering attacks, so that you can learn to detect them as they happen
+                    </div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-card class="strategy-item pa-3 mb-3" outlined>
+                <div class="d-flex align-center">
+                  <v-icon color="primary" size="36" class="mr-3">mdi-card-account-details</v-icon>
+                  <div>
+                    <div class="font-weight-bold text-white">Identity Verification</div>
+                    <div class="strategy-description text-white">
+                      For impersonation-related social engineering attacks, it would be best to have a system in place where an employee ID badge needs to be presented
+                    </div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-card class="strategy-item pa-3 mb-3" outlined>
+                <div class="d-flex align-center">
+                  <v-icon color="primary" size="36" class="mr-3">mdi-shield-check</v-icon>
+                  <div>
+                    <div class="font-weight-bold text-white">MFA & Monitoring</div>
+                    <div class="strategy-description text-white">
+                      Other strong defenses include Multi-Factor Authentication (MFA) and constant monitoring
+                    </div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
 
-            <h3>Additional Resources</h3>
-            
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="9">
+        <h2 class="section-title text-center">Types of Social Engineering Attacks</h2>
+        
+        <v-carousel
+          v-model="currentAttack"
+          height="500"
+          hide-delimiter-background
+          show-arrows="hover"
+          :continuous="false"
+          delimiter-icon="mdi-circle"
+          class="threat-carousel"
+        >
+          <v-carousel-item v-for="(attack, index) in socialEngineeringTypes" :key="index">
+            <v-card class="carousel-card h-100" elevation="4">
+              <v-container fluid>
+                <v-row>
+                  <v-col cols="4">
+                    <v-img
+                      :src="attack.image"
+                      :alt="attack.name"
+                      class="rounded threat-image"
+                      height="400"
+                      contain
+                    ></v-img>
+                  </v-col>
+                  <v-col cols="8" class="pa-4">
+                    <div class="threat-content">
+                      <h3 class="threat-title text-h4 mb-2">{{ attack.name }}</h3>
+                      <div class="threat-description">{{ attack.description }}</div>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-carousel-item>
+        </v-carousel>
+
+        <v-card class="mt-4 mb-6" elevation="2">
+          <v-card-text class="pa-2">
+            <div class="progress-text d-flex justify-space-between mb-1">
+              <span>{{ socialEngineeringTypes[currentAttack].name }}</span>
+              <span>{{ currentAttack + 1 }} of {{ socialEngineeringTypes.length }}</span>
+            </div>
+            <v-progress-linear
+              :value="((currentAttack + 1) / socialEngineeringTypes.length) * 100"
+              height="12"
+              color="primary"
+              rounded
+              striped
+            ></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="3" class="defense-card pa-4 mb-6">
+          <h2 class="section-title">Phishing IQ Activity</h2>
+          <p class="section-description">
+            The following links will take you to websites where you can practice identifying phishing emails by determining if the presented 
+            email is legitimate or a phishing email. You may use a fake name and a fake email address to use the quizzes.
+          </p>
+          <div class="text-center mt-4">
             <v-menu>
               <template v-slot:activator="{ props }">
-                <v-btn v-bind="props" color="primary">Show Resources</v-btn>
+                <v-btn v-bind="props" color="primary" class="cyber-button">Activity Quizzes</v-btn>
               </template>
-              <v-list>
+              <v-list class="cyber-menu">
                 <v-list-item>
-                  <a href="https://www.microsoft.com/en-us/security/blog/2021/08/26/widespread-credential-phishing-campaign-abuses-open-redirector-links/" target="_blank"> Microsoft Security Blog </a>
+                  <a href="https://www.sonicwall.com/phishing-iq-test" target="_blank" class="text-decoration-none"> Phishing Activity 1 </a>
+                </v-list-item>
+                <v-list-item>
+                  <a href="https://phishingquiz.withgoogle.com/" target="_blank" class="text-decoration-none"> Phishing Activity 2 </a>
                 </v-list-item>
               </v-list>
             </v-menu>
-
           </div>
-        </v-col>
-      </v-row>
-  
-      <!-- Quiz Section -->
-      <v-row>
-        <v-col cols="12">
-          <h1>Module Quiz</h1>
-          <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
-          <br><br><br><br><br>
-        </v-col>
-      </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
 
-      <!-- Add Quiz Component -->
-      <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
-      
-    </v-container>
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="3" class="defense-card pa-4 mb-6">
+          <h2 class="section-title">Additional Resources</h2>
+          <div class="text-center mt-4">
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-btn v-bind="props" color="primary" class="cyber-button">Show Resources</v-btn>
+              </template>
+              <v-list class="cyber-menu">
+                <v-list-item>
+                  <a href="https://www.microsoft.com/en-us/security/blog/2021/08/26/widespread-credential-phishing-campaign-abuses-open-redirector-links/" target="_blank" class="text-decoration-none"> Microsoft Security Blog </a>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Quiz Section -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8" class="text-center">
+        <h1 class="section-title">Module Quiz</h1>
+        <v-btn color="primary" @click="showQuizDialog = true" class="cyber-button mb-6">Take Quiz</v-btn>
+      </v-col>
+    </v-row>
+
+    <!-- Add Quiz Component -->
+    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+  </v-container>
 </template>
   
 <script>
-
   import PhishingIMG from "@/assets/Course1SEimages/Phishing.jpg"
   import SmishingIMG from "@/assets/Course1SEimages/Smishing.jpg"
   import VishingIMG from "@/assets/Course1SEimages/Vishing.jpg"
@@ -142,7 +251,7 @@
   import QuizStructure from "@/components/QuizStructure.vue";
 
   export default {
-    name: "CourseWithQuizPage",
+    name: "SocialEngineeringModule",
 
     components: {
       QuizStructure,
@@ -152,7 +261,8 @@
       return {
         //Title
         courseTitle: "Intro to Social Engineering",
-
+        headerImage: "/api/placeholder/800/400", // Placeholder for social engineering header image
+        currentAttack: 0,
         showQuizDialog: false,
 
         //Social Engineering Types
@@ -277,52 +387,180 @@
       };
     },
 
-    
     methods: {
-
       //Back Button
       goBack() {
-      this.$router.go(-1); 
+        this.$router.go(-1); 
       },
     },
   };
 </script>
   
 <style scoped>
-  .page-title {
-    text-align: center;
-    font-size: 2.5em;
-    margin-top: 20px;
-    font-weight: bold;
-  }
-  
-  .content-section {
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    text-align: left;
-  }
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
 
-  .formatted-description {
-    text-align: left;
-    margin-left: 20px;
-    margin-right: 20px;
-  }
+.main-container {
+  position: relative;
+  background-color: #0a192f;
+  background-image: 
+    radial-gradient(rgba(73, 216, 230, 0.1) 1px, transparent 1px),
+    radial-gradient(rgba(0, 149, 237, 0.05) 2px, transparent 2px);
+  background-size: 50px 50px, 70px 70px;
+  background-position: 0 0, 25px 25px;
+  min-height: 100vh;
+  padding-top: 20px;
+  padding-bottom: 60px;
+  color: #e6f1ff;
+}
 
-  .SE-Types-Title {
-    text-align: center;
-  }
+.header-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #64ffda;
+  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+}
 
-  .SE-Types-Description {
-    text-align: left;
-  }
+.header-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
 
-  v-img {
-    border-radius: 8px;
-  }
-  h3 {
-    margin-top: 0;
-  }
+.section-title {
+  font-size: 1.8rem;
+  margin: 20px 0;
+  color: #64ffda;
+}
 
-</style>  
+.intro-card, .defense-card, .carousel-card {
+  background-color: #172a46;
+  border-radius: 12px;
+  border-left: 5px solid #64ffda;
+}
+
+.section-description {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.threat-carousel {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.threat-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.threat-title {
+  color: #64ffda;
+  font-weight: 600;
+}
+
+.threat-description {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.threat-image {
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+}
+
+.progress-text {
+  font-size: 0.9em;
+  color: #ffffff;
+}
+
+.strategy-item {
+  background-color: #233554;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #64ffda;
+}
+
+.strategy-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.strategy-description {
+  color: #ffffff;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.v-progress-linear {
+  background: #233554 !important;
+}
+
+.v-progress-linear__determinate {
+  background: #64ffda !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+.cyber-button {
+  background-color: #64ffda !important;
+  color: #0a192f !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+  transition: all 0.3s ease;
+}
+
+.cyber-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(100, 255, 218, 0.8);
+}
+
+.cyber-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.cyber-button:hover:before {
+  left: 100%;
+}
+
+.cyber-menu {
+  background-color: #172a46 !important;
+  border: 1px solid #64ffda;
+}
+
+.text-decoration-none {
+  text-decoration: none;
+  color: #64ffda !important;
+}
+</style>
