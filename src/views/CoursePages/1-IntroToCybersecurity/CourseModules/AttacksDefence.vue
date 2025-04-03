@@ -8,9 +8,9 @@
     <!-- Header -->
     <v-row justify="center" align="center">
       <v-col cols="12" md="8" class="text-center">
+        <h1 class="header-title">Cybersecurity Attacks</h1>
         <img :src="headerImage" alt="Header Image" class="header-image" />
-        <h2 class="table-theme">Cybersecurity Attacks</h2>
-        <p class="table-description">
+        <p class="section-description">
           The time has come to understand what cybersecurity is all about. Today we are going to learn about common cyberattacks,
           what they represent, and how we can defend against them.
         </p>
@@ -20,12 +20,16 @@
     <!-- Attack Types Carousel Section -->
     <v-row justify="center" align="center">
       <v-col cols="12" md="9">
+        <h2 class="section-title text-center">Common Attack Types</h2>
+        
         <v-carousel
           v-model="currentSlide"
           height="400"
           hide-delimiter-background
           show-arrows="hover"
           :continuous="false"
+          delimiter-icon="mdi-circle"
+          class="threat-carousel"
         >
           <v-carousel-item v-for="(attack, index) in attacks" :key="index">
             <v-card class="carousel-card h-100" elevation="4">
@@ -42,16 +46,17 @@
                   </v-col>
                   <v-col cols="12" sm="7" class="pa-4">
                     <div class="attack-content">
-                      <h3 class="attack-title text-h4 mb-3">{{ attack.name }}</h3>
-                      <div class="attack-description">{{ attack.description }}</div>
-                      <div class="attack-details mt-4" v-if="attack.details">
-                        <div class="details-text">{{ attack.details }}</div>
+                      <h3 class="threat-title text-h4 mb-3">{{ attack.name }}</h3>
+                      <div class="threat-description">{{ attack.description }}</div>
+                      <div class="threat-description mt-4" v-if="attack.details">
+                        {{ attack.details }}
                       </div>
-                      <div class="attack-subtypes mt-4" v-if="attack.subtypes && attack.subtypes.length > 0">
-                        <strong>Types:</strong>
+                      <div class="mt-4" v-if="attack.subtypes && attack.subtypes.length > 0">
+                        <strong class="text-white">Types:</strong>
                         <ul class="subtype-list mt-2">
                           <li v-for="(subtype, idx) in attack.subtypes" :key="idx">
-                            <strong>{{ subtype.name }}:</strong> {{ subtype.description }}
+                            <strong class="text-white">{{ subtype.name }}:</strong> 
+                            <span class="text-white">{{ subtype.description }}</span>
                           </li>
                         </ul>
                       </div>
@@ -85,24 +90,28 @@
     <!-- Summary Section -->
     <v-row justify="center" align="center">
       <v-col cols="12" md="8">
-        <v-card elevation="3" class="pa-4 mb-6">
-          <h3 class="text-h5 mb-4">Cybersecurity Attacks Summary</h3>
-          <p class="text-below">
+        <v-card elevation="3" class="defense-card pa-4 mb-6">
+          <h2 class="section-title">Cybersecurity Attacks Summary</h2>
+          <p class="defense-description">
             Understanding these common attacks is crucial for maintaining strong cybersecurity defenses.
             Let's review what we've learned:
           </p>
-          <ul class="text-below-list">
-            <li><strong>Malware:</strong> Malicious software including spyware, ransomware, viruses, and worms that can damage systems.</li>
-            <li><strong>Man-in-the-middle:</strong> Attacks where hackers insert themselves into communications between two parties.</li>
-            <li><strong>Denial-of-service:</strong> Attacks that flood systems with traffic to exhaust resources and disrupt services.</li>
-            <li><strong>SQL injection:</strong> Inserting malicious code into servers that use SQL to manipulate databases.</li>
-            <li><strong>Zero-day exploit:</strong> Attacks that target announced but unpatched vulnerabilities.</li>
-            <li><strong>DNS tunneling:</strong> Using DNS protocol to communicate non-DNS traffic and bypass security measures.</li>
-            <li><strong>Phishing:</strong> Fraudulent communications designed to steal sensitive data through deception.</li>
-          </ul>
-          <p class="text-below">
-            Remember that staying informed about these threats is your first line of defense in the digital world.
-          </p>
+          <v-row>
+            <v-col cols="12">
+              <ul class="summary-list">
+                <li><strong>Malware:</strong> Malicious software including spyware, ransomware, viruses, and worms that can damage systems.</li>
+                <li><strong>Man-in-the-middle:</strong> Attacks where hackers insert themselves into communications between two parties.</li>
+                <li><strong>Denial-of-service:</strong> Attacks that flood systems with traffic to exhaust resources and disrupt services.</li>
+                <li><strong>SQL injection:</strong> Inserting malicious code into servers that use SQL to manipulate databases.</li>
+                <li><strong>Zero-day exploit:</strong> Attacks that target announced but unpatched vulnerabilities.</li>
+                <li><strong>DNS tunneling:</strong> Using DNS protocol to communicate non-DNS traffic and bypass security measures.</li>
+                <li><strong>Phishing:</strong> Fraudulent communications designed to steal sensitive data through deception.</li>
+              </ul>
+              <p class="defense-description mt-4">
+                Remember that staying informed about these threats is your first line of defense in the digital world.
+              </p>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -268,50 +277,59 @@ body,
 
 .main-container {
   position: relative;
-  background-color: #f8f9fa;
+  background-color: #0a192f;
   background-image: 
-    linear-gradient(rgba(173, 216, 230, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(173, 216, 230, 0.3) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255, 99, 71, 0.1) 2px, transparent 2px);
-  background-size: 50px 50px, 50px 50px, 40px 40px;
-  background-position: 0 0, 0 0, 20px 20px;
+    radial-gradient(rgba(73, 216, 230, 0.1) 1px, transparent 1px),
+    radial-gradient(rgba(0, 149, 237, 0.05) 2px, transparent 2px);
+  background-size: 50px 50px, 70px 70px;
+  background-position: 0 0, 25px 25px;
   min-height: 100vh;
   padding-top: 20px;
   padding-bottom: 60px;
+  color: #e6f1ff;
+}
+
+.header-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #64ffda;
+  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
 }
 
 .header-image {
   max-width: 100%;
   height: auto;
   margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.text-center {
-  text-align: center;
-  margin-bottom: 30px;
+.section-title {
+  font-size: 1.8rem;
+  margin: 20px 0;
+  color: #64ffda;
 }
 
-.table-theme {
-  font-size: 2.2em;
-  color: #2c3e50;
-  margin-bottom: 20px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.table-description {
-  font-size: 1.2em;
-  color: #34495e;
+.section-description {
+  font-size: 1.2rem;
   margin-bottom: 20px;
   line-height: 1.6;
+  color: #ffffff;
+}
+
+.threat-carousel {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
 }
 
 .carousel-card {
-  background-color: white;
+  background-color: #172a46;
   border-radius: 12px;
   overflow: hidden;
   height: 100%;
   max-width: 100%;
-  border-left: 5px solid #e74c3c;
+  border-left: 5px solid #64ffda;
 }
 
 .attack-content {
@@ -320,74 +338,77 @@ body,
   flex-direction: column;
 }
 
-.attack-title {
-  color: #2c3e50;
+.threat-title {
+  color: #64ffda;
   font-weight: 600;
 }
 
-.attack-description {
+.threat-description {
   font-size: 1.1em;
-  color: #2c3e50;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.defense-card {
+  background-color: #172a46;
+  border-radius: 12px;
+  border-left: 5px solid #64ffda;
+}
+
+.defense-description {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.summary-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-top: 10px;
+  color: #ffffff;
+  font-size: 1.1em;
   line-height: 1.6;
 }
 
-.attack-details {
-  max-width: 100%;
+.summary-list li {
+  margin-bottom: 10px;
 }
 
-.details-text {
-  font-size: 1em;
-  color: #34495e;
-  line-height: 1.5;
-}
-
-.attack-subtypes {
-  font-size: 0.95em;
-  color: #34495e;
+.attack-image {
+  max-height: 300px;
+  padding: 10px;
+  filter: drop-shadow(0 0 10px rgba(100, 255, 218, 0.3));
 }
 
 .subtype-list {
   list-style-type: disc;
   padding-left: 20px;
+  color: #a8b2d1;
 }
 
 .subtype-list li {
   margin-bottom: 8px;
 }
 
-.attack-image {
-  max-height: 300px;
-  padding: 10px;
-}
-
-.text-below {
-  font-size: 1.1em;
-  color: #2c3e50;
-  text-align: left;
-  margin-top: 20px;
-  line-height: 1.6;
-}
-
-.text-below-list {
-  margin-top: 10px;
-  margin-left: 20px;
-  text-align: left;
-  list-style-type: disc;
-  color: #2c3e50;
-  font-size: 1.1em;
-  line-height: 1.6;
-}
-
-.text-below-list li {
-  margin-bottom: 10px;
-}
-
 .progress-text {
   font-size: 0.9em;
-  color: #2c3e50;
+  color: #ffffff;
 }
 
 .h-100 {
   height: 100%;
+}
+
+.v-progress-linear {
+  background: #233554 !important;
+}
+
+.v-progress-linear__determinate {
+  background: #64ffda !important;
+}
+
+.text-white {
+  color: #ffffff !important;
 }
 </style>
