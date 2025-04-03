@@ -193,6 +193,13 @@ export default {
       });
   
       this.quizSubmitted = true; // Track when submit quiz button is clicked
+
+      // Emit quiz-completed event
+      this.$emit('quiz-completed', {
+        correctAnswers: this.correctAnswers,
+        totalQuestions: this.quizQuestions.length,
+        score: Math.round((this.correctAnswers / this.quizQuestions.length) * 100)
+      });
     },
     exitQuiz() {
       this.localShowQuizDialog = false;

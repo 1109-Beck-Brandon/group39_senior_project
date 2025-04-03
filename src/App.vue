@@ -5,6 +5,14 @@
     <!-- Spacer so that AppNavBar does not cover page content -->
     <br><br><br>
     <router-view/>
+
+    <!-- Add snackbar for notifications -->
+    <v-snackbar v-model="snackbar" :timeout="3000" :color="snackbarColor">
+      {{ snackbarMessage }}
+      <template v-slot:action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="snackbar = false">Close</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -20,10 +28,20 @@ export default {
   data() {
     return {
       message: '',
+      // Snackbar data
+      snackbar: false,
+      snackbarMessage: '',
+      snackbarColor: 'success',
     };
   },
   mounted() {
     this.fetchData();
+    // Listen for show-snackbar events from children
+    this.$root.$on('show-snackbar', this.showSnackbar);
+  },
+  beforeUnmount() {
+    // Clean up event listener
+    this.$root.$off('show-snackbar', this.showSnackbar);
   },
   methods: {
     async fetchData() {
@@ -33,6 +51,12 @@ export default {
       } catch (error) {
         console.error('Error fetching data:', error);
       }
+    },
+    // Method to show snackbar
+    showSnackbar(message, color = 'success') {
+      this.snackbarMessage = message;
+      this.snackbarColor = color;
+      this.snackbar = true;
     },
   },
 };
