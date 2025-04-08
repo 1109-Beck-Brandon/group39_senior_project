@@ -47,6 +47,9 @@ import NewTeacherView from '@/views/OnboardingPages/NewTeacherView.vue';
 import NewGradebook from '@/views/OnboardingPages/NewGradebook.vue';
 import ClassroomStudents from '@/views/TeacherActions/ClassroomStudents.vue';
 
+//TEMPORARY TEST PAGES LINK
+import TestPages from '@/views/TestPages.vue';
+
 
 const routes = [
   {
@@ -101,6 +104,10 @@ const routes = [
   {
     path: '/passwordReset',
     component: PasswordReset
+  },
+  {
+    path: '/testPages',
+    component: TestPages
   },
   //These will be all of the course pages
   { path: "/course/intro-to-cybersecurity", name: "IntroToCybersecurity", component: CourseIntroToCybersecurity },
