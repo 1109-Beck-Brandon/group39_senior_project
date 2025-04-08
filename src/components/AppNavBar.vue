@@ -92,23 +92,16 @@ export default {
     },
     logout() {
       this.showLogoutDialog = false;
-      // Call the backend logout API
       apiLogout()
         .then(() => {
-          // Clear any local authentication tokens if needed
           localStorage.removeItem('user');
-          // Update login state after logout
           updateLoginState();
-          // Redirect to the login page after successful logout
           this.$router.push('/login');
         })
         .catch(error => {
           console.error('Logout error:', error);
-          // Clear any local authentication tokens if needed
           localStorage.removeItem('user');
-          // Update login state after logout failure
           updateLoginState();
-          // Redirect to the login page if logout fails
           this.$router.push('/login');
         });
     },
