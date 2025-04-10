@@ -158,11 +158,9 @@ export default {
         this.isEnrolling = true;
         await enrollCourse(this.userId, this.courseId);
         this.isEnrolled = true;
-        // Show success message
         this.$emit('show-snackbar', 'Successfully enrolled in the course');
       } catch (error) {
         console.error('Error enrolling in course:', error);
-        // Show error message
         this.$emit('show-snackbar', 'Failed to enroll in course: ' + (error.response?.data?.error || 'Unknown error'));
       } finally {
         this.isEnrolling = false;
