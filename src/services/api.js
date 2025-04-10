@@ -34,12 +34,19 @@ export function login(credentials) {
 
 export function logout() {
   return apiClient.post('/logout')
+    .then(response => {
+      localStorage.removeItem('user');
+      return response;
+    })
     .catch(error => {
+      localStorage.removeItem('user');
+      
+      console.log('Logout completed (client-side only)');
+      
       if (error.response?.status === 401) {
-        // If the user is unauthorized, clear the local storage and redirect to login
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+        return { data: { message: 'Logged out (session already expired)' } };
       }
+      
       return Promise.reject(error);
     });
 }
