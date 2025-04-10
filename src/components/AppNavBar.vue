@@ -63,6 +63,7 @@ export default {
         { text: 'Profile', route: '/profileView' },
         { text: 'Teacher View', route: '/teacherView' },
         { text: 'Reviews', route: '/reviewPage' },
+        { text: 'Test Pages (Temporary)', route: '/testPages'} // TEMPORARY UNTIL MODULE PAGES ARE DONE
       ],
     };
   },
@@ -128,7 +129,7 @@ export default {
 
 .nav-list {
   background-color: rgb(9, 32, 68);
-  padding-top: 0;
+  padding-top: 60px;
 }
 
 .nav-list-item {
