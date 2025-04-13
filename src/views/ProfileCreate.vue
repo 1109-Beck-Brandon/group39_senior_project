@@ -1,45 +1,74 @@
 <template>
-  <v-container class="pa-5">
-      <h2>Create Your Profile</h2>
-      <v-form @submit.prevent="handleSubmit">
-          <v-text-field
+  <v-container fluid class="profile-page-container">
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="6">
+        <v-card elevation="3" class="profile-card pa-6">
+          <h2 class="section-title text-center">Create Your Profile</h2>
+
+          <v-form @submit.prevent="handleSubmit" class="profile-form">
+            <v-text-field
               label="First Name"
               v-model="formData.first_name"
+              outlined
+              color="cyan-darken-2"
               required
-          ></v-text-field>
+            ></v-text-field>
 
-          <v-text-field
+            <v-text-field
               label="Last Name"
               v-model="formData.last_name"
+              outlined
+              color="cyan-darken-2"
               required
-          ></v-text-field>
+            ></v-text-field>
 
-          <v-text-field
+            <v-text-field
               label="Email Address"
               v-model="formData.email"
               type="email"
+              outlined
+              color="cyan-darken-2"
               required
-          ></v-text-field>
+            ></v-text-field>
 
-          <v-text-field
+            <v-text-field
               label="Password"
               v-model="formData.password"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
+              outlined
+              color="cyan-darken-2"
+              :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append="togglePasswordVisibility"
               required
-          ></v-text-field>
+            ></v-text-field>
 
-          <v-select
+            <v-select
               label="Role"
               :items="roles"
               v-model="formData.role"
+              outlined
+              color="cyan-darken-2"
               required
-          ></v-select>
+            ></v-select>
 
-          <v-btn color="primary" type="submit">Submit</v-btn>
-      </v-form>
-      <p v-if="message" class="message">{{ message }}</p>
+            <v-btn 
+              color="primary" 
+              type="submit" 
+              elevation="2" 
+              class="submit-button"
+            >
+              <v-icon left>mdi-account-plus</v-icon>
+              Create Account
+            </v-btn>
+          </v-form>
+
+          <p v-if="message" class="message">{{ message }}</p>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
+
 
 <script>
 import { register } from '@/services/api';
@@ -55,7 +84,8 @@ export default {
         role: '',
       },
       roles: ['Student', 'Teacher', 'Individual'],
-      message: ''
+      message: '',
+      showPassword: false,      
     };
   },
   methods: {
@@ -72,7 +102,32 @@ export default {
         const response = await register(payload);
         this.message = response.data.message;
         console.log('Profile Created:', response.data);
-        this.$router.push('/login');
+
+        //saving user stuff
+        const userInfo = {
+          email: this.formData.email,
+          role: this.formData.role,
+          first_name: this.formData.first_name,
+          last_name: this.formData.last_name
+        };
+        localStorage.setItem(this.formData.email, JSON.stringify(userInfo));
+
+
+        // Redirect based on role, pass the email as a query parameter
+        if (this.formData.role === 'Teacher') {
+          this.$router.push({ path: '/new-teacher-onboarding', query: { email: this.formData.email } });
+        }
+        // i will uncomment these lines of code soon
+        //  else if (this.formData.role === 'Student') {
+        //   this.$router.push({ path: '/studentOnboarding', query: { email: this.formData.email } });
+        // } else {
+        //   this.$router.push({ path: '/userOnboarding', query: { email: this.formData.email } });
+        // }  
+        else {
+          this.$router.push('/login');
+        }
+
+        //this.$router.push('/login');
       } catch (error) {
         if (error.response && error.response.status === 409) {
           this.message = 'Email already exists';
@@ -82,16 +137,64 @@ export default {
         console.error('Error creating profile:', error);
       }
     },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
   },
 };
 </script>
 
 <style scoped>
-.pa-5 {
-  padding:40px;
+.profile-page-container {
+  position: relative;
+  background-color: #0a192f;
+  background-image: 
+    radial-gradient(rgba(73, 216, 230, 0.1) 1px, transparent 1px),
+    radial-gradient(rgba(0, 149, 237, 0.05) 2px, transparent 2px);
+  background-size: 50px 50px, 70px 70px;
+  background-position: 0 0, 25px 25px;
+  padding-top: 40px;
+  padding-bottom: 100px;
+  color: #e6f1ff;
 }
+
+.profile-card {
+  background-color: #172a46;
+  border-radius: 12px;
+  border-left: 5px solid #64ffda;
+  padding: 30px;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #64ffda;
+  text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+}
+
+.profile-form {
+  margin-top: 20px;
+  color:#98ffe7;
+}
+
+.submit-button {
+  background-color: #64ffda !important;
+  color: #172a46 !important;
+  font-weight: bold;
+  margin-top: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
 .message {
-  margin-top: 10px;
-  color: red;
+  margin-top: 15px;
+  color: #ff6b6b;
+  text-align: center;
+  font-weight: bold;
 }
 </style>
+
