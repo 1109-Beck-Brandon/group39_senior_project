@@ -263,6 +263,7 @@
     margin-top: 40px;
     margin-left: 90px;
     border-radius: 12px;
+    margin-bottom: 120px;
   }
 
   .grade-button {

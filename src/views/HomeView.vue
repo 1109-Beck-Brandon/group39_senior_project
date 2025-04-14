@@ -2,11 +2,12 @@
   <div class="home">
     <v-layout class="rounded rounded-md"></v-layout>
 
+    <!-- removing create a profile, because users navigate to the login page and then click create a profile
     <div v-if="!isLoggedIn" class="join-button-container">
       <v-btn color="primary" class="join-button" @click="showModal = true">
         Create an Account for Free
       </v-btn>
-    </div> 
+    </div>  -->
 
     <div class="hello-world-section">
       <HelloWorld msg="Welcome to Cybersecurity Learning Platform!" />
