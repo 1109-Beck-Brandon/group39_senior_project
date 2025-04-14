@@ -19,9 +19,11 @@
             <v-text-field
               label="Password"
               v-model="password"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               outlined
               color="cyan-darken-2"
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              @click:append="togglePasswordVisibility" 
               required
             ></v-text-field>
   
@@ -37,9 +39,7 @@
             <v-btn text class="link-btn" @click="$router.push('/createProfile')">
               New user? Create a profile
             </v-btn>
-            <v-btn text class="link-btn" @click="$router.push('/passwordReset')">
-              Forgot Password?
-            </v-btn>
+
           </div>
         </v-card>
       </v-col>
@@ -65,7 +65,8 @@ export default {
       LockPicture,
       email: '',
       password: '',
-      error: ''
+      error: '',
+      showPassword: false
     };
   },
   methods: {
@@ -96,6 +97,9 @@ export default {
         .catch(err => {
           this.error = err.response?.data?.error || 'Login failed. Please check your credentials.';
         });
+    },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
     }
   }
 };
