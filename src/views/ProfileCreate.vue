@@ -3,7 +3,7 @@
     <v-row justify="center" align="center">
       <v-col cols="12" md="6">
         <v-card elevation="3" class="profile-card pa-6">
-          <h2 class="section-title text-center">Create Your Profile</h2>
+          <h2 class="section-title text-center">Create Your Account</h2>
 
           <v-form @submit.prevent="handleSubmit" class="profile-form">
             <v-text-field
@@ -11,7 +11,7 @@
               v-model="formData.first_name"
               outlined
               color="cyan-darken-2"
-              required
+              :rules="[requiredRule]"
             ></v-text-field>
 
             <v-text-field
@@ -19,7 +19,7 @@
               v-model="formData.last_name"
               outlined
               color="cyan-darken-2"
-              required
+              :rules="[requiredRule]"
             ></v-text-field>
 
             <v-text-field
@@ -28,7 +28,7 @@
               type="email"
               outlined
               color="cyan-darken-2"
-              required
+              :rules="[requiredRule, emailFormatRule]"
             ></v-text-field>
 
             <v-text-field
@@ -37,9 +37,9 @@
               :type="showPassword ? 'text' : 'password'"
               outlined
               color="cyan-darken-2"
-              :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append="togglePasswordVisibility"
-              required
+              :rules="[requiredRule]"
             ></v-text-field>
 
             <v-select
@@ -48,7 +48,7 @@
               v-model="formData.role"
               outlined
               color="cyan-darken-2"
-              required
+              :rules="[requiredRule]"
             ></v-select>
 
             <v-btn 
@@ -56,6 +56,7 @@
               type="submit" 
               elevation="2" 
               class="submit-button"
+              :disabled="!formIsValid"
             >
               <v-icon left>mdi-account-plus</v-icon>
               Create Account
@@ -85,8 +86,22 @@ export default {
       },
       roles: ['Student', 'Teacher', 'Individual'],
       message: '',
-      showPassword: false,      
+      showPassword: false,
+      requiredRule: v => !!v || 'This field is required',
+      emailFormatRule: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Please enter a valid email address',     
     };
+  },
+  computed: {
+    formIsValid() {
+      const emailValid = this.requiredRule(this.formData.email) === true && this.emailFormatRule(this.formData.email) === true;
+      return (
+        this.formData.first_name &&
+        this.formData.last_name &&
+        emailValid &&
+        this.formData.password &&
+        this.formData.role
+      );
+    },
   },
   methods: {
     async handleSubmit() {
@@ -123,7 +138,10 @@ export default {
         // } else {
         //   this.$router.push({ path: '/userOnboarding', query: { email: this.formData.email } });
         // }  
-        else {
+        else if (this.formData.role === 'Student') {
+          this.$router.push('/login');
+        }
+        else if (this.formData.role === 'Individual') {
           this.$router.push('/login');
         }
 
@@ -163,6 +181,20 @@ export default {
   border-radius: 12px;
   border-left: 5px solid #64ffda;
   padding: 30px;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+  /* animation-delay: 0.5s; */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px); 
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .section-title {
@@ -195,6 +227,10 @@ export default {
   color: #ff6b6b;
   text-align: center;
   font-weight: bold;
+}
+
+::v-deep .v-messages__message {
+  color: #ff9393 !important;
 }
 </style>
 

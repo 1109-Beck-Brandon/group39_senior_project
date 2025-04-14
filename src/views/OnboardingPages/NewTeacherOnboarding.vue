@@ -136,11 +136,12 @@
     computed: {
       formIsValid() {
         const isCustomClassIdValid = this.classIdChoice === 'custom' ? !!this.customClassId : true;
+        const phoneValid = this.phoneFormatRule(this.phoneNumber) === true;
         return (
           this.firstName &&
           this.lastName &&
           this.classroomName &&
-          this.phoneNumber &&
+          phoneValid &&
           this.schoolName &&
           this.preferredContactMethod &&
           this.classIdChoice &&
@@ -284,6 +285,10 @@
 .grade-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+::v-deep .v-messages__message {
+  color: #ff9393 !important;
 }
 
   </style>
