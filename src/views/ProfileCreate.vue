@@ -132,17 +132,11 @@ export default {
         if (this.formData.role === 'Teacher') {
           this.$router.push({ path: '/new-teacher-onboarding', query: { email: this.formData.email } });
         }
-        // i will uncomment these lines of code soon
-        //  else if (this.formData.role === 'Student') {
-        //   this.$router.push({ path: '/studentOnboarding', query: { email: this.formData.email } });
-        // } else {
-        //   this.$router.push({ path: '/userOnboarding', query: { email: this.formData.email } });
-        // }  
         else if (this.formData.role === 'Student') {
-          this.$router.push('/login');
+          this.$router.push({path: '/new-student-onboarding', query: { email: this.formData.email }});
         }
         else if (this.formData.role === 'Individual') {
-          this.$router.push('/login');
+          this.$router.push('/new-user-onboarding');
         }
 
         //this.$router.push('/login');
