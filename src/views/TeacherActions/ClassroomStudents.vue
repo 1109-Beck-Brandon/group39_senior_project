@@ -6,7 +6,6 @@
 
   <v-container fluid>
     <v-row>
-
       <!-- Left Section - Classrooms -->
       <v-col cols="3"> 
         <v-card class="classroom-card"> 
@@ -17,17 +16,14 @@
       <!-- Middle Section - Students List -->
       <v-col cols="6"> 
         <v-card class="dashboard-card"> 
-          <!-- <v-row class="class-name-row"> 
-            <h6>{{ classroomName }}</h6>            
-          </v-row> -->
+
           <v-row> 
             <v-btn class="return-button" @click="redirectToTeacherView" >Return</v-btn>            
           </v-row>
+
           <v-row class="join-id-row"> 
-
-            <h1>Students</h1>            
+            <h1>Students </h1>            
           </v-row>
-
 
           <v-row class="join-id-row"> 
            <h5>Join ID: {{ classroomId }}</h5>
@@ -54,7 +50,7 @@
           <v-divider> </v-divider>
           <!-- Assign Courses Section -->
           <v-row class="roadmap-row"> 
-            <v-col cols="12"> 
+            <v-col cols="12">  
               <h4>
                 <v-icon left class="class-icon" color="grey-lighten-1">mdi-book</v-icon>
                 Assign Courses to your class!
@@ -94,7 +90,8 @@
 </template>
 
 <script>
-import { getTeacherDashboard } from '@/services/api';
+//commenting for now
+//import { getTeacherDashboard } from '@/services/api';
 
 export default {
   name: 'ClassroomStudents',
@@ -108,56 +105,84 @@ export default {
     };
   },
   created() {
-  // Instead of reading from localStorage, call the API
-  getTeacherDashboard()
-    .then(response => {
-      const teacherData = response.data;
-      // Update your component data
+    const classroomId = this.$route.query.id || '';
+    const teacherEmail = this.$route.query.email || '';
+    this.classroomId = classroomId;
+    
+    if (teacherEmail) {
+      const teacherData = JSON.parse(localStorage.getItem(teacherEmail)) || {};
+      this.email = teacherData.email || teacherEmail;
+      this.firstName = teacherData.first_name || 'No first name provided';
+      this.lastName = teacherData.last_name || 'No last name provided';
+      this.role = teacherData.role || 'No role provided';
+      this.gradeLevel = teacherData.gradeLevel || 'No grade level';
+      this.phoneNumber = teacherData.phoneNumber || 'No phone number';
+      this.schoolName = teacherData.schoolName || 'No school name';
+      this.preferredContactMethod = teacherData.preferredContactMethod || 'No contact method';
       this.classroomNames = teacherData.classroomNames || [];
       this.allStudents = teacherData.allStudents || {};
-      // Retrieve the Classroom ID from query parameters
-      this.classroomId = this.$route.query.id || '';
-      if (this.classroomId) {
-        const classroom = this.classroomNames.find(c => c.id === this.classroomId);
-        this.classroomName = classroom ? classroom.name : 'Unknown Classroom';
-        this.students = this.allStudents[this.classroomId] || [];
-        console.log('Fetched Students:', this.students);
-      } else {
-        this.classroomName = 'No Classroom Selected';
-      }
-    })
-    .catch(error => {
-      console.error("Error fetching teacher dashboard data:", error);
-    });
+      
+      // gets CURRENT classroom selected
+      const classroom = this.classroomNames.find(c => c.id === classroomId);
+      this.classroomName = classroom ? classroom.name : 'Unknown Classroom';
+      
+      // load students in that current classroom selected
+      this.students = this.allStudents[classroomId] || [];
+      console.log('Loaded classroom students:', this.students);
+    } else {
+      this.classroomName = 'No Classroom Selected';
+    }
+    // commenting for now
+  // // Instead of reading from localStorage, call the API
+  // getTeacherDashboard()
+  //   .then(response => {
+  //     const teacherData = response.data;
+  //     // Update your component data
+  //     this.classroomNames = teacherData.classroomNames || [];
+  //     this.allStudents = teacherData.allStudents || {};
+  //     // Retrieve the Classroom ID from query parameters
+  //     this.classroomId = this.$route.query.id || '';
+  //     if (this.classroomId) {
+  //       const classroom = this.classroomNames.find(c => c.id === this.classroomId);
+  //       this.classroomName = classroom ? classroom.name : 'Unknown Classroom';
+  //       this.students = this.allStudents[this.classroomId] || [];
+  //       console.log('Fetched Students:', this.students);
+  //     } else {
+  //       this.classroomName = 'No Classroom Selected';
+  //     }
+  //   })
+  //   .catch(error => {
+  //     console.error("Error fetching teacher dashboard data:", error);
+  //   });
   },
   methods: {
-    /**
-     * @param {Object} classroom 
-     */
-    selectClassroom(classroom) {
-      // Ensure there's an array for the selected class ID
-      if (!this.allStudents[classroom.id]) {
-        this.allStudents[classroom.id] = [];
-      }
-      const userData = JSON.parse(localStorage.getItem('newUser')) || {};
-      const email = userData.email || 'No email provided';
+    // /**
+    //  * @param {Object} classroom 
+    //  */
+    // selectClassroom(classroom) {
+    //   // Ensure there's an array for the selected class ID
+    //   if (!this.allStudents[classroom.id]) {
+    //     this.allStudents[classroom.id] = [];
+    //   }
+    //   const userData = JSON.parse(localStorage.getItem('newUser')) || {};
+    //   const email = userData.email || 'No email provided';
 
-      const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
-      if (teachersData[email]) {
-        teachersData[email].allStudents = this.allStudents;
-        localStorage.setItem('teachersData', JSON.stringify(teachersData));
-      }
+    //   const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
+    //   if (teachersData[email]) {
+    //     teachersData[email].allStudents = this.allStudents;
+    //     localStorage.setItem('teachersData', JSON.stringify(teachersData));
+    //   }
 
-      // Navigate to /classroom-students with the class ID as a query parameter
-      this.$router.push({ path: '/classroom-students', query: { id: classroom.id } });
-    },
+    //   // Navigate to /classroom-students with the class ID as a query parameter
+    //   this.$router.push({ path: '/classroom-students', query: { id: classroom.id } });
+    // },
 
     redirectToCourses() {
-      alert('Redirecting to courses...');
+      this.$router.push('/courseSelect');
     },
 
     redirectToTeacherView() {
-      this.$router.push('/new-teacher-view');
+      this.$router.push({ path: '/new-teacher-view', query: { email: this.email } });
     }
   }
 };

@@ -1,7 +1,4 @@
 <template>
-  <v-layout class="rounded rounded-md">
-    <v-app-bar color="surface-variant" title="Cybersecurity Learning Platform"></v-app-bar>
-  </v-layout>
   <h2 class="dashboard-header">Teacher Dashboard</h2>
 
   <v-container fluid>
@@ -9,14 +6,6 @@
 
       <!-- Left Section- classrooms-->
       <v-col cols="3"> 
-        <!-- <v-card class="classroom-card">
-          <h3> Profile Picture</h3>
-          <v-btn rounded class="classroom-button">
-            <v-icon left class ="class-icon">mdi-pencil</v-icon>
-            Edit Profile Picture
-          </v-btn>
-        </v-card> -->
-
         <v-card class="classroom-card"> 
           <h3>Classrooms</h3>
           <!--class buttons loop-->
@@ -217,11 +206,11 @@
             </v-col> 
             <v-divider></v-divider>
             <v-col cols="12">
-              <h5>Paste your student list</h5>              
+              <h5>Paste your student list (More than 1 student)</h5>              
             </v-col>
             <v-col cols="12">
               <h4 class="center-h4">
-                Copy from your excel sheet and paste here!
+                Copy and paste from excel sheet only!
               </h4>
             </v-col>
             <v-col cols="12">
@@ -277,27 +266,21 @@
       <v-spacer> </v-spacer>
       <v-col cols="12" class="text-center">
 
-        <p>For debugging, i'll delete this later</p>
-
-        <v-btn @click="testAddStudent">Test addStudent</v-btn>        
-        <p>Username: {{ username }}</p>
+        <p>For debugging, i'll delete this later</p>    
         <p>First Name: {{ firstName }}</p>
         <p>Last Name: {{ lastName }}</p>
         <p>Email: {{ email }}</p>
         <p>Role: {{ role }}</p>
         <p>Classrooms: {{ classroomNames }}</p>
         <p>Students: {{ allStudents }}</p>
-         <p>Grade Level: {{ gradeLevel }}</p>
-        <p>Phone Number: {{ phoneNumber }}</p>
         <p>School Name: {{ schoolName }}</p>
-        <p>Preferred Contact Method: {{ preferredContactMethod }}</p>
       </v-col>
     </v-row> -->
 
     <!-- v-snackbar ui components (the little alert messages)-->
-    <v-snackbar text rounded transition="dialog-top-transition" v-model="snackbar" :timeout="1500" top right>
+    <v-snackbar text rounded transition="dialog-top-transition" v-model="snackbar" :timeout="1200" top right>
       {{ snackbarMessage }}
-      <v-btn text @click="snackbar = false">
+      <v-btn text color="blue" @click="snackbar = false">
         Close
       </v-btn>
     </v-snackbar>
@@ -306,7 +289,8 @@
 </template>
 
 <script>
-import { getTeacherDashboard, addStudentToClassroom } from '@/services/api';
+//commenting out temporarily
+//import { getTeacherDashboard, addStudentToClassroom } from '@/services/api'; 
 
 export default {
   name: 'NewTeacherView',
@@ -316,6 +300,7 @@ export default {
       requiredRule: v=> !!v || 'This field is required',
       emailFormatRule: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Please enter a valid email address',
 
+      //teacher stuff
       username: '',
       email: '',
       role: '',
@@ -325,6 +310,8 @@ export default {
       phoneNumber: '',
       schoolName: '',
       preferredContactMethod: '',
+
+      //class stuff
       classroomNames: [],
       allStudents: {},
 
@@ -339,13 +326,13 @@ export default {
 
       //For the Show Excel and Paste Modal
       showExcelModal: false,
-      excelData: '', //Data from user pasting from excel sheet
+      excelData: '', 
 
       //For the Add New Class modal
       newClassName: '', 
       newGradeLevel: '',  
-      newClassId: this.generateClassId(),  // new classroom ID (randomly generated)
-      grades: ['9th grade', '10th grade', '11th grade', '12th grade'],  // available grade levels
+      newClassId: this.generateClassId(),  
+      grades: ['9th grade', '10th grade', '11th grade', '12th grade'], 
       showNewClassModal: false, 
 
       //For the snackbar ui alerts
@@ -354,52 +341,56 @@ export default {
     };
   },
   created() {
-    // Instead of reading from localStorage, fetch teacher data from the backend.
-    getTeacherDashboard()
-      .then(response => {
-        const teacherData = response.data;
-        this.email = teacherData.email || 'No email provided';
-        this.username = teacherData.username || 'No username provided';
-        this.firstName = teacherData.firstName || '';
-        this.role = teacherData.role || '';
-        this.gradeLevel = teacherData.gradeLevel || '';
-        this.phoneNumber = teacherData.phoneNumber || '';
-        this.schoolName = teacherData.schoolName || '';
-        this.preferredContactMethod = teacherData.preferredContactMethod || '';
-        this.classroomNames = teacherData.classroomNames || [];
-        this.allStudents = teacherData.allStudents || {};
-      })
-      .catch(error => {
-        console.error("Error fetching teacher dashboard data:", error);
-      });
+    // retrieving teacher's email
+    const email = this.$route.query.email;
+    console.log('Teacher email on dashboard:', email);
+    this.getTeacherDashboardLocalStorage(email);
+
+    // im commenting this part for now 
+    //  Instead of reading from localStorage, fetch teacher data from the backend.
+    // getTeacherDashboard()
+    //   .then(response => {
+    //     const teacherData = response.data;
+    //     this.email = teacherData.email || 'No email provided';
+    //     this.username = teacherData.username || 'No username provided';
+    //     this.firstName = teacherData.firstName || '';
+    //     this.role = teacherData.role || '';
+    //     this.gradeLevel = teacherData.gradeLevel || '';
+    //     this.phoneNumber = teacherData.phoneNumber || '';
+    //     this.schoolName = teacherData.schoolName || '';
+    //     this.preferredContactMethod = teacherData.preferredContactMethod || '';
+    //     this.classroomNames = teacherData.classroomNames || [];
+    //     this.allStudents = teacherData.allStudents || {};
+    //   })
+    //   .catch(error => {
+    //     console.error("Error fetching teacher dashboard data from backend:", error);
+    //   });
     },
   methods: {
-    getTeacherDashboardLocalStorage() {
-      const userData = JSON.parse(localStorage.getItem('newUser')) || {};
-      this.email = userData.email || 'No email provided';
-
-      // fetch the teacher's data using the email from 'teachersData' in localStorage
-      const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
-      const teacherData = teachersData[this.email] || {};
-
-      // populate from teacherData if available
-      this.username = teacherData.username || 'No username provided';
-      this.firstName = teacherData.firstName || 'No first name provided';
-      this.lastName = teacherData.lastName || 'No first name provided';
-      this.role = teacherData.role || 'No role provided';
-
-      this.gradeLevel = teacherData.gradeLevel || 'No grade level';
-      this.phoneNumber = teacherData.phoneNumber || 'No phone number';
-      this.schoolName = teacherData.schoolName || 'No school name';
-      this.preferredContactMethod = teacherData.preferredContactMethod || 'No contact method';
-      //
-      this.classroomNames = teacherData.classroomNames || [];
-      this.allStudents = teacherData.allStudents || {};
-      console.log('Classroom Names Array:', this.classroomNames);
+    getTeacherDashboardLocalStorage(email) {
+      const storedData = JSON.parse(localStorage.getItem(email)) || {};
+      
+      this.email = storedData.email || 'No email provided';
+      this.firstName = storedData.first_name || 'No first name provided';
+      this.lastName = storedData.last_name || 'No last name provided';
+      this.role = storedData.role || 'No role provided';
+      this.phoneNumber = storedData.phoneNumber || 'No phone number';
+      this.schoolName = storedData.schoolName || 'No school name';
+      this.preferredContactMethod = storedData.preferredContactMethod || 'No contact method';
+      this.gradeLevel = storedData.gradeLevel || 'No grade level';
+      this.classroomNames = storedData.classroomNames || [];
+      this.allStudents = storedData.allStudents || {};
+      
+      console.log('Loaded teacher data from localStorage:', storedData);
     },
     selectClassroom(classroom) {
-      // Optionally, update local data if needed
-      this.$router.push({ path: '/classroom-students', query: { id: classroom.id } });
+      this.$router.push({ 
+        path: '/classroom-students', 
+        query: { 
+          id: classroom.id,
+          email: this.email  // Pass the teacher's email as well.
+        }
+      });
     },
     openAddStudentsModal() {
       this.showAddStudentsModal = true;
@@ -427,66 +418,80 @@ export default {
         alert('Please enter a valid email address.');
         return;
       }
-      // Call the backend API to add the student.
-      addStudentToClassroom(this.selectedClassroom, this.newStudent)
-        .then(() => {
-          // Refresh the teacher dashboard data
-          return getTeacherDashboard();
-        })
-        .then(response => {
-          const teacherData = response.data;
-          this.allStudents = teacherData.allStudents || {};
-          this.classroomNames = teacherData.classroomNames || [];
-          this.closeAddStudentsModal();
-          this.snackbarMessage = 'Student added successfully!';
-          this.snackbar = true;
-        })
-        .catch(error => {
-          console.error("Error adding student:", error);
-        });
+
+      const teacherData = JSON.parse(localStorage.getItem(this.email)) || {};
+      teacherData.allStudents = teacherData.allStudents || {};
+      // using the selected classroom ID as the key.
+      if (!teacherData.allStudents[this.selectedClassroom]) {
+        teacherData.allStudents[this.selectedClassroom] = [];
+      }
+      // adding to array
+      teacherData.allStudents[this.selectedClassroom].push(this.newStudent);
+      
+      // updating
+      this.allStudents = teacherData.allStudents;     
+      localStorage.setItem(this.email, JSON.stringify(teacherData));
+      this.snackbarMessage = 'Student added successfully!';
+      this.snackbar = true;
+      this.closeAddStudentsModal();
+      
+      // // // commenting this part out for now - Call the backend API to add the student.
+      // addStudentToClassroom(this.selectedClassroom, this.newStudent)
+      //   .then(() => {
+      //     // Refresh the teacher dashboard data
+      //     return getTeacherDashboard();
+      //   })
+      //   .then(response => {
+      //     const teacherData = response.data;
+      //     this.allStudents = teacherData.allStudents || {};
+      //     this.classroomNames = teacherData.classroomNames || [];
+      //     this.closeAddStudentsModal();
+      //     this.snackbarMessage = 'Student added successfully!';
+      //     this.snackbar = true;
+      //   })
+      //   .catch(error => {
+      //     console.error("Error adding student:", error);
+      //   });
     },
     manuallyAddStudents() {
       this.openAddStudentsModal();
     },
     redirectToCourses() {
-      alert('redirecting');
+      this.$router.push('/courseSelect');
     },
     openExcelModal(){
       this.showExcelModal = true;
     },
     processExcelData() {
-      // Taking pasted info from user
       const students = this.excelData.split('\n').map((line) => {
         const [firstName, lastName, email] = line.split('\t');
         return { firstName, lastName, email };
       });
 
-      // Check if a classroom is selected and that there are students
+      // checks if a classroom is selected and that there are students
       if (this.selectedClassroom && students.length > 1) {
-        // Add students to the selected classroom
-        if (!this.allStudents[this.selectedClassroom]) {
-          this.allStudents[this.selectedClassroom] = []; // Create an array for this classroom if it doesn't exist
+        const teacherData = JSON.parse(localStorage.getItem(this.email)) || {};
+        teacherData.allStudents = teacherData.allStudents || {};
+
+        //making an array for the selected classroom if none
+        if (!teacherData.allStudents[this.selectedClassroom]) {
+          teacherData.allStudents[this.selectedClassroom] = [];
         }
 
-        // Add each student to the classroom
-        students.forEach((student) => {
-          this.allStudents[this.selectedClassroom].push(student);
+        // adding
+        students.forEach(student => {
+          teacherData.allStudents[this.selectedClassroom].push(student);
         });
 
-        // Persist the updated allStudents object to localStorage
-        const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
-        if (teachersData[this.email]) {
-          teachersData[this.email].allStudents = this.allStudents;
-          localStorage.setItem('teachersData', JSON.stringify(teachersData));
-        }
+        // updating
+        this.allStudents = teacherData.allStudents;
+        localStorage.setItem(this.email, JSON.stringify(teacherData));
 
-        // Provide feedback to the user
         this.snackbarMessage = 'Students added successfully!';
         this.snackbar = true;
         this.closeExcelModal();
         this.closeAddStudentsModal();
       } else {
-        // Show an error message if no classroom is selected or if no students were pasted
         this.snackbarMessage = 'Please select a classroom and paste valid data.';
         this.snackbar = true;
       }
@@ -509,29 +514,22 @@ export default {
     },
     saveNewClass() {
       if (this.newClassName && this.newGradeLevel) {
-        // Create new class object
+        // new class object
         const newClass = {
           name: this.newClassName,
           gradeLevel: this.newGradeLevel,
           id: this.newClassId,
         };
 
-        // Add the new class to the list of classrooms in localStorage
-        const teachersData = JSON.parse(localStorage.getItem('teachersData')) || {};
-        const teacherData = teachersData[this.email] || {};
+        // using the teacher’s email, and saving 
+        const teacherData = JSON.parse(localStorage.getItem(this.email)) || {};
+        teacherData.classroomNames = teacherData.classroomNames || [];
         teacherData.classroomNames.push(newClass);
-
-        // Save updated data in localStorage
-        teachersData[this.email] = teacherData;
-        localStorage.setItem('teachersData', JSON.stringify(teachersData));
-
-        // Update the classroom names in the current session
+        localStorage.setItem(this.email, JSON.stringify(teacherData));
+        
+        // updating 
         this.classroomNames.push(newClass);
-
-        // Close the modal and reset fields
         this.closeNewClassModal();
-
-        // Show feedback message
         this.snackbarMessage = 'Class created successfully!';
         this.snackbar = true;
       } else {
@@ -540,32 +538,9 @@ export default {
       }
     },
 
-    testAddStudent() {   
-      //checking for classrooms 
-      if (this.classroomNames.length === 0) {
-        const testClass = { id: 'TEST123', name: 'Test Classroom' };
-        this.classroomNames.push(testClass);
-        this.selectedClassroom = testClass.id;
-      } else {
-        
-        this.selectedClassroom = this.classroomNames[0].id;
-      }
-      //test student info
-      this.newStudent.firstName = 'Test';
-      this.newStudent.lastName = 'Student';
-      this.newStudent.email = 'test@student.com';
-      
-      this.addStudent();
-
-      console.log('After addStudent, allStudents:', this.allStudents);
-      this.snackbarMessage = 'Student added successfully!';
-    },
-
   }
 };
 </script>
-
-
 
 <style scoped>
 .dashboard-header {
