@@ -115,7 +115,11 @@
     </v-row>
 
     <!-- Add Quiz Component -->
-    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+    <QuizStructure 
+      :quizQuestions="quizQuestions" 
+      v-model:showQuizDialog="showQuizDialog"
+      @quiz-completed="handleQuizCompleted"
+    />
 
   </v-container>
 </template>
@@ -128,6 +132,7 @@ import incidentResponderImage from "@/assets/logo.webp";
 import consultantImage from "@/assets/5db715334d39bc64c600f95d_cyber-security-consultant.jpg";
 
 import QuizStructure from '@/components/QuizStructure.vue';
+import progressTracking from '@/mixins/progressTracking.js';
 
 export default {
   name: "JobsAtCyber",
@@ -135,6 +140,8 @@ export default {
   components: {
     QuizStructure,
   },
+
+  mixins: [progressTracking],
 
   data() {
     return {
@@ -213,6 +220,20 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    async handleQuizCompleted(result) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.user_id) {
+        console.error('User not logged in. Progress not saved.');
+        return;
+      }
+      try {
+        await this.trackProgress(result.correctAnswers, result.totalQuestions);
+        this.$root.$emit('show-snackbar', 'Your progress has been saved!', 'success');
+      } catch (error) {
+        console.error('Error saving progress:', error);
+        this.$root.$emit('show-snackbar', 'Failed to save progress', 'error');
+      }
+    }
   },
 };
 </script>
