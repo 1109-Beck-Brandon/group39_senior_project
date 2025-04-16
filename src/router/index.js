@@ -46,10 +46,11 @@ import NewTeacherOnboarding  from '@/views/OnboardingPages/NewTeacherOnboarding.
 import NewTeacherView from '@/views/OnboardingPages/NewTeacherView.vue';
 import NewGradebook from '@/views/OnboardingPages/NewGradebook.vue';
 import ClassroomStudents from '@/views/TeacherActions/ClassroomStudents.vue';
+import NewStudentOnboarding from '@/views/OnboardingPages/NewStudentOnboarding.vue';
+import NewUserOnboarding from '@/views/OnboardingPages/NewUserOnboarding.vue';
 
 //TEMPORARY TEST PAGES LINK
 import TestPages from '@/views/TestPages.vue';
-
 
 const routes = [
   {
@@ -194,6 +195,18 @@ const routes = [
     path: '/classroom-students',
     name: 'ClassroomStudents',
     component: ClassroomStudents,
+  },
+
+  {
+    path: '/new-student-onboarding',
+    name: 'NewStudentOnboarding',
+    component: NewStudentOnboarding,
+  },
+
+  {
+    path: '/new-user-onboarding',
+    name: 'NewUserOnboarding',
+    component: NewUserOnboarding,
   },
 
   {
