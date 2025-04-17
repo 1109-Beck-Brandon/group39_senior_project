@@ -9,7 +9,30 @@
     <v-row justify="center" align="center">
       <v-col cols="12" md="8" class="text-center">
         <h1 class="header-title">NIST CSF 2.0: Govern Function</h1>
-        <img :src="headerImage" alt="NIST Govern Function" class="header-image" />
+        
+        <!-- Interactive Image Map -->
+        <div class="image-map-container">
+          <img :src="headerImage" alt="NIST Govern Function" class="header-image" usemap="#nist-map" />
+          
+          <!-- Image Map Areas -->
+          <div class="map-overlay" ref="mapOverlay">
+            <div 
+              v-for="(module, index) in nistModules" 
+              :key="index"
+              class="module-hotspot"
+              :class="{ 'active': hoveredModule === module.name }"
+              :style="module.style"
+              @mouseover="hoveredModule = module.name"
+              @mouseleave="hoveredModule = null"
+              @click="navigateToModule(module.route)"
+            >
+              <div class="module-tooltip" v-if="hoveredModule === module.name">
+                {{ module.name }}
+                <span class="click-hint">Click to navigate</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </v-col>
     </v-row>
 
@@ -127,9 +150,44 @@ export default {
 
   data() {
     return {
-      headerImage: "/api/placeholder/800/400", // Placeholder for NIST Govern image
+      headerImage: require("@/assets/nist.png"),
       currentCategory: 0,
       showQuizDialog: false,
+      hoveredModule: null,
+      
+      // Define the NIST modules with their navigation paths and positions on the image
+      nistModules: [
+        {
+          name: "Govern",
+          route: "/course/nist-framework/governModule",
+          style: "top: 10%; left: 84%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Identify",
+          route: "/course/nist-framework/identifyModule",
+          style: "top: 64%; left: 10%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Protect",
+          route: "/course/nist-framework/protectModule",
+          style: "top: 27%; left: 18%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Detect",
+          route: "/course/nist-framework/detectModule",
+          style: "top: 16%; left: 42%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Respond",
+          route: "/course/nist-framework/respondModule",
+          style: "top: 30%; left: 67%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Recover",
+          route: "/course/nist-framework/recoverModule",
+          style: "top: 63%; left: 76%; width: 15%; height: 15%;"
+        }
+      ],
 
       governCategories: [
         {
@@ -214,7 +272,23 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    navigateToModule(route) {
+      this.$router.push(route);
+    },
+    // You can add a method to adjust hotspot positions after image loads if needed
+    adjustHotspots() {
+      // This could be implemented if you need to dynamically position hotspots
+      // based on actual image dimensions
+    }
   },
+  
+  mounted() {
+    // You can add code here to adjust hotspot positions after the component mounts
+    // For example, you might want to calculate positions based on the actual image size
+    this.$nextTick(() => {
+      // Optional: Add code to adjust hotspot positions if needed
+    });
+  }
 };
 </script>
 
@@ -248,12 +322,79 @@ body,
   text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
 }
 
+/* Image Map Styling */
+.image-map-container {
+  position: relative;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
 .header-image {
   max-width: 100%;
   height: auto;
   margin-bottom: 30px;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: block;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.module-hotspot {
+  position: absolute;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.module-hotspot:hover {
+  background-color: rgba(100, 255, 218, 0.3);
+  box-shadow: 0 0 15px rgba(100, 255, 218, 0.5);
+}
+
+.module-hotspot.active {
+  background-color: rgba(100, 255, 218, 0.3);
+}
+
+.module-tooltip {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #233554;
+  color: #64ffda;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border: 1px solid #64ffda;
+}
+
+.module-tooltip:after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: #64ffda transparent transparent transparent;
+}
+
+.click-hint {
+  display: block;
+  font-size: 12px;
+  color: #a8b2d1;
+  margin-top: 4px;
 }
 
 .section-title {

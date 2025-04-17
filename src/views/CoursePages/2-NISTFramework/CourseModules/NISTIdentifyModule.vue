@@ -1,7 +1,487 @@
 <template>
-  <h1>NIST Identify Module Content</h1>
+  <!-- Back Button -->
+  <v-btn icon class="position-absolute" style="left: 16px; background-color: gray; z-index: 10;" @click="goBack">
+    <v-icon>mdi-arrow-left</v-icon>
+  </v-btn>
+
+  <v-container fluid class="main-container">
+    <!-- Header -->
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8" class="text-center">
+        <h1 class="header-title">NIST CSF 2.0: Identify Function</h1>
+        
+        <!-- Interactive Image Map -->
+        <div class="image-map-container">
+          <img :src="headerImage" alt="NIST Identify Function" class="header-image" usemap="#nist-map" />
+          
+          <!-- Image Map Areas -->
+          <div class="map-overlay" ref="mapOverlay">
+            <div 
+              v-for="(module, index) in nistModules" 
+              :key="index"
+              class="module-hotspot"
+              :class="{ 'active': hoveredModule === module.name }"
+              :style="module.style"
+              @mouseover="hoveredModule = module.name"
+              @mouseleave="hoveredModule = null"
+              @click="navigateToModule(module.route)"
+            >
+              <div class="module-tooltip" v-if="hoveredModule === module.name">
+                {{ module.name }}
+                <span class="click-hint">Click to navigate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8" class="text-center">
+        <v-card elevation="3" class="intro-card pa-4 mb-6">
+          <h2 class="section-title">Understanding the Identify Function</h2>
+          <p class="section-description">
+            The "Identify" function helps organizations develop a clear understanding of cybersecurity risks
+            to systems, people, assets, data, and capabilities. By mapping business context and critical resources,
+            organizations can prioritize efforts aligned with risk management strategies and business needs.
+          </p>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="9">
+        <h2 class="section-title text-center">Key Identify Categories</h2>
+        
+        <v-carousel
+          v-model="currentCategory"
+          height="300"
+          hide-delimiter-background
+          show-arrows="hover"
+          :continuous="false"
+          delimiter-icon="mdi-circle"
+          class="category-carousel"
+        >
+          <v-carousel-item v-for="(category, index) in identifyCategories" :key="index">
+            <v-card class="carousel-card h-100" elevation="4">
+              <v-container fluid>
+                <v-row>
+                  <v-col cols="12" class="pa-4">
+                    <div class="category-content text-center">
+                      <h3 class="category-title text-h4 mb-2">{{ category.title }}</h3>
+                      <div class="category-description">{{ category.description }}</div>
+                      <div class="category-outcomes mt-4" v-if="category.outcomes">
+                        <strong>Key Outcomes:</strong> {{ category.outcomes }}
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-carousel-item>
+        </v-carousel>
+
+        <v-card class="mt-4 mb-6" elevation="2">
+          <v-card-text class="pa-2">
+            <div class="progress-text d-flex justify-space-between mb-1">
+              <span>{{ identifyCategories[currentCategory].title }}</span>
+              <span>{{ currentCategory + 1 }} of {{ identifyCategories.length }}</span>
+            </div>
+            <v-progress-linear
+              :value="((currentCategory + 1) / identifyCategories.length) * 100"
+              height="12"
+              color="primary"
+              rounded
+              striped
+            ></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8">
+        <v-card elevation="3" class="implementation-card pa-4 mb-6">
+          <h2 class="section-title">Implementation Benefits</h2>
+          <p class="implementation-description">
+            Effective implementation of the Identify function enables organizations to:
+          </p>
+          <v-row>
+            <v-col cols="12" md="6" v-for="(benefit, index) in implementationBenefits" :key="index">
+              <v-card class="strategy-item pa-3 mb-3" outlined>
+                <div class="d-flex align-center">
+                  <v-icon color="primary" size="36" class="mr-3">{{ benefit.icon }}</v-icon>
+                  <div>
+                    <div class="font-weight-bold text-white">{{ benefit.title }}</div>
+                    <div class="strategy-description text-white">{{ benefit.description }}</div>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Quiz Section -->
+    <v-row>
+      <v-col cols="12">
+        <h1>Module Quiz</h1>
+        <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
+        <br><br><br><br><br>
+      </v-col>
+    </v-row>
+
+    <!-- Add Quiz Component -->
+    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+  </v-container>
 </template>
 
 <script>
+import QuizStructure from '@/components/QuizStructure.vue';
 
+export default {
+  name: "NISTIdentifyModule",
+
+  components: {
+    QuizStructure,
+  },
+
+  data() {
+    return {
+      headerImage: require("@/assets/nist.png"),
+      currentCategory: 0,
+      showQuizDialog: false,
+      hoveredModule: null,
+      
+      // Define the NIST modules with their navigation paths and positions on the image
+      nistModules: [
+        {
+          name: "Govern",
+          route: "/course/nist-framework/governModule",
+          style: "top: 10%; left: 84%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Identify",
+          route: "/course/nist-framework/identifyModule",
+          style: "top: 64%; left: 10%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Protect",
+          route: "/course/nist-framework/protectModule",
+          style: "top: 27%; left: 18%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Detect",
+          route: "/course/nist-framework/detectModule",
+          style: "top: 16%; left: 42%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Respond",
+          route: "/course/nist-framework/respondModule",
+          style: "top: 30%; left: 67%; width: 15%; height: 15%;"
+        },
+        {
+          name: "Recover",
+          route: "/course/nist-framework/recoverModule",
+          style: "top: 63%; left: 76%; width: 15%; height: 15%;"
+        }
+      ],
+
+      identifyCategories: [
+        {
+          title: "Asset Management",
+          description: "Involves identifying and managing data, systems, devices, personnel, and facilities to achieve organizational objectives. This includes inventorying physical and digital assets, mapping data flows, and prioritizing resources based on criticality.",
+          outcomes: "Complete asset inventory, Accurate data flow mapping, Resource prioritization"
+        },
+        {
+          title: "Business Environment",
+          description: "Focuses on understanding the organization's mission, objectives, stakeholders, and role in its supply chain and industry sector. This knowledge informs cybersecurity decisions and helps establish resilience requirements.",
+          outcomes: "Defined critical functions, Clear organizational roles, Established resilience requirements"
+        },
+        {
+          title: "Governance",
+          description: "Encompasses policies and procedures for managing organizational risk and regulatory requirements. Proper governance ensures cybersecurity policies align with organizational needs and legal obligations.",
+          outcomes: "Aligned security policies, Coordinated roles, Regulatory compliance"
+        },
+        {
+          title: "Risk Assessment",
+          description: "The process of identifying vulnerabilities, threats, and potential impacts to determine cybersecurity risk. This includes documenting internal and external threats and using this intelligence to prioritize responses.",
+          outcomes: "Documented vulnerabilities, Threat intelligence integration, Prioritized risk responses"
+        },
+        {
+          title: "Risk Management Strategy",
+          description: "Establishes organizational priorities, risk tolerances, and constraints to guide operational risk decisions. An effective strategy ensures stakeholder agreement and alignment with industry-specific risk factors.",
+          outcomes: "Defined risk tolerance, Industry-informed risk analysis, Stakeholder agreement"
+        },
+        {
+          title: "Supply Chain Risk Management",
+          description: "Addresses the identification, assessment, and management of supply chain risks. This includes evaluating suppliers, implementing contractual safeguards, and conducting recovery planning with third parties.",
+          outcomes: "Supplier assessment program, Contractual safeguards, Collaborative recovery planning"
+        }
+      ],
+      
+      implementationBenefits: [
+        {
+          title: "Gap Identification",
+          description: "Define current state and illuminate path toward addressing cybersecurity gaps.",
+          icon: "mdi-magnify"
+        },
+        {
+          title: "Prioritization Framework",
+          description: "Establish clear mitigation priorities based on business impact.",
+          icon: "mdi-priority-high"
+        },
+        {
+          title: "Process Reliability",
+          description: "Develop reliable and reproducible cybersecurity processes.",
+          icon: "mdi-refresh-auto"
+        },
+        {
+          title: "Complex System Management",
+          description: "Simplify management of complex interconnected systems.",
+          icon: "mdi-view-grid-plus"
+        }
+      ],
+      
+      quizQuestions: [
+        {
+          text: "Which Identify category involves cataloging physical systems, devices, and software platforms?",
+          type: "multiple-choice",
+          options: ["Asset Management", "Risk Assessment", "Business Environment"],
+          answer: "Asset Management",
+        },
+        {
+          text: "What key outcome results from effective Supply Chain Risk Management?",
+          type: "multiple-choice",
+          options: ["Defined risk tolerance", "Supplier assessment program", "Complete asset inventory"],
+          answer: "Supplier assessment program",
+        },
+        {
+          text: "Which benefit of implementing the Identify function helps organizations determine where to focus cybersecurity efforts?",
+          type: "multiple-choice",
+          options: ["Process Reliability", "Gap Identification", "Complex System Management"],
+          answer: "Gap Identification",
+        }
+      ],
+    };
+  },
+  
+  methods: {
+    goBack() {
+      this.$router.go(-1);
+    },
+    navigateToModule(route) {
+      this.$router.push(route);
+    },
+    // You can add a method to adjust hotspot positions after image loads if needed
+    adjustHotspots() {
+      // This could be implemented if you need to dynamically position hotspots
+      // based on actual image dimensions
+    }
+  },
+  
+  mounted() {
+    // You can add code here to adjust hotspot positions after the component mounts
+    this.$nextTick(() => {
+      // Optional: Add code to adjust hotspot positions if needed
+    });
+  }
+};
 </script>
+
+<style scoped>
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.main-container {
+  position: relative;
+  background-color: #0a192f;
+  background-image: 
+    radial-gradient(rgba(73, 216, 230, 0.1) 1px, transparent 1px),
+    radial-gradient(rgba(0, 149, 237, 0.05) 2px, transparent 2px);
+  background-size: 50px 50px, 70px 70px;
+  background-position: 0 0, 25px 25px;
+  min-height: 100vh;
+  padding-top: 20px;
+  padding-bottom: 60px;
+  color: #e6f1ff;
+}
+
+.header-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #64ffda;
+  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+}
+
+/* Image Map Styling */
+.image-map-container {
+  position: relative;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.header-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: block;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.module-hotspot {
+  position: absolute;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.module-hotspot:hover {
+  background-color: rgba(100, 255, 218, 0.3);
+  box-shadow: 0 0 15px rgba(100, 255, 218, 0.5);
+}
+
+.module-hotspot.active {
+  background-color: rgba(100, 255, 218, 0.3);
+}
+
+.module-tooltip {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #233554;
+  color: #64ffda;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border: 1px solid #64ffda;
+}
+
+.module-tooltip:after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: #64ffda transparent transparent transparent;
+}
+
+.click-hint {
+  display: block;
+  font-size: 12px;
+  color: #a8b2d1;
+  margin-top: 4px;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  margin: 20px 0;
+  color: #64ffda;
+}
+
+.intro-card, .implementation-card, .carousel-card {
+  background-color: #172a46;
+  border-radius: 12px;
+  border-left: 5px solid #64ffda;
+}
+
+.section-description,
+.implementation-description {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.category-carousel {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.category-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.category-title {
+  color: #64ffda;
+  font-weight: 600;
+}
+
+.category-description {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #ffffff;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.category-outcomes {
+  font-size: 0.95em;
+  color: #a8b2d1;
+  margin-top: 15px;
+}
+
+.progress-text {
+  font-size: 0.9em;
+  color: #ffffff;
+}
+
+.strategy-item {
+  background-color: #233554;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #64ffda;
+}
+
+.strategy-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.strategy-description {
+  color: #ffffff;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.v-progress-linear {
+  background: #233554 !important;
+}
+
+.v-progress-linear__determinate {
+  background: #64ffda !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+</style>
