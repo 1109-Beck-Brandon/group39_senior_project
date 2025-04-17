@@ -1,13 +1,20 @@
 <template>
-  <h2 class="dashboard-header">Teacher Dashboard</h2>
 
-  <v-container fluid>
+  <v-container fluid class="teacher-view-page-container">
+    <v-row> 
+      <v-col cols="1"> 
+        <h2 class="cybersecurity-title">Cybersecurity </h2>             
+      </v-col>
+      <v-col class="for-schools-title-column" cols="2"> 
+        <h2 class="for-schools-header-title">for schools</h2>
+      </v-col>
+    </v-row>
+
     <v-row>
-
       <!-- Left Section- classrooms-->
       <v-col cols="3"> 
         <v-card class="classroom-card"> 
-          <h3>Classrooms</h3>
+          <h3>CLASSROOMS</h3>
           <!--class buttons loop-->
           <v-row class="classrooms-row">
             <v-btn v-for="classroom in classroomNames"
@@ -17,10 +24,11 @@
 
             @click="selectClassroom(classroom)"
             >
+            <v-icon block left class="class-button-icon">mdi-book-open-page-variant</v-icon>
               {{ classroom.name }}
             </v-btn>
           </v-row>
-          <v-btn rounded class = "classroom-button" @click="openNewClassModal">
+          <v-btn rounded class = "make-class-button" @click="openNewClassModal">
             <v-icon block left class="class-icon"> mdi-plus</v-icon>
               New Class
           </v-btn>                
@@ -32,26 +40,26 @@
         <v-card class = "dashboard-card"> 
 
           <h1>Welcome, {{ firstName }}!</h1>     
-          <v-divider> </v-divider>
+          <v-divider class="divider-color"> </v-divider>
           
           <!-- Roadmap guide for new teacher users -->
            <!-- step 1: create a class-->
           <v-row class="roadmap-row">
             <v-col cols="12">
               <h4>
-                <v-icon left class ="class-icon" color="green-lighten-2">mdi-check-circle</v-icon>
+                <v-icon left class ="class-icon" color="teal-lighten-3">mdi-check-circle</v-icon>
                 Create a Classroom
               </h4>
               <small>Select your classroom to view class settings</small>
             </v-col>
           </v-row>
-          <v-divider> </v-divider>
+          <v-divider class="divider-color" > </v-divider>
 
           <!-- step 2: add students or invite-->
           <v-row class="roadmap-row"> 
             <v-col cols="12"> 
               <h4>
-                <v-icon left class ="class-icon" color="grey-lighten-2">mdi-check-circle</v-icon>
+                <v-icon left class ="class-icon" color="grey-darken-2">mdi-check-circle</v-icon>
                 Invite or Add Students
               </h4>
               <small>Invite students to begin their learning journey</small>
@@ -65,14 +73,14 @@
                 </v-col>
               </v-row>
           </v-row>
-          <v-divider> </v-divider>
+          <v-divider class="divider-color" > </v-divider>
 
 
           <!-- step 3: assign courses-->
           <v-row class="roadmap-row"> 
             <v-col cols="12"> 
               <h4>
-                <v-icon left class ="class-icon" color="grey-lighten-2">mdi-check-circle</v-icon>
+                <v-icon left class ="class-icon" color="grey-darken-2">mdi-check-circle</v-icon>
                 Assign courses
               </h4>
               <small>Explore courses and assign modules to classrooms </small>
@@ -109,7 +117,7 @@
     <v-dialog transition="dialog-bottom-transition" class="add-students-dialog" v-model="showAddStudentsModal" max-width="600px">
       <v-card>
         <v-card-title class="headline" >Add a New Student</v-card-title>
-        <v-divider></v-divider>
+        <v-divider class="divider-color" ></v-divider>
 
         <v-card-text>
           <v-row>
@@ -129,7 +137,7 @@
                 :rules="[requiredRule]"
               ></v-select>
             </v-col>
-            <v-divider></v-divider>
+            <v-divider class="divider-color"></v-divider>
             <v-col cols="12">
               <h5>Manually add students </h5>
               <!-- <p><strong>Classroom ID:</strong> {{ getClassroomId(selectedClassroom) }}</p> -->
@@ -169,7 +177,7 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-divider> </v-divider>
+        <v-divider class="divider-color" > </v-divider>
         <v-card-actions>
         <v-col cols="12"> 
           <v-spacer></v-spacer>
@@ -185,7 +193,7 @@
     <v-dialog transition="dialog-bottom-transition" class="paste-excel-dialog" v-model="showExcelModal" max-width="600px">
       <v-card>
         <v-card-title class="headline">Paste From Excel</v-card-title>
-        <v-divider></v-divider>
+        <v-divider class="divider-color" ></v-divider>
         <v-card-text>
           <v-row class="excel-dialog-row">
             <v-col cols="12">
@@ -204,7 +212,7 @@
                 :rules="[requiredRule]"
               ></v-select>
             </v-col> 
-            <v-divider></v-divider>
+            <v-divider class="divider-color" ></v-divider>
             <v-col cols="12">
               <h5>Paste your student list (More than 1 student)</h5>              
             </v-col>
@@ -224,7 +232,7 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-divider></v-divider>
+        <v-divider class="divider-color"></v-divider>
         <v-card-actions>
           <v-btn text @click="closeExcelModal">Go Back</v-btn>
           <v-btn color="blue darken-1" text @click="processExcelData">Add Students</v-btn>
@@ -253,7 +261,7 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-divider></v-divider>
+          <v-divider class="divider-color"></v-divider>
           <v-card-actions>
             <v-btn text @click="closeNewClassModal">Cancel</v-btn>
             <v-btn color="blue darken-1" text @click="saveNewClass">Create Class</v-btn>
@@ -543,31 +551,59 @@ export default {
 </script>
 
 <style scoped>
-.dashboard-header {
-  font-weight: bolder;
+
+.teacher-view-page-container {
+  position: relative;
+  background-image: 
+    radial-gradient(rgba(13, 235, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(rgba(0, 149, 237, 0.05) 2px, transparent 2px);
+  background-size: 50px 50px, 70px 70px;
+  background-position: 0 0, 25px 25px;
+  padding-top: 20px;
+  color: #e6f1ff;
+}
+
+.for-schools-title-column {
+  margin-left: 65px;
+}
+
+.cybersecurity-title {
   color:rgb(73, 114, 137);
+  font-weight: bolder;
   justify-self: left;
-  margin-left: 20px;
-  margin-bottom: -10px;
+  margin-bottom: -15px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+}
+
+.for-schools-header-title {
+  color: rgb(19, 112, 165); 
+  font-weight: lighter;
+  justify-self: left;
+  margin-bottom: -15px; 
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 h1 {
-  color: rgb(94, 94, 94);
+  color: #64ffda;
+  text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
   font-weight: lighter;
 }
 
-h2 {
-  margin-bottom: 10px;
-  font-weight: lighter;
+
+.divider-color {
+  color: #64ffda;
 }
 
-h3 {
-  margin-bottom: 10px;
+.class-icon { 
+  /* the small icons next to text */
+  padding-right: 15px; 
 }
 
-.class-icon {
+.class-button-icon {
   padding-right: 15px;
 }
+
 
 h4 {
   font-weight: lighter;
@@ -576,36 +612,68 @@ h4 {
 h5 {
   font-weight: bolder;
   font-size: medium;
-  color:rgb(50, 79, 96)
+  color:rgb(50, 79, 96);
 }
 
 .classroom-card {
   width: auto;
+  background-color: #bfe1df70;
+  border-radius: 12px;
+  border-left: 5px solid #2bedff8a;
+  border-right: 5px  solid #82ffe2;
   padding: 35px;
   color: rgb(88, 88, 88);
   height: auto;
   margin-bottom: 5px;
+  box-shadow: -10px 15px rgba(86, 175, 203, 0.3);
   /* background-color: darkgrey; */
 }
 
+h3 {
+  /* the header text 'Classrooms' and 'Actions' */
+  color: #5478a6;
+  background-color: #ffffff8d;
+  border-radius: 15px;
+  text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+  margin-bottom: 20px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+} 
+
 .dashboard-card {
   padding: 20px;
+  background-color: #24426c;
+  border-radius: 12px;
+  border-left: 5px solid #64ffda;
 }
 
 .actions-card {
+  background-color: #24426c;
+  border-radius: 12px;
+  border-left: 5px solid #64ffda;
   padding: 40px;
   width: auto;
   height: auto;
 }
 
+
 .classroom-button {
-  color: rgb(61, 61, 61);
-  outline-style: solid;
-  outline-width: 1px;
-  outline-color: rgba(118, 131, 118, 0.756);
+  color: #5c8aa0;
   margin-bottom:20px;
   text-transform: capitalize;
+  font-weight: bolder;
+  font-size: large;
+  background-color: #ffffff00;
+  box-shadow: none;
+}
 
+.make-class-button {
+  color: #ffffff;
+  margin-bottom: -10px;
+  text-transform: capitalize;
+  font-weight: bolder;
+  font-size: large;
+  background-color: #99c6ddad;
+  box-shadow: none;
 }
 
 .add-students-button {
@@ -619,12 +687,23 @@ h5 {
 }
 
 .classroom-button:hover {
-  color:rgb(93, 134, 92);
+  color:rgb(15, 97, 132);
+  transform: translateY(-3px);
+}
+
+.make-class-button:hover {
+  background-color: #5192b3ad;
+  transform: translateY(-3px);
 }
 
 .roadmap-row {
   margin-top: 10px;
   margin-bottom: 10px;
+  color: #551515;
+  font-size: larger;
+  background-color: #63beb8e7;
+  border-radius: 20px;
+
 }
 
 .classrooms-row {
