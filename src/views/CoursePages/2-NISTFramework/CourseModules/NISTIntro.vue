@@ -154,32 +154,32 @@ export default {
         {
           name: "Govern",
           route: "/course/nist-framework/governModule",
-          style: "top: 10%; left: 84%; width: 15%; height: 15%;"
+          style: "top: 9%; left: 76.38%; width: 8%; height: 17%;"
         },
         {
           name: "Identify",
           route: "/course/nist-framework/identifyModule",
-          style: "top: 64%; left: 10%; width: 15%; height: 15%;"
+          style: "top: 62.7%; left: 21.6%; width: 8%; height: 17%;"
         },
         {
           name: "Protect",
           route: "/course/nist-framework/protectModule",
-          style: "top: 27%; left: 18%; width: 15%; height: 15%;"
+          style: "top: 27%; left: 27.7%; width: 8%; height: 17%;"
         },
         {
           name: "Detect",
           route: "/course/nist-framework/detectModule",
-          style: "top: 16%; left: 42%; width: 15%; height: 15%;"
+          style: "top: 15%; left: 45.7%; width: 8%; height: 17%;"
         },
         {
           name: "Respond",
           route: "/course/nist-framework/respondModule",
-          style: "top: 30%; left: 67%; width: 15%; height: 15%;"
+          style: "top: 29%; left: 63.7%; width: 8%; height: 17%;"
         },
         {
           name: "Recover",
           route: "/course/nist-framework/recoverModule",
-          style: "top: 63%; left: 76%; width: 15%; height: 15%;"
+          style: "top: 63%; left: 70.2%; width: 8%; height: 17%;"
         }
       ],
 
@@ -366,6 +366,8 @@ body,
   max-width: 100%;
   height: auto;
   margin-bottom: 30px;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   display: block;
