@@ -123,12 +123,50 @@
     <v-row justify="center">
       <v-col cols="12" md="8" class="text-center">
         <h2 class="section-title">Test Your Knowledge</h2>
+
+        <!-- Take Quiz Button -->
         <v-btn color="primary" large class="mt-3 mb-6" @click="showQuizDialog = true">Take Quiz</v-btn>
+
+        <!-- Past Attempts Button -->
+        <v-btn 
+          v-if="pastAttempts.length > 0" 
+          color="secondary" 
+          @click="showPastAttemptsDialog = true" class="mb-6 ml-4">
+          See Past Attempts
+        </v-btn>
+
       </v-col>
     </v-row>
 
     <!-- Add Quiz Component -->
-    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" />
+    <QuizStructure :quizQuestions="quizQuestions" v-model:showQuizDialog="showQuizDialog" @quiz-completed="loadPastAttempts" />
+
+    <!-- Past Attempts Dialog -->
+    <v-dialog v-model="showPastAttemptsDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Past Attempts</v-card-title>
+        <v-card-text>
+          <v-list>
+            <v-list-item
+              v-for="(attempt, index) in pastAttempts"
+              :key="index"
+            >
+              <v-list-item-content>
+                <v-list-item-title>Attempt {{ index + 1 }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  Date: {{ attempt.date }} | Score: {{ attempt.score }}%
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="showPastAttemptsDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 </template>
 
@@ -148,6 +186,8 @@ export default {
       currentArea: null,
       showQuizDialog: false,
       hoveredModule: null,
+      showPastAttemptsDialog: false,
+      pastAttempts: [],
       
       // Define the NIST modules with their navigation paths and positions on the image
       nistModules: [
@@ -313,7 +353,21 @@ export default {
     adjustHotspots() {
       // This could be implemented if you need to dynamically position hotspots
       // based on actual image dimensions
-    }
+    },
+
+    // Load past attempts from local storage
+    loadPastAttempts() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.user_id) {
+        console.error("User not logged in. Cannot load past attempts.");
+        return;
+      }
+
+      const quizId = this.$route.path;
+      const attemptsKey = `quizAttempts_${user.user_id}_${quizId}`;
+      this.pastAttempts = JSON.parse(localStorage.getItem(attemptsKey)) || [];
+    },
+
   },
   
   mounted() {
@@ -321,6 +375,9 @@ export default {
     this.$nextTick(() => {
       // Optional: Add code to adjust hotspot positions if needed
     });
+
+    // Load Past Attempts
+    this.loadPastAttempts();
   }
 };
 </script>
