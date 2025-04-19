@@ -26,6 +26,16 @@ export default {
         { name: "Respond", description: "Explore the Respond function of the framework.", route: "/course/nist-framework/respondModule" },
         { name: "Recover", description: "Explore the Recover function of the framework.", route: "/course/nist-framework/recoverModule" },
         { name: "Final Module", description: "Take the final quiz for the NIST course.", route: "/course/nist-framework/finalModule" },
+      
+        // First Course Modules (Introduction to Cybersecurity)
+        { name: "CIA Triad", description: "Learn about the CIA Triad and its importance in cybersecurity.", route: "/course/intro-to-cybersecurity/moduleOne" },
+        { name: "Attacks and Defenses", description: "Explore common cyberattacks and their defenses.", route: "/course/intro-to-cybersecurity/AttacksDefensemodule" },
+        { name: "Social Engineering", description: "Understand social engineering attacks and how to prevent them.", route: "/course/intro-to-cybersecurity/SEmodule" },
+        { name: "OSI Model", description: "Learn about the OSI model and its relevance to network security.", route: "/course/intro-to-cybersecurity/OSImodule" },
+        { name: "Basic Unix Commands Lab", description: "Practice basic Unix commands in a virtual lab environment.", route: "/course/intro-to-cybersecurity/labModule" },
+        { name: "Advanced Unix Commands Lab", description: "Continue learning Unix commands with more advanced exercises.", route: "/course/intro-to-cybersecurity/labModule2" },
+        { name: "Jobs in Cybersecurity", description: "Discover different career paths in cybersecurity.", route: "/course/intro-to-cybersecurity/Jobsmodule" },
+        { name: "Final Quiz", description: "Take the final quiz for the Introduction to Cybersecurity course.", route: "/course/intro-to-cybersecurity/FinalQuiz" },
       ],
     };
   },
