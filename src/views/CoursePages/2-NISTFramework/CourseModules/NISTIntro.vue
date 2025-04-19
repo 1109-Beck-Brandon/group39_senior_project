@@ -120,7 +120,7 @@
     </v-row>
 
     <!-- Quiz Section -->
-    <v-row justify="center">
+    <v-row justify="center" align="center">
       <v-col cols="12" md="8" class="text-center">
         <h2 class="section-title">Test Your Knowledge</h2>
 
