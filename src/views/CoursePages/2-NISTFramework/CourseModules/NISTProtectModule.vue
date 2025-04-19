@@ -128,10 +128,10 @@
     <!-- Quiz Section -->
     <v-row justify="center" align="center">
       <v-col cols="12" md="8" class="text-center">
-        <h1>Module Quiz</h1>
+        <h2 class="section-title">Module Quiz</h2>
 
         <!-- Take Quiz Button -->
-        <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
+        <v-btn color="primary" @click="showQuizDialog = true" class="mb-6">Take Quiz</v-btn>
 
         <!-- Past Attempts Button -->
         <v-btn 
