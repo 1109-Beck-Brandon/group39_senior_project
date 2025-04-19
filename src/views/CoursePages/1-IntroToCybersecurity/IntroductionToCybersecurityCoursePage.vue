@@ -70,7 +70,9 @@
 </template>
   
 <script>
-import { enrollCourse } from '@/services/api';
+import { enrollCourse, saveModuleProgress } from '@/services/api';
+import axios from 'axios';
+
 export default {
   props: ["courseName"],
   data() {
@@ -172,13 +174,29 @@ export default {
       if (!this.userId) return;
       
       try {
-        const response = await this.$axios.get(`/users/${this.userId}/courses`);
+        const response = await axios.get(`/users/${this.userId}/courses`);
         const enrolledCourses = response.data.courses || [];
         this.isEnrolled = enrolledCourses.some(course => course.id === this.courseId);
       } catch (error) {
         console.error('Error checking enrollment status:', error);
       }
-    }
+    },
+
+    async handleQuizCompleted({ score }) {
+      if (!this.userId) {
+        console.error('User not logged in. Cannot save progress.');
+        return;
+      }
+
+      try {
+        const moduleId = this.modules[this.activeModule]; // Assuming module ID corresponds to the active module index
+        await saveModuleProgress(this.userId, moduleId, score);
+        this.$emit('show-snackbar', 'Quiz progress saved successfully!');
+      } catch (error) {
+        console.error('Error saving quiz progress:', error);
+        this.$emit('show-snackbar', 'Failed to save quiz progress.');
+      }
+    },
   },
   
   created() {

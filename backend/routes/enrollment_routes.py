@@ -18,8 +18,13 @@ def enroll_course(user_id):
     user = User.query.get(user_id)
     course = Course.query.get(course_id)
 
-    if not user or not course:
-        return jsonify({'error': 'User or Course not found'}), 404
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    course = Course.query.get(course_id)
+    if not course:
+        return jsonify({'error': 'Course not found'}), 404
 
     # Check if the user is already enrolled
     existing_enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
