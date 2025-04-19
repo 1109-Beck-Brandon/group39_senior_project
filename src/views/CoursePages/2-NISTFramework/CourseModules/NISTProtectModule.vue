@@ -141,7 +141,6 @@
           See Past Attempts
         </v-btn>
 
-        <br><br><br><br><br>
       </v-col>
     </v-row>
 

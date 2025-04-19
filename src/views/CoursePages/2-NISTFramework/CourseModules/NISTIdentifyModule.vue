@@ -138,7 +138,7 @@
           @click="showPastAttemptsDialog = true" class="mb-6 ml-4">
           See Past Attempts
         </v-btn>
-        <br><br><br><br><br>
+        
       </v-col>
     </v-row>
 
