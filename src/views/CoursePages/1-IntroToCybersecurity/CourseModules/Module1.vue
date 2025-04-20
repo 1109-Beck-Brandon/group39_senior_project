@@ -158,6 +158,7 @@
 
 <script>
 import QuizStructure from '@/components/QuizStructure.vue';
+import headerImg from '@/assets/cia.jpg';
 
 export default {
   name: "CIATtriad",
@@ -168,7 +169,7 @@ export default {
 
   data() {
     return {
-      headerImage: "/api/placeholder/800/400", // Placeholder for CIA Triad image
+      headerImage: headerImg,
       currentSlide: 0,
       showQuizDialog: false,
       showPastAttemptsDialog: false,

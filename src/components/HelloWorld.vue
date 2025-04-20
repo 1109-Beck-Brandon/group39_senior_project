@@ -124,7 +124,7 @@
               contain
               height="200"
             />
-            <h3 class="subheading font-weight-bold space-grotesk">Cybersecurity Basics</h3>
+            <h3 class="subheading font-weight-bold space-grotesk" style="background: linear-gradient(to right, #ff69b4, #40e0d0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Cybersecurity Basics</h3>
             <p class="grey-text">
               Learn the core principles of cybersecurity, from data protection to secure systems.
             </p>
@@ -137,7 +137,7 @@
               contain
               height="200"
             />
-            <h3 class="subheading font-weight-bold space-grotesk">Advanced Techniques</h3>
+            <h3 class="subheading font-weight-bold space-grotesk" style="background: linear-gradient(to right, #ff69b4, #40e0d0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Advanced Techniques</h3>
             <p class="grey-text">
               Delve into advanced methods for securing networks and mitigating cyber threats.
             </p>
@@ -150,7 +150,7 @@
               contain
               height="200"
             />
-            <h3 class="subheading font-weight-bold space-grotesk">Real-World Examples</h3>
+            <h3 class="subheading font-weight-bold space-grotesk" style="background: linear-gradient(to right, #ff69b4, #40e0d0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Real World Examples</h3>
             <p class="grey-text">
               Apply your knowledge to solve real-world challenges and secure critical systems.
             </p>

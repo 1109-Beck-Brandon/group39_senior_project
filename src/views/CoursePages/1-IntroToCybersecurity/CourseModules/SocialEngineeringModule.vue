@@ -285,6 +285,7 @@
   import ReverseSEIMG from "@/assets/Course1SEimages/ReverseSocialEngineering.jpg"
   import ReconnaissanceIMG from "@/assets/Course1SEimages/Reconnaissance.jpg"
   import TypoSquattingIMG from "@/assets/Course1SEimages/TypoSquatting.jpg"
+  import headerImg from '@/assets/socialeng.jpg';
 
   import QuizStructure from "@/components/QuizStructure.vue";
 
@@ -299,7 +300,7 @@
       return {
         //Title
         courseTitle: "Intro to Social Engineering",
-        headerImage: "/api/placeholder/800/400", // Placeholder for social engineering header image
+        headerImage: headerImg,
         currentAttack: 0,
         showQuizDialog: false,
         showPastAttemptsDialog: false,
