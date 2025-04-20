@@ -1,13 +1,8 @@
 <template>
 
   <v-container fluid class="teacher-view-page-container">
-    <v-row> 
-      <v-col cols="1"> 
-        <h2 class="cybersecurity-title">Cybersecurity </h2>             
-      </v-col>
-      <v-col class="for-schools-title-column" cols="2"> 
-        <h2 class="for-schools-header-title">for schools</h2>
-      </v-col>
+    <v-row class="page-title-row"> 
+          <h2 class="cybersecurity-title">Cybersecurity </h2><h2 class="for-schools-header-title">for schools</h2>     
     </v-row>
 
     <v-row>
@@ -24,11 +19,11 @@
 
             @click="selectClassroom(classroom)"
             >
-            <v-icon block left class="class-button-icon">mdi-book-open-page-variant</v-icon>
+            <!-- <v-icon block left class="class-button-icon">mdi-book-open-page-variant</v-icon> -->
               {{ classroom.name }}
             </v-btn>
           </v-row>
-          <v-btn rounded class = "make-class-button" @click="openNewClassModal">
+          <v-btn rounded class="make-class-button" @click="openNewClassModal">
             <v-icon block left class="class-icon"> mdi-plus</v-icon>
               New Class
           </v-btn>                
@@ -37,77 +32,126 @@
 
       <!-- Middle Section-->
       <v-col cols="6"> 
-        <v-card class = "dashboard-card"> 
+        <v-card class = "roadmap-card"> 
 
-          <h1>Welcome, {{ firstName }}!</h1>     
+          <h1 class="dashboard-welcome-title">Welcome, {{ firstName }}!</h1>     
           <v-divider class="divider-color"> </v-divider>
           
           <!-- Roadmap guide for new teacher users -->
            <!-- step 1: create a class-->
-          <v-row class="roadmap-row">
+          <!-- <v-row class="roadmap-row"> 
             <v-col cols="12">
-              <h4>
-                <v-icon left class ="class-icon" color="teal-lighten-3">mdi-check-circle</v-icon>
+              <h4 class="roadmap-tasks-header-text">
+                <v-icon left class ="class-icon" color="teal-darken-3">mdi-check-circle</v-icon>
                 Create a Classroom
-              </h4>
-              <small>Select your classroom to view class settings</small>
+              </h4> 
+              <h4 class="roadmap-tasks-subtitle-text">Select your classroom to view class settings</h4>
             </v-col>
           </v-row>
-          <v-divider class="divider-color" > </v-divider>
+          <v-divider class="divider-color" > </v-divider> -->
 
           <!-- step 2: add students or invite-->
-          <v-row class="roadmap-row"> 
+          <!-- <v-row class="roadmap-row"> 
             <v-col cols="12"> 
-              <h4>
-                <v-icon left class ="class-icon" color="grey-darken-2">mdi-check-circle</v-icon>
+              <h4 class="roadmap-tasks-header-text">
                 Invite or Add Students
               </h4>
-              <small>Invite students to begin their learning journey</small>
+              <h4 class="roadmap-tasks-subtitle-text">Invite students to begin their learning journey</h4>
             </v-col>      
 
               <v-row> 
                 <v-col cols="12"> 
-                <v-btn class="add-students-button" @click="manuallyAddStudents"> 
+                <v-btn class="roadmap-task-button" @click="manuallyAddStudents"> 
                   Add Students!
                 </v-btn>                    
                 </v-col>
               </v-row>
           </v-row>
-          <v-divider class="divider-color" > </v-divider>
+          <v-divider class="divider-color" > </v-divider> -->
 
 
           <!-- step 3: assign courses-->
-          <v-row class="roadmap-row"> 
+          <!-- <v-row class="roadmap-row"> 
             <v-col cols="12"> 
-              <h4>
-                <v-icon left class ="class-icon" color="grey-darken-2">mdi-check-circle</v-icon>
-                Assign courses
+              <h4 class="roadmap-tasks-header-text">
+                <v-icon left class ="class-icon" color="teal-darken-3">mdi-head-dots-horizontal-outline</v-icon>
+                Assign Courses
               </h4>
-              <small>Explore courses and assign modules to classrooms </small>
+              <h4 class="roadmap-tasks-subtitle-text">Explore courses and assign modules to classrooms </h4>
             </v-col>
-            <v-row> 
+            <v-row>
                 <v-col cols="12"> 
-                <v-btn class="add-students-button" @click="redirectToCourses"> 
+                <v-btn class="roadmap-task-button" @click="redirectToCourses"> 
                   Explore Courses!
                 </v-btn>                    
                 </v-col>
-              </v-row>           
-          </v-row>
+            </v-row>   
+          </v-row> -->
         
         </v-card>
+
+
+        <v-card class="roadmap-tasks-card">
+          <!-- create a class section-->
+          <v-row class="roadmap-row"> 
+            <v-col cols="12">
+              <h4 class="roadmap-tasks-header-text">
+                <v-icon left class ="class-icon" color="teal-darken-3">mdi-check-circle</v-icon>
+                Create a Classroom
+              </h4> 
+              <h4 class="roadmap-tasks-subtitle-text">Select your classroom to view class settings</h4>
+            </v-col>
+          </v-row>
+
+          <!-- invite or add students section-->
+          <v-row class="roadmap-row"> 
+            <v-col cols="12"> 
+              <h4 class="roadmap-tasks-header-text">
+                Invite or Add Students
+              </h4>
+              <h4 class="roadmap-tasks-subtitle-text">Invite students to begin their learning journey</h4>
+            </v-col>      
+
+              <v-row> 
+                <v-col cols="12"> 
+                <v-btn class="roadmap-task-button" @click="manuallyAddStudents"> 
+                  Add Students!
+                </v-btn>                    
+                </v-col>
+              </v-row>
+          </v-row>
+
+          <!-- Assign Courses section-->
+          <v-divider class="divider-color" > </v-divider> 
+          <v-row class="roadmap-row"> 
+            <v-col cols="12"> 
+              <h4 class="roadmap-tasks-header-text">
+                <v-icon left class ="class-icon" color="teal-darken-3">mdi-head-dots-horizontal-outline</v-icon>
+                Assign Courses
+              </h4>
+              <h4 class="roadmap-tasks-subtitle-text">Explore courses and assign modules to classrooms </h4>
+            </v-col>
+            <v-row>
+                <v-col cols="12"> 
+                <v-btn class="roadmap-task-button" @click="redirectToCourses"> 
+                  Explore Courses!
+                </v-btn>                    
+                </v-col>
+            </v-row>   
+          </v-row>
+
+        </v-card>
+        
       </v-col>
 
       <!-- Right section, inbox, gradebook-->
       <v-col cols="3"> 
         <v-card class="actions-card"> 
-          <h3>Actions</h3>
-          <v-row class="roadmap-row">         
-            <v-btn block class="classroom-button" > <v-icon class="class-icon" left>mdi-email</v-icon>Inbox</v-btn> 
-          </v-row>
-          <v-row class="roadmap-row">
-            <v-btn block class="classroom-button" >Gradebook</v-btn>
-          </v-row>
-
+            <v-icon left color="#093f6c">mdi-arrow-down-drop-circle</v-icon>
+            <v-divider class="divider-color"> </v-divider>
+            <v-btn rounded class="actions-button" > <v-icon class="class-icon" left>mdi-email</v-icon>Inbox</v-btn>             
+            <v-divider class="divider-color"></v-divider>
+            <!-- <v-btn rounded class="actions-button" >Gradebook</v-btn> -->
         </v-card>
       </v-col>
     </v-row>
@@ -293,7 +337,6 @@
       </v-btn>
     </v-snackbar>
   </v-container>
-
 </template>
 
 <script>
@@ -393,7 +436,7 @@ export default {
     },
     selectClassroom(classroom) {
       this.$router.push({ 
-        path: '/classroom-students', 
+        path: '/classroom-management', 
         query: { 
           id: classroom.id,
           email: this.email  // Pass the teacher's email as well.
@@ -563,31 +606,37 @@ export default {
   color: #e6f1ff;
 }
 
-.for-schools-title-column {
-  margin-left: 65px;
-}
 
 .cybersecurity-title {
-  color:rgb(73, 114, 137);
+  color: #2e5387d9;
   font-weight: bolder;
   justify-self: left;
-  margin-bottom: -15px;
+  margin-bottom: -5px;
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
 }
 
 .for-schools-header-title {
-  color: rgb(19, 112, 165); 
+  color:#2f5fa2;
   font-weight: lighter;
   justify-self: left;
-  margin-bottom: -15px; 
+  margin-bottom: -5px; 
+  margin-left: 10px;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-h1 {
+.dashboard-welcome-title {
+  /* the "Welcome, teacher's name" */
   color: #64ffda;
   text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
-  font-weight: lighter;
+}
+
+.page-title-row {
+  background-color: #e7e7e7;
+  padding: 20px;
+  margin-top: -30px;
+  margin-bottom: -24px;
+  border-bottom: 3px solid rgba(19, 55, 118, 0.715);
 }
 
 
@@ -598,10 +647,6 @@ h1 {
 .class-icon { 
   /* the small icons next to text */
   padding-right: 15px; 
-}
-
-.class-button-icon {
-  padding-right: 15px;
 }
 
 
@@ -617,94 +662,158 @@ h5 {
 
 .classroom-card {
   width: auto;
-  background-color: #bfe1df70;
-  border-radius: 12px;
-  border-left: 5px solid #2bedff8a;
-  border-right: 5px  solid #82ffe2;
-  padding: 35px;
-  color: rgb(88, 88, 88);
+  background-color: #d9d9d9c4;
+  border-left: 5px  solid #82ffe2a6;
+  padding-top: 30px;
+  padding-bottom: 35px;
+  padding-left: 10px;
+  padding-right: 10px;
   height: auto;
-  margin-bottom: 5px;
-  box-shadow: -10px 15px rgba(86, 175, 203, 0.3);
+  box-shadow: 0px 5px rgba(0, 195, 255, 0.511);
   /* background-color: darkgrey; */
 }
 
 h3 {
   /* the header text 'Classrooms' and 'Actions' */
-  color: #5478a6;
+  color: #5b5b5be7;
   background-color: #ffffff8d;
   border-radius: 15px;
   text-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
   margin-bottom: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 } 
 
-.dashboard-card {
-  padding: 20px;
+.roadmap-card {
+  padding: 15px;
+  margin-left: -10px;
+  margin-right: -10px;
   background-color: #24426c;
-  border-radius: 12px;
-  border-left: 5px solid #64ffda;
+  /* box-shadow: -10px 15px rgba(86, 176, 203, 0.675); */
+}
+
+.roadmap-tasks-card {
+  margin-left: -10px;
+  margin-right: -10px;
+  background-color: #193358;
+  border-top: 30px solid #193358;
+  border-bottom: 30px solid #193358;
+  border-right: 5px solid #193358;
+  border-left: 5px solid #193358;
+}
+
+.roadmap-tasks-header-text { 
+  /* the 'Invite or Add, Assign Courses... Text' */
+  color: #11213a;
+  background-color: #47585800;
+  /* text-shadow: 1px 1px 5px #00e1ff; */
+  border-radius: 15px;
+  font-size: larger;
+}
+
+.roadmap-tasks-subtitle-text {
+  color: #0c201b;
+  border-radius: 15px;
+  padding: 5px;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  font-size: smaller;
+}
+
+.roadmap-task-button {
+  color: #ffffff;
+  background-color:rgb(33, 66, 120);
+  border-radius: 6px;
+  border-bottom: 4px solid rgb(16, 40, 77);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  box-shadow: none;
+}
+.roadmap-row {
+  margin-top: -5px;
+  margin-bottom: 7px;
+  padding: 10px;
+  font-size: larger;
+  border-left: 20px solid #49e4e1a5;
+  border-right: 20px solid #49e4e1a5;
+  background-color: rgb(255, 255, 255);
+}
+.roadmap-task-button:hover {
+  background-color:rgb(39, 83, 153);
+  transform: translateY(-2px); 
+
 }
 
 .actions-card {
-  background-color: #24426c;
-  border-radius: 12px;
-  border-left: 5px solid #64ffda;
-  padding: 40px;
   width: auto;
+  background-color: #d9d9d9c4;
+  border-right: 5px  solid #82ffe2a6;
+  padding-top: 30px;
+  padding-bottom: 35px;
+  padding-left: 10px;
+  padding-right: 10px;
   height: auto;
+  box-shadow: 0px 5px rgba(0, 195, 255, 0.511);
 }
 
+.actions-row {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 30px;
+  margin-right: 20px;
+}
+
+.actions-button {
+  color: #09406cdb;
+  font-weight: bold;
+  border-radius: 3px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  border-bottom: 2px solid #0b2a43;
+  background-color: #05e2ff00;
+  box-shadow: none;
+}
+
+.actions-button:hover {
+  color: #1b6098;
+  border-bottom: 2px solid #12b4d1;
+}
 
 .classroom-button {
-  color: #5c8aa0;
-  margin-bottom:20px;
+  color: #656565;
   text-transform: capitalize;
   font-weight: bolder;
   font-size: large;
-  background-color: #ffffff00;
+  background-color: #7979791e; 
+  margin-bottom:20px;
   box-shadow: none;
 }
 
 .make-class-button {
-  color: #ffffff;
+  color: #e3ffff;
+  background-color:rgba(36, 140, 193, 0.982);
+  border-bottom: 4px solid rgba(17, 95, 134, 0.982);
+  border-radius: 15px;
+  margin-top: -5px;
   margin-bottom: -10px;
-  text-transform: capitalize;
-  font-weight: bolder;
-  font-size: large;
-  background-color: #99c6ddad;
   box-shadow: none;
 }
 
-.add-students-button {
-  color: rgb(12, 93, 35);
-  /* outline-style: dashed; */
-  outline-style: solid;
-  outline-width: 1px;
-  outline-color: rgb(118, 131, 118);
-  margin-top: 0px;
-  text-transform: capitalize;
-}
 
 .classroom-button:hover {
-  color:rgb(15, 97, 132);
-  transform: translateY(-3px);
+  color:rgb(14, 69, 93);
+  background-color: #0ce7ff3c; 
+  transform: translateY(-2px);
 }
 
 .make-class-button:hover {
-  background-color: #5192b3ad;
-  transform: translateY(-3px);
+  background-color:rgba(38, 156, 215, 0.982);
+  transform: translateY(-1px);
 }
 
-.roadmap-row {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  color: #551515;
-  font-size: larger;
-  background-color: #63beb8e7;
-  border-radius: 20px;
 
-}
 
 .classrooms-row {
   margin-top: 10px;
