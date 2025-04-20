@@ -117,11 +117,21 @@
     </v-row>
 
     <!-- Quiz Section -->
-    <v-row>
-      <v-col cols="12">
-        <h1>Module Quiz</h1>
-        <v-btn color="primary" @click="showQuizDialog = true">Take Quiz</v-btn>
-        <br><br><br><br><br>
+    <v-row justify="center" align="center">
+      <v-col cols="12" md="8" class="text-center">
+        <h2 class="section-title">Module Quiz</h2>
+
+        <!-- Take Quiz Button -->
+        <v-btn color="primary" @click="showQuizDialog = true" class="mb-6">Take Quiz</v-btn>
+
+        <!-- Past Attempts Button -->
+        <v-btn 
+          v-if="pastAttempts.length > 0" 
+          color="secondary" 
+          @click="showPastAttemptsDialog = true" class="mb-6 ml-4">
+          See Past Attempts
+        </v-btn>
+        
       </v-col>
     </v-row>
 
@@ -129,8 +139,34 @@
     <QuizStructure 
       :quizQuestions="quizQuestions" 
       v-model:showQuizDialog="showQuizDialog"
-      @quiz-completed="handleQuizCompleted"
+      @quiz-completed="onQuizCompleted"
     />
+
+    <!-- Past Attempts Dialog -->
+    <v-dialog v-model="showPastAttemptsDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Past Attempts</v-card-title>
+        <v-card-text>
+          <v-list>
+            <v-list-item
+              v-for="(attempt, index) in pastAttempts"
+              :key="index"
+            >
+              <v-list-item-content>
+                <v-list-item-title>Attempt {{ index + 1 }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  Date: {{ attempt.date }} | Score: {{ attempt.score }}%
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="showPastAttemptsDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
   </v-container>
 </template>
@@ -164,6 +200,8 @@ export default {
       moduleId: 2,
       moduleName: "Attacks and Defense",
       showQuizDialog: false,
+      showPastAttemptsDialog: false,
+      pastAttempts: [],
 
       attacks: [
         {
@@ -244,6 +282,14 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    async onQuizCompleted(result) {
+      // Call handleQuizCompleted to track progress or show feedback
+      await this.handleQuizCompleted(result);
+
+      // Reload past attempts
+      this.loadPastAttempts();
+    },
+    
     async handleQuizCompleted(result) {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (!user.user_id) {
@@ -261,7 +307,23 @@ export default {
         console.error('Error saving progress:', error);
         this.$root.$emit('show-snackbar', 'Failed to save progress', 'error');
       }
-    }
+    },
+
+    loadPastAttempts() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.user_id) {
+        console.error("User not logged in. Cannot load past attempts.");
+        return;
+      }
+
+      const quizId = this.$route.path; // Use the route path as a unique quiz ID
+      const attemptsKey = `quizAttempts_${user.user_id}_${quizId}`;
+      this.pastAttempts = JSON.parse(localStorage.getItem(attemptsKey)) || [];
+    },
+  },
+
+  mounted() {
+    this.loadPastAttempts();
   },
 };
 </script>

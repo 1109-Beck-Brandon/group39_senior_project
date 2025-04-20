@@ -84,6 +84,32 @@
       You have 1 or more unanswered questions. Please answer all questions before submitting.
       <v-btn color="red" text @click="showSnackbar = false">Close</v-btn>
     </v-snackbar>
+
+    <!-- Past Attempts Dialog -->
+    <v-dialog v-model="showPastAttemptsDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Past Attempts</v-card-title>
+        <v-card-text>
+          <v-list>
+            <v-list-item
+              v-for="(attempt, index) in pastAttempts"
+              :key="index"
+            >
+              <v-list-item-content>
+                <v-list-item-title>Attempt {{ index + 1 }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  Date: {{ attempt.date }} | Score: {{ attempt.score }}%
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="showPastAttemptsDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
   
@@ -109,6 +135,7 @@ export default {
       showSnackbar: false,
       userAnswers: this.initializeUserAnswers(),
       feedback: {},
+      pastAttempts: [],
     };
   },
   watch: {
@@ -131,7 +158,7 @@ export default {
       });
       return answers;
     },
-    submitQuiz() {
+    async submitQuiz() {
       // Check if all questions are answered, if not then display snackbar warning
       const unansweredQuestions = this.quizQuestions.some((question, index) => {
         if (question.type === 'fill-in-the-blank-multiple') {
@@ -143,63 +170,74 @@ export default {
         this.showSnackbar = true;
         return;
       }
-  
-      this.feedback = {}; // Reset feedback
-      this.correctAnswers = 0; // Reset correct answers
 
+      // Calculate results
+      this.correctAnswers = 0;
       this.quizQuestions.forEach((question, index) => {
-        // Different logic for fill in the blank questions with multiple answers
         if (question.type === 'fill-in-the-blank-multiple') {
-          // Make input non-case sensitive
           const userAnswers = this.userAnswers[index].map(answer => answer.trim().toLowerCase());
           const correctAnswers = question.answers.map(answer => answer.toLowerCase());
-
-          // Check for duplicate answers and count correct answers
           const uniqueUserAnswers = [...new Set(userAnswers)];
           const correctCount = uniqueUserAnswers.filter(answer => correctAnswers.includes(answer)).length;
-
           if (correctCount === correctAnswers.length) {
-            this.feedback[index] = {
-              correct: true,
-              message: `Correct!`,
-            };
             this.correctAnswers++;
-          } else {
-            this.feedback[index] = {
-              correct: false,
-              message: `Incorrect.`,
-            };
           }
         } else {
-          // The normal logic for mutliple choice / single fill-in-the-blank questions
-          // Ensures that fill in the blank questions are not case sensitive
           const userAnswer = this.userAnswers[index]?.trim()?.toLowerCase();
           const correctAnswer = question.answer.toLowerCase();
-
-          // Checks for correct answer
           if (userAnswer === correctAnswer) {
-            this.feedback[index] = {
-              correct: true,
-              message: `Correct!`,
-            };
             this.correctAnswers++;
-          } else {
-            this.feedback[index] = {
-              correct: false,
-              message: `Incorrect.`,
-            };
           }
         }
       });
-  
-      this.quizSubmitted = true; // Track when submit quiz button is clicked
+
+      const score = Math.round((this.correctAnswers / this.quizQuestions.length) * 100);
+
+      // Save Quiz Attempt
+      this.saveQuizAttempt(score);
 
       // Emit quiz-completed event
       this.$emit('quiz-completed', {
         correctAnswers: this.correctAnswers,
         totalQuestions: this.quizQuestions.length,
-        score: Math.round((this.correctAnswers / this.quizQuestions.length) * 100)
+        score
       });
+
+      this.quizSubmitted = true;
+    },
+    saveQuizAttempt(score) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.user_id) {
+        console.error("User not logged in. Cannot save quiz attempt.");
+        return;
+      }
+
+      const quizId = this.$route.path;
+      const attemptsKey = `quizAttempts_${user.user_id}_${quizId}`;
+      const attempts = JSON.parse(localStorage.getItem(attemptsKey)) || [];
+
+      // Add the new attempt
+      attempts.push({
+        date: new Date().toLocaleString(),
+        score,
+      });
+
+      // Save back to localStorage
+      localStorage.setItem(attemptsKey, JSON.stringify(attempts));
+
+      // Update local past attempts
+      this.pastAttempts = attempts;
+    },
+    loadPastAttempts() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.user_id) {
+        console.error("User not logged in. Cannot load past attempts.");
+        return;
+      }
+
+      const quizId = this.$route.path;
+      const attemptsKey = `quizAttempts_${user.user_id}_${quizId}`;
+      this.pastAttempts = JSON.parse(localStorage.getItem(attemptsKey)) || [];
     },
     exitQuiz() {
       this.localShowQuizDialog = false;
@@ -208,6 +246,9 @@ export default {
       this.userAnswers = this.initializeUserAnswers();
       this.feedback = {};
     },
+  },
+  mounted() {
+    this.loadPastAttempts();
   },
 };
 </script>

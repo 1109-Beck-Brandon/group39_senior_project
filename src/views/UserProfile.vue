@@ -217,6 +217,16 @@
           <h3>Course Progress Chart</h3>
           <canvas id="progressChart"></canvas>
         </v-card>
+
+        <!-- Add this inside your profile template -->
+        <v-card class="pa-3 mb-4">
+          <h3>Quiz Scores</h3>
+          <ul>
+            <li v-for="progress in user.progress" :key="progress.module_id">
+              Module {{ progress.module_id }}: {{ progress.score }}%
+            </li>
+          </ul>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
