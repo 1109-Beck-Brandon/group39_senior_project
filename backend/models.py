@@ -35,7 +35,7 @@ class Course(db.Model):
     description = db.Column(db.Text)
     teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    modules = db.relationship('Module', back_populates='course', lazy=True)
+    modules = db.relationship('Module', back_populates='course', lazy=True, order_by='Module.order')
     enrollments = db.relationship('Enrollment', backref='course', lazy=True)
     reviews = db.relationship('Review', backref='course', lazy=True)
     grades = db.relationship('Grade', backref='course', lazy=True)
@@ -50,8 +50,11 @@ class Module(db.Model):
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     order = db.Column(db.Integer, nullable=False)
+    route_path = db.Column(db.String(200), nullable=True)
 
     course = db.relationship('Course', back_populates='modules')
+    progress_records = db.relationship('Progress', backref='module', lazy=True)
+    assessments = db.relationship('Assessment', backref='module', lazy=True)
 
     def __repr__(self):
         return f'<Module {self.title}>'

@@ -2,6 +2,17 @@
   
   <v-container fluid>
     <h1 class="course-title">NIST Cybersecurity Framework</h1>
+    <v-row justify="center" class="mb-4">
+      <v-btn 
+        color="success" 
+        class="enroll-button" 
+        @click="enrollInCourse"
+        :loading="isEnrolling"
+        :disabled="isEnrolled"
+      >
+        {{ enrollButtonText }}
+      </v-btn>
+    </v-row>
     <v-row>
       <!-- Course Description Section with Background Box -->
       <v-col cols="12" md="6">
@@ -60,6 +71,8 @@
 </template>
   
 <script>
+import { enrollCourse } from '@/services/api';
+
 export default {
   props: ["courseName"],
   data() {
@@ -106,7 +119,19 @@ export default {
         "/course/nist-framework/recoverModule", 
         "/course/nist-framework/finalModule"
       ],
+      isEnrolled: false,
+      isEnrolling: false,
+      courseId: 2,
     };
+  },
+  computed: {
+    enrollButtonText() {
+      return this.isEnrolled ? 'Enrolled' : 'Enroll in Course';
+    },
+    userId() {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.user_id;
+    }
   },
   methods: {
     showPopup(index) {
@@ -119,6 +144,37 @@ export default {
     goToModulePage(route) {
       this.$router.push(route);
     },
+    async enrollInCourse() {
+      if (!this.userId) {
+        this.$router.push('/login?redirect=' + encodeURIComponent(this.$route.fullPath));
+        return;
+      }
+      try {
+        this.isEnrolling = true;
+        await enrollCourse(this.userId, this.courseId);
+        this.isEnrolled = true;
+        this.$emit('show-snackbar', 'Successfully enrolled in the course');
+      } catch (error) {
+        console.error('Error enrolling in course:', error);
+        this.$emit('show-snackbar', 'Failed to enroll in course: ' + (error.response?.data?.error || 'Unknown error'));
+      } finally {
+        this.isEnrolling = false;
+      }
+    },
+    async checkEnrollmentStatus() {
+      if (!this.userId) return;
+      try {
+        this.isEnrolled = false; // Default to not enrolled
+      } catch (error) {
+        this.isEnrolled = false;
+      }
+    },
+  },
+  created() {
+    this.checkEnrollmentStatus();
+  },
+  mounted() {
+    this.checkEnrollmentStatus();
   },
 };
 </script>
