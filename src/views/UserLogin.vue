@@ -13,6 +13,7 @@
               type="email"
               outlined
               color="cyan-darken-2"
+              :rules="[requiredRule]"
               required
             ></v-text-field>
   
@@ -24,6 +25,7 @@
               color="cyan-darken-2"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append="togglePasswordVisibility" 
+              :rules="[requiredRule]"
               required
             ></v-text-field>
   
@@ -66,7 +68,8 @@ export default {
       email: '',
       password: '',
       error: '',
-      showPassword: false
+      showPassword: false,
+      requiredRule: v => !!v || 'This field is required',
     };
   },
   methods: {
@@ -87,9 +90,30 @@ export default {
               user.first_name = nameParts[0] || '';
               user.last_name = nameParts.slice(1).join(' ') || '';
             }
+
             
-            localStorage.setItem('user', JSON.stringify(user));
-            this.$router.push('/dashboard');
+            // localStorage.setItem('user', JSON.stringify(user));
+            // this.$router.push('/dashboard');
+
+            const existing = JSON.parse(localStorage.getItem(user.email)) || {};
+            const merged  = { ...existing, ...user };
+            localStorage.setItem(user.email, JSON.stringify(merged));
+            // role‑based redirect
+            if (user.role === 'Teacher') {
+              this.$router.push({
+                path: '/new-teacher-view',
+                query: { email: user.email }
+              });
+            } else if (user.role === 'Student') {
+              this.$router.push({
+                path: '/profileView',
+                query: { email: user.email }
+              });
+            } else {
+              // for 'individual' users, I'll work on it later, bc it won't load their data in properly
+              this.$router.push('/profileView');
+            }
+
           } else {
             this.error = 'Login failed: Invalid credentials.';
           }
@@ -97,6 +121,7 @@ export default {
         .catch(err => {
           this.error = err.response?.data?.error || 'Login failed. Please check your credentials.';
         });
+      
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
