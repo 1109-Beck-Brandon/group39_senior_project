@@ -1,20 +1,26 @@
 # teacher_routes.py
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from ..models import db, User, Course, Classroom
+from ..models import db, User, Course, Classroom, TeacherCourseSelection
 
 teacher_bp = Blueprint('teacher', __name__)
 
 @teacher_bp.route('/teachers/<int:teacher_id>', methods=['GET'])
 def get_teacher(teacher_id):
     teacher = User.query.filter_by(id=teacher_id, role='teacher').first_or_404()
-    courses = [{'id': course.id, 'title': course.title, 'description': course.description} 
-               for course in teacher.courses]
+    
+    # Get courses selected by this teacher
+    selections = TeacherCourseSelection.query.filter_by(teacher_id=teacher_id).all()
+    course_ids = [selection.course_id for selection in selections]
+    courses = Course.query.filter(Course.id.in_(course_ids)).all()
+    
+    courses_data = [{'id': course.id, 'title': course.title, 'description': course.description} 
+               for course in courses]
     return jsonify({
         'id': teacher.id,
         'name': teacher.name,
         'email': teacher.email,
-        'courses': courses
+        'courses': courses_data
     }), 200
 
 @teacher_bp.route('/dashboard', methods=['GET'])

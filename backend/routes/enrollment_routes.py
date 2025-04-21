@@ -14,10 +14,7 @@ def enroll_course(user_id):
     if not course_id:
         return jsonify({'error': 'Course ID is required'}), 400
 
-    # Check if the user and course exist
-    user = User.query.get(user_id)
-    course = Course.query.get(course_id)
-
+    # Check if the user and course exist (removed duplicate user lookup)
     user = User.query.get(user_id)
     if not user:
         return jsonify({'error': 'User not found'}), 404
