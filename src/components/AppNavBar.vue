@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
 
       <!-- Title -->
-      <v-toolbar-title class="title">Cybersecurity Learning Platform</v-toolbar-title>
+      <v-toolbar-title class="title" @click="navigateToHome" style="cursor: pointer;">Cybersecurity Learning Platform</v-toolbar-title>
 
       <!-- Spacers to keep proper alignment -->
       <v-spacer></v-spacer>
@@ -63,7 +63,6 @@ export default {
         { text: 'Profile', route: '/profileView' },
         { text: 'Teacher View', route: '/teacherView' },
         { text: 'Reviews', route: '/reviewPage' },
-        { text: 'Test Pages (Temporary)', route: '/testPages'} // TEMPORARY UNTIL MODULE PAGES ARE DONE
       ],
     };
   },
@@ -109,6 +108,11 @@ export default {
     navigate(route) {
       this.drawer = false;
       this.$router.push(route);
+    },
+
+    // Navigate to home page when website title is clicked
+    navigateToHome() {
+      this.$router.push('/');
     },
   },
 };

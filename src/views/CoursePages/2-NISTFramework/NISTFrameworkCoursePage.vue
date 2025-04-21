@@ -10,7 +10,12 @@
             Welcome to the NIST Cybersecurity Framework lesson!
 
             <br><br>
-            Insert Description here
+            The National Institute of Standards and Technology (NIST) Cybersecurity 
+            Framework is a policy framework of computer security guidance for how 
+            private sector organizations in the United States can assess and improve 
+            their ability to prevent, detect, and respond to cyber attacks. The 
+            framework consists of standards, guidelines, and best practices to manage 
+            cybersecurity-related risk.
           </p>
         </div>
       </v-col>
