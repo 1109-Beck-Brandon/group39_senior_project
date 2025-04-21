@@ -37,7 +37,7 @@ export default {
       courses: [
         { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
         { name: "NIST Cybersecurity Framework", description: "Learn about the National Institute for Science and Technology's Cybersecurity Framework", progress: 0 },
-        { name: "Digital Forensics Fundamentals", description: "Learn about the basics to Digtial Forensics", progress: 0 },
+        { name: "Digital Forensics Fundamentals", description: "Coming Soon!", progress: 0 },
         // Add more courses as needed
       ],
     };
