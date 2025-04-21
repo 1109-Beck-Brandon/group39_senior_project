@@ -7,7 +7,24 @@
     <v-row justify="center" align="center">
       <v-col cols="12" md="8" class="text-center">
         <h1 class="header-title">Explore Careers in Cybersecurity</h1>
-        <img :src="headerImage" alt="Cybersecurity Jobs" class="header-image" />
+        <div class="header-image-container">
+          <img :src="headerImage" alt="Cybersecurity Jobs" class="header-image" />
+          
+          <!-- Hover areas for each job -->
+          <div 
+            v-for="job in cybersecurityJobs" 
+            :key="job.id"
+            class="job-hover-area"
+            :style="job.position"
+            @mouseover="activeJob = job.id"
+            @mouseleave="activeJob = null"
+          >
+            <div v-if="activeJob === job.id" class="job-tooltip">
+              <h3 class="job-tooltip-title">{{ job.title }}</h3>
+              <p class="job-tooltip-description">{{ job.description }}</p>
+            </div>
+          </div>
+        </div>
       </v-col>
     </v-row>
 
@@ -183,10 +200,125 @@ export default {
     return {
       headerImage,
       currentRole: 0,
+      activeJob: null,
 
       showQuizDialog: false,
       showPastAttemptsDialog: false,
       pastAttempts: [],
+
+      // Cybersecurity job data with initial positions (you can adjust these manually later)
+      cybersecurityJobs: [
+        {
+          id: 1,
+          title: "Security Analyst",
+          description: "Monitors networks and systems for security breaches, investigates incidents, and implements protections.",
+          position: {
+            top: '10%',
+            left: '50.6%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 2,
+          title: "Penetration Tester",
+          description: "Performs authorized simulated attacks on systems to identify vulnerabilities before malicious hackers do.",
+          position: {
+            top: '18%',
+            left: '76.65%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 3,
+          title: "Incident Response Specialist",
+          description: "Responds to and manages cybersecurity breaches, minimizing damage and preventing future incidents.",
+          position: {
+            top: '35%',
+            left: '83.5%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 4,
+          title: "Cloud Security Specialist",
+          description: "Secures cloud environments, ensuring data and applications hosted on cloud platforms are protected.",
+          position: {
+            top: '56.2%',
+            left: '83.1%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 5,
+          title: "Cybersecurity Consultant",
+          description: "Advises businesses on how to protect their systems and data from cyber threats, often across multiple industries.",
+          position: {
+            top: '73%',
+            left: '76%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 6,
+          title: "Network Security Engineer",
+          description: "Designs and implements secure network solutions to protect against hackers, malware, and data breaches.",
+          position: {
+            top: '80%',
+            left: '50%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 7,
+          title: "Chief Information Security Officer (CISO)",
+          description: "Leads an organization's cybersecurity strategy and oversees the security of information and systems.",
+          position: {
+            top: '73%',
+            left: '24.5%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 8,
+          title: "Malware Analyst",
+          description: "Studies and dissects malicious software to understand how it works and develops tools to detect and remove it.",
+          position: {
+            top: '56%',
+            left: '17.5%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 9,
+          title: "Application Security Engineer",
+          description: "Ensures software applications are developed and maintained with strong security measures in place.",
+          position: {
+            top: '34.7%',
+            left: '17%',
+            width: '20px',
+            height: '20px'
+          }
+        },
+        {
+          id: 10,
+          title: "Cybersecurity Trainer/Educator",
+          description: "Teaches and trains individuals or teams about cybersecurity principles, tools, and best practices.",
+          position: {
+            top: '17.6%',
+            left: '23.8%',
+            width: '20px',
+            height: '20px'
+          }
+        }
+      ],
 
       careerRoles: [
         {
@@ -331,12 +463,73 @@ body,
   text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
 }
 
+.header-image-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
 .header-image {
   max-width: 100%;
   height: auto;
-  margin-bottom: 30px;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Style for job hover areas */
+.job-hover-area {
+  position: absolute;
+  cursor: pointer;
+  border: 2px solid rgba(100, 255, 218, 0.3);
+  border-radius: 8px;
+  background-color: rgba(100, 255, 218, 0.1);
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+.job-hover-area:hover {
+  background-color: rgba(100, 255, 218, 0.3);
+  border-color: #64ffda;
+}
+
+/* Style for job tooltips */
+.job-tooltip {
+  position: absolute;
+  width: 250px;
+  background-color: #172a46;
+  border-left: 3px solid #64ffda;
+  padding: x;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: left;
+  padding: 10px;
+}
+
+.job-tooltip:after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0;
+  border-style: solid;
+  border-color: #172a46 transparent transparent;
+}
+
+.job-tooltip-title {
+  color: #64ffda;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.job-tooltip-description {
+  color: #ffffff;
+  font-size: 0.9rem;
+  margin: 0;
 }
 
 .section-title {

@@ -154,6 +154,7 @@
 
 <script>
 import QuizStructure from '@/components/QuizStructure.vue';
+import headerImg from '@/assets/osi.jpg';
 
 export default {
   name: "NetworkThreats",
@@ -164,7 +165,7 @@ export default {
 
   data() {
     return {
-      headerImage: "/api/placeholder/800/400", // Placeholder for network security threats image
+      headerImage: headerImg,
       currentThreat: 0,
       showQuizDialog: false,
       showPastAttemptsDialog: false,
