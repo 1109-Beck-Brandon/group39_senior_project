@@ -99,6 +99,7 @@ export default {
             const existing = JSON.parse(localStorage.getItem(user.email)) || {};
             const merged  = { ...existing, ...user };
             localStorage.setItem(user.email, JSON.stringify(merged));
+            localStorage.setItem('user', JSON.stringify(merged)); 
 
             updateLoginState();
             // role‑based redirect
