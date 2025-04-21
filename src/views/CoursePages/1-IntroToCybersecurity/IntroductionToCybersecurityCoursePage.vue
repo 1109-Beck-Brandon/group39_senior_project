@@ -70,7 +70,7 @@
 </template>
   
 <script>
-import { enrollCourse, saveModuleProgress } from '@/services/api';
+import { enrollCourse, saveModuleProgress, apiClient } from '@/services/api';
 import axios from 'axios';
 
 export default {
@@ -148,19 +148,21 @@ export default {
       this.$router.push(route);
     },
 
-
     async enrollInCourse() {
       if (!this.userId) {
-        // Redirect to login if user is not logged in
         this.$router.push('/login?redirect=' + encodeURIComponent(this.$route.fullPath));
         return;
       }
-      
       try {
         this.isEnrolling = true;
         await enrollCourse(this.userId, this.courseId);
         this.isEnrolled = true;
         this.$emit('show-snackbar', 'Successfully enrolled in the course');
+        
+        if (typeof this.updateCoursesProgress === 'function') {
+          await this.updateCoursesProgress();
+        }
+
       } catch (error) {
         console.error('Error enrolling in course:', error);
         this.$emit('show-snackbar', 'Failed to enroll in course: ' + (error.response?.data?.error || 'Unknown error'));
@@ -174,11 +176,27 @@ export default {
       if (!this.userId) return;
       
       try {
-        const response = await axios.get(`/users/${this.userId}/courses`);
+        // Try to get enrollment status from API
+        const response = await apiClient.get(`/users/${this.userId}/courses`);
         const enrolledCourses = response.data.courses || [];
         this.isEnrolled = enrolledCourses.some(course => course.id === this.courseId);
       } catch (error) {
         console.error('Error checking enrollment status:', error);
+        
+        // Fallback: Check localStorage for enrollment information
+        try {
+          const user = JSON.parse(localStorage.getItem('user') || '{}');
+          const enrolledCourses = user.courses_enrolled || [];
+          this.isEnrolled = enrolledCourses.some(course => course.course_id === this.courseId);
+          
+          // If no enrollment info found, set to false but don't show error
+          if (!user.courses_enrolled) {
+            this.isEnrolled = false;
+          }
+        } catch (localStorageError) {
+          console.error('Error reading from localStorage:', localStorageError);
+          this.isEnrolled = false;
+        }
       }
     },
 
