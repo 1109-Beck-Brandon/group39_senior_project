@@ -127,7 +127,7 @@ export default {
           last_name: this.formData.last_name
         };
         localStorage.setItem(this.formData.email, JSON.stringify(userInfo));
-        localStorage.setItem('user', JSON.stringify(userInfo));
+        // localStorage.setItem('user', JSON.stringify(userInfo));
 
         //update login state commented out for now
         // updateLoginState();
