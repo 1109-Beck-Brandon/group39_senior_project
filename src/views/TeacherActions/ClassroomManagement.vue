@@ -36,7 +36,7 @@
           <!-- Tab Contents inside -->
             <v-tabs-window class="tab-window" v-model="tab">
 
-              <!-- Students Tab, it displays number of students and then the students -->
+              <!--  1st TAB Students Tab, it displays number of students and then the students -->
               <v-tabs-window-item value="students">
                 <v-row class="num-of-students-row">
                   <h3 class="tab-card-headers">Current Students: {{ students.length }}</h3> 
@@ -99,7 +99,7 @@
                 </v-card>
               </v-tabs-window-item>
 
-              <!-- Chat Tab, displays the classroom's chat box -->
+              <!-- 2nd TAB Chat Tab, displays the classroom's chat box -->
               <v-tabs-window-item value="chat">
                 <v-card class="chat-card">
                   <v-row class="chat-header-row">
@@ -137,10 +137,10 @@
                             {{ msg }}
                           </h4>
                           <h4 class="timestamp-text"> 
-                            Sent 12:57 AM
+                            Sent {{  timestamps[i] }}
                           </h4>
                           <v-row class="trash-button-row">
-                            <v-btn class="trash-button">
+                            <v-btn class="trash-button" @click="removeChat(i)">
                               <v-icon>mdi-trash-can</v-icon>
                             </v-btn>                            
                           </v-row>
@@ -266,6 +266,7 @@ export default {
 
       chatMessage: '',
       chatMessages: [],
+      timestamps: [],
     };
   },
   computed: {
@@ -287,6 +288,13 @@ export default {
     if (room) this.classroomName = room.name;
 
     this.students = (teacherData.allStudents || {})[this.classId] || [];
+
+    // for the chat history
+    const allChats = teacherData.chatMessages || {}
+    if (allChats[this.classId]) {
+      this.chatMessages = allChats[this.classId].messages.slice()
+      this.timestamps   = allChats[this.classId].timestamps.slice()
+    }
   },
   methods: {
     goBack() {
@@ -344,11 +352,42 @@ export default {
     sendChat() {
       const text = this.chatMessage.trim()
       if (!text) return
+
+      //for it to show up on UI
       this.chatMessages.push(text)
+      this.timestamps.push(
+        new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+      )
+
+      // now messages are under teacherData.chatMessages[classId]
+      const teacherData = JSON.parse(localStorage.getItem(this.email)) || {}
+      teacherData.chatMessages = teacherData.chatMessages || {}
+      teacherData.chatMessages[this.classId] = {
+        messages:   this.chatMessages,
+        timestamps: this.timestamps
+      }
+      localStorage.setItem(this.email, JSON.stringify(teacherData))
+
+
       this.chatMessage = ''
       this.$nextTick(() => {
-        // scroll down or any other UX tweak
+        //optional scroll
       })
+    },
+    removeChat(idx) {
+      //removing using splice
+      this.chatMessages.splice(idx, 1)
+      this.timestamps.splice(idx, 1)
+
+      // then updating 
+      const teacherData = JSON.parse(localStorage.getItem(this.email)) || {}
+      if (teacherData.chatMessages && teacherData.chatMessages[this.classId]) {
+        teacherData.chatMessages[this.classId] = {
+          messages:   this.chatMessages,
+          timestamps: this.timestamps
+        }
+        localStorage.setItem(this.email, JSON.stringify(teacherData))
+      }
     }
   },
 };
