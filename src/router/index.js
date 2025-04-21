@@ -49,6 +49,7 @@ import ClassroomStudents from '@/views/TeacherActions/ClassroomStudents.vue';
 import NewStudentOnboarding from '@/views/OnboardingPages/NewStudentOnboarding.vue';
 import NewUserOnboarding from '@/views/OnboardingPages/NewUserOnboarding.vue';
 import ClassroomManagement from '@/views/TeacherActions/ClassroomManagement.vue';
+import NewStudentView from '@/views/OnboardingPages/NewStudentView.vue';
 
 const routes = [
   {
@@ -207,6 +208,12 @@ const routes = [
     path: '/classroom-management',
     name: 'ClassroomManagement',
     component: ClassroomManagement,
+  },
+
+  {
+    path: '/new-student-view',
+    name: 'NewStudentView',
+    component: NewStudentView,
   },
 
   {

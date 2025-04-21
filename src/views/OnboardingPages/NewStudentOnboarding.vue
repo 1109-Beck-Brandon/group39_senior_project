@@ -124,7 +124,7 @@
         localStorage.setItem(email, JSON.stringify(updatedUser));
         console.log('Updated student info saved:', updatedUser);
   
-        this.$router.push({ path: '/profileView', query: { email: email } });
+        this.$router.push({ path: '/new-student-view', query: { email: email } });
       },
     },
   };
