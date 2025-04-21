@@ -73,7 +73,7 @@
 
 <script>
 import { register } from '@/services/api';
-import { updateLoginState } from '@/eventBus';
+// import { updateLoginState } from '@/eventBus';
 
 export default {
   data() {
@@ -129,7 +129,8 @@ export default {
         localStorage.setItem(this.formData.email, JSON.stringify(userInfo));
         localStorage.setItem('user', JSON.stringify(userInfo));
 
-        updateLoginState();
+        //update login state commented out for now
+        // updateLoginState();
         // Redirect based on role, pass the email as a query parameter
         if (this.formData.role === 'Teacher') {
           this.$router.push({ path: '/new-teacher-onboarding', query: { email: this.formData.email } });
