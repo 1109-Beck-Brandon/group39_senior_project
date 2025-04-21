@@ -73,6 +73,7 @@
 
 <script>
 import { register } from '@/services/api';
+import { updateLoginState } from '@/eventBus';
 
 export default {
   data() {
