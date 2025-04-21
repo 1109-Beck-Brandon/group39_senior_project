@@ -71,7 +71,7 @@
   
 <script>
 import { enrollCourse, saveModuleProgress, apiClient } from '@/services/api';
-import axios from 'axios';
+//import axios from 'axios';
 
 export default {
   props: ["courseName"],
@@ -183,7 +183,7 @@ export default {
       } catch (error) {
         console.error('Error checking enrollment status:', error);
         
-        // Fallback: Check localStorage for enrollment information
+        // Check localStorage for enrollment information
         try {
           const user = JSON.parse(localStorage.getItem('user') || '{}');
           const enrolledCourses = user.courses_enrolled || [];
