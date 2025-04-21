@@ -57,7 +57,7 @@
 </template>
 
 <script>
-// import { updateLoginState } from '@/eventBus';
+import { updateLoginState } from '@/eventBus';
 import { login } from '@/services/api';
 import LockPicture from './OnboardingPages/LockPicture.png';
 
@@ -99,9 +99,14 @@ export default {
             const existing = JSON.parse(localStorage.getItem(user.email)) || {};
             const merged  = { ...existing, ...user };
             localStorage.setItem(user.email, JSON.stringify(merged));
-            // localStorage.setItem('user', JSON.stringify(merged)); 
+            localStorage.setItem('user', JSON.stringify(merged)); 
 
-            // updateLoginState();
+            updateLoginState();
+
+            // only for testing purposes
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            console.log('printing the user that exists:', storedUser);
+
             // role‑based redirect
             if (user.role === 'Teacher') {
               this.$router.push({
