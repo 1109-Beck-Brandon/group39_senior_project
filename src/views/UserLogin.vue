@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { updateLoginState } from '@/eventBus';
+// import { updateLoginState } from '@/eventBus';
 import { login } from '@/services/api';
 import LockPicture from './OnboardingPages/LockPicture.png';
 
@@ -101,7 +101,7 @@ export default {
             localStorage.setItem(user.email, JSON.stringify(merged));
             localStorage.setItem('user', JSON.stringify(merged)); 
 
-            updateLoginState();
+            // updateLoginState();
             // role‑based redirect
             if (user.role === 'Teacher') {
               this.$router.push({
