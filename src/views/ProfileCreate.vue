@@ -128,6 +128,7 @@ export default {
         localStorage.setItem(this.formData.email, JSON.stringify(userInfo));
 
 
+        updateLoginState();
         // Redirect based on role, pass the email as a query parameter
         if (this.formData.role === 'Teacher') {
           this.$router.push({ path: '/new-teacher-onboarding', query: { email: this.formData.email } });
