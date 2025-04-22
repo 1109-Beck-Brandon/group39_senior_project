@@ -710,6 +710,13 @@ export default {
   },
   // Listen for route changes
   created() {
+    // Add global refresh function for other components to call
+    window.refreshUserProfile = () => {
+      this.fetchUserData();
+      this.updateCoursesProgress();
+      this.createChart();
+    };
+    
     this.$router.beforeEach((to, from, next) => {
       // If returning to profile from a course module
       if (from.path.includes('/course/') && to.path === '/dashboard') {

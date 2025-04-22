@@ -154,8 +154,16 @@ export default {
         await enrollCourse(this.userId, this.courseId);
         this.isEnrolled = true;
         
+        // Add to user's courses_enrolled in localStorage
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        user.courses_enrolled = user.courses_enrolled || [];
+        if (!user.courses_enrolled.some(c => c.course_id === this.courseId)) {
+          user.courses_enrolled.push({ course_id: this.courseId, title: this.courseName || 'NIST Cybersecurity Framework' });
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+
         // Save course locally after successful API call
-        this.saveCourseLocally(this.courseId.toString(), "NIST Cybersecurity Framework");
+        this.saveCourseLocally(this.courseId, this.courseName || 'NIST Cybersecurity Framework');
         this.$emit('show-snackbar', 'Successfully enrolled in the course');
         
         // Refresh the user profile page if we're coming back to it
