@@ -209,6 +209,15 @@ export default {
 
       // Update module progress in localStorage
       this.updateModuleProgress(score);
+      
+      // Ensure window.refreshUserProfile exists and call it if it does
+      if (typeof window.refreshUserProfile === 'function') {
+        try {
+          window.refreshUserProfile();
+        } catch (error) {
+          console.error('Error refreshing user profile:', error);
+        }
+      }
 
       // Emit quiz-completed event
       this.$emit('quiz-completed', {

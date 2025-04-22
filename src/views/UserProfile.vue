@@ -719,7 +719,7 @@ export default {
     
     this.$router.beforeEach((to, from, next) => {
       // If returning to profile from a course module
-      if (from.path.includes('/course/') && to.path === '/dashboard') {
+      if (from.path.includes('/course/') && (to.path === '/dashboard' || to.path === '/profileView')) {
         this.refreshProgress();
       }
       next();
