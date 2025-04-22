@@ -218,14 +218,45 @@
           <canvas id="progressChart"></canvas>
         </v-card>
 
-        <!-- Add this inside your profile template -->
+        <!-- Quiz Scores Card with improved UI -->
         <v-card class="pa-3 mb-4">
           <h3>Quiz Scores</h3>
-          <ul>
-            <li v-for="progress in user.progress" :key="progress.module_id">
-              Module {{ progress.module_id }}: {{ progress.score }}%
-            </li>
-          </ul>
+          <div v-if="user.progress && user.progress.length > 0">
+            <v-simple-table dark>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th>Module</th>
+                    <th>Score</th>
+                    <th>Status</th>
+                    <th>Last Attempt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="progress in user.progress" :key="progress.module_id">
+                    <td>Module {{ progress.module_id }}</td>
+                    <td>
+                      <v-chip
+                        :color="getScoreColor(progress.score)"
+                        text-color="white"
+                        small
+                      >
+                        {{ progress.score }}%
+                      </v-chip>
+                    </td>
+                    <td>{{ progress.status }}</td>
+                    <td>{{ progress.last_accessed }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </div>
+          <div v-else class="text-center pa-3">
+            <p>No quiz attempts recorded yet.</p>
+            <v-btn color="primary" @click="navigateToCourses" class="mt-2">
+              Start Learning
+            </v-btn>
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -258,6 +289,7 @@ export default {
         grade_level: user.grade_level || null,
         school_name: user.school_name || null,
         classroom_id: user.classroom_id || null,
+        progress: [], // Initialize empty progress array to store quiz scores
       },
       editProfileData: {
         gradeLevel: user.gradeLevel || "",
@@ -309,9 +341,41 @@ export default {
           
           // Update localStorage with the latest user data
           localStorage.setItem('user', JSON.stringify(this.user));
+          
+          // Fetch user's quiz progress data
+          await this.fetchUserProgress();
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
+      }
+    },
+    
+    async fetchUserProgress() {
+      try {
+        // Get user progress data from API
+        const response = await apiClient.get(`/users/${this.user.user_id}/progress`);
+        if (response.data && Array.isArray(response.data)) {
+          this.user.progress = response.data.map(item => ({
+            module_id: item.module_id,
+            score: item.score,
+            status: item.status,
+            last_accessed: new Date(item.last_accessed).toLocaleDateString()
+          }));
+        } else {
+          // Alternative: if endpoint doesn't exist or returns different format
+          // Try getting progress from user profile data
+          if (this.user.progress_data && Array.isArray(this.user.progress_data)) {
+            this.user.progress = this.user.progress_data;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user progress:', error);
+        // Try one more approach - if progress was directly included in user data
+        if (this.user.progress && Array.isArray(this.user.progress)) {
+          console.log('Using progress data from user profile');
+        } else {
+          this.user.progress = []; // Initialize with empty array if all fails
+        }
       }
     },
 
@@ -465,6 +529,13 @@ export default {
     async refreshProgress() {
       await this.updateCoursesProgress();
       this.createChart();
+    },
+    // Add this method to get score color
+    getScoreColor(score) {
+      if (score >= 90) return 'green';
+      if (score >= 75) return 'blue';
+      if (score >= 50) return 'orange';
+      return 'red';
     }
   },
   // Listen for route changes

@@ -12,11 +12,12 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(64), default='student')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    courses = db.relationship('Course', backref='teacher', lazy=True)
     enrollments = db.relationship('Enrollment', backref='student', lazy=True)
     reviews = db.relationship('Review', backref='author', lazy=True)
     grades = db.relationship('Grade', backref='student', lazy=True)
     password_reset_tokens = db.relationship('PasswordResetToken', backref='user', lazy=True)
+    # Add the relationship for teacher course selections
+    selected_courses = db.relationship('TeacherCourseSelection', back_populates='teacher', lazy=True)
 
     def set_password(self, password):
         # bcrypt.generate_password_hash returns bytes, so decode to get a string
@@ -28,17 +29,40 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'<User {self.email}>'
 
+class TeacherCourseSelection(db.Model):
+    """Association table to track which teachers have chosen which courses"""
+    __tablename__ = 'teacher_course_selections'
+    id = db.Column(db.Integer, primary_key=True)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    selected_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Define relationship to User and Course with back_populates
+    teacher = db.relationship('User', back_populates='selected_courses')
+    course = db.relationship('Course', back_populates='teacher_selections')
+    
+    def __repr__(self):
+        return f'<TeacherCourseSelection Teacher:{self.teacher_id} Course:{self.course_id}>'
+
 class Course(db.Model):
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), nullable=False)
     description = db.Column(db.Text)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     modules = db.relationship('Module', back_populates='course', lazy=True, order_by='Module.order')
     enrollments = db.relationship('Enrollment', backref='course', lazy=True)
     reviews = db.relationship('Review', backref='course', lazy=True)
     grades = db.relationship('Grade', backref='course', lazy=True)
+    teacher_selections = db.relationship('TeacherCourseSelection', back_populates='course', lazy=True)
+    # Use a separate relationship for the many-to-many with teachers
+    teachers = db.relationship(
+        'User',
+        secondary='teacher_course_selections',
+        viewonly=True,  # Make it viewonly to avoid conflicts
+        overlaps="teacher_selections,selected_courses,teacher",
+        lazy='dynamic'
+    )
 
     def __repr__(self):
         return f'<Course {self.title}>'
@@ -54,7 +78,8 @@ class Module(db.Model):
 
     course = db.relationship('Course', back_populates='modules')
     progress_records = db.relationship('Progress', backref='module', lazy=True)
-    assessments = db.relationship('Assessment', backref='module', lazy=True)
+    # Use back_populates instead of backref to avoid conflict
+    assessments = db.relationship('Assessment', back_populates='module', lazy=True)
 
     def __repr__(self):
         return f'<Module {self.title}>'
@@ -67,7 +92,8 @@ class Assessment(db.Model):
     type = db.Column(db.String(50), nullable=False)
     content = db.Column(db.Text, nullable=False)
     max_score = db.Column(db.Integer, nullable=False)
-    module = db.relationship('Module', backref='assessments')
+    # Use back_populates to match the relationship in Module class
+    module = db.relationship('Module', back_populates='assessments')
 
     def __repr__(self):
         return f'<Assessment {self.title}>'
@@ -116,7 +142,7 @@ class Progress(db.Model):
     last_accessed = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<Progress {self.progress_id}>'
+        return f'<Progress {self.id}>'
 
 class Resource(db.Model):
     __tablename__ = 'resources'
@@ -146,7 +172,6 @@ class Classroom(db.Model):
     name = db.Column(db.String(100), nullable=False)
 
     students = db.relationship('Student', backref='classroom', lazy=True)
-
 
     def __repr__(self):
         return f'<Classroom {self.name}>'
