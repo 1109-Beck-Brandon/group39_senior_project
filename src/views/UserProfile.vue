@@ -67,8 +67,8 @@
         <!-- Academic Info Panel (ONLY FOR STUDENT ROLE USERS, doesn't appear for individual users) -->
         <v-card v-if="user.role === 'Student'" class="pa-3 mb-4">
           <h3>Academic Info</h3>
-          <p class="academic-info-text"><strong>Grade Level:</strong> {{ user.gradeLevel || "N/A" }}</p>
-          <p class="academic-info-text"><strong>School Name:</strong> {{ user.schoolName || "N/A" }}</p>
+          <p class="academic-info-text"><strong>Grade Level:</strong> {{ user.grade_level || "N/A" }}</p>
+          <p class="academic-info-text"><strong>School Name:</strong> {{ user.school_name || "N/A" }}</p>
           <v-btn color="secondary" block small @click="showEditProfileDialog = true">
             Edit Academic Info
           </v-btn>
@@ -86,9 +86,9 @@
                   <v-row>
                     <v-col cols="3" v-for="grade in grades" :key="grade">
                       <v-btn
-                        :color="editProfileData.gradeLevel === grade ? 'primary' : 'secondary'"
+                        :color="editProfileData.grade_level === grade ? 'primary' : 'secondary'"
                         block
-                        @click="editProfileData.gradeLevel = grade"
+                        @click="editProfileData.grade_level = grade"
                       >
                         {{ grade }}
                       </v-btn>
@@ -96,7 +96,7 @@
                   </v-row>
                 </div>
                 <v-text-field
-                  v-model="editProfileData.schoolName"
+                  v-model="editProfileData.school_name"
                   label="School Name"
                   outlined
                 />
@@ -292,8 +292,8 @@ export default {
         progress: [], // Initialize empty progress array to store quiz scores
       },
       editProfileData: {
-        gradeLevel: user.gradeLevel || "",
-        schoolName: user.schoolName || "",
+        grade_level: user.grade_level || "",
+        school_name: user.school_name || "",
       },
       grades: ["9th grade", "10th grade", "11th grade", "12th grade"],
       coursesList: ["Intro to Cybersecurity"], // updated later
@@ -629,12 +629,12 @@ export default {
     async saveProfileInfo() {
       try {
         await updateUserProfile(this.user.user_id, {
-          grade_level: this.editProfileData.gradeLevel,
-          school_name: this.editProfileData.schoolName,
+          grade_level: this.editProfileData.grade_level,
+          school_name: this.editProfileData.school_name,
         });
         // Update local user data after saving
-        this.user.grade_level = this.editProfileData.gradeLevel;
-        this.user.school_name = this.editProfileData.schoolName;
+        this.user.grade_level = this.editProfileData.grade_level;
+        this.user.school_name = this.editProfileData.school_name;
         localStorage.setItem('user', JSON.stringify(this.user));
       } catch (error) {
         console.error('Error saving profile info:', error);
