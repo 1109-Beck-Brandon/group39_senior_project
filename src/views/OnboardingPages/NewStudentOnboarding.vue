@@ -66,6 +66,7 @@
   
   <script>
   import CyberPicture from './CyberPicture.png'; 
+  import { updateLoginState } from '@/eventBus';
   
   export default {
     name: 'NewStudentOnboarding',
@@ -120,8 +121,17 @@
           classId: this.classId ? this.classId : ''
         };
   
-
+        // Save updated user info under their email key
         localStorage.setItem(email, JSON.stringify(updatedUser));
+        
+        // Also save as current logged-in user
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        
+        // Update login state (if using eventBus)
+        if (typeof updateLoginState === 'function') {
+          updateLoginState();
+        }
+        
         console.log('Updated student info saved:', updatedUser);
   
         this.$router.push({ path: '/profileView', query: { email: email } });
@@ -208,4 +218,3 @@
     color: #ff9393 !important;
   }
   </style>
-  
