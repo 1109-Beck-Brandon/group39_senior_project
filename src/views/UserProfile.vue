@@ -317,6 +317,12 @@ export default {
   },
 
   mounted() {
+    // Check if the user is logged in, if not redirect to login page
+    if (!localStorage.getItem('user')) {
+      this.$router.push('/login');
+      return;
+    }
+    
     this.fetchUserData();
     this.updateCoursesProgress();
     this.createChart();

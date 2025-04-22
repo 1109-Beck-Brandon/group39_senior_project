@@ -221,30 +221,40 @@ export default {
         
         if (!localProgress[userId]) return 0;
         
-        // Get modules for this course - use the proper module IDs for NIST Framework
-        // These need to match the moduleId values used when storing quiz completions
-        const courseModules = [
-          'introModule', 
-          'governModule', 
-          'identifyModule', 
-          'protectModule', 
-          'detectModule', 
-          'respondModule', 
-          'recoverModule',
-          'finalModule'
+        // Check for both numeric IDs and string format IDs
+        // These module IDs match those used in QuizStructure.vue
+        const numericModuleIds = ['11', '12', '13', '14', '15', '16', '17', '18'];
+        const stringModuleIds = [
+          'nist-framework-introModule', 
+          'nist-framework-governModule', 
+          'nist-framework-identifyModule', 
+          'nist-framework-protectModule', 
+          'nist-framework-detectModule', 
+          'nist-framework-respondModule', 
+          'nist-framework-recoverModule',
+          'nist-framework-finalModule'
         ];
         
-        // Count completed modules
+        // Count completed modules - check both ID formats
         let completedCount = 0;
-        courseModules.forEach(moduleId => {
-          // Check if the module is completed in local storage
-          const fullModuleId = `nist-framework-${moduleId}`;
-          if (localProgress[userId][fullModuleId]) {
+        
+        // Check numeric IDs
+        numericModuleIds.forEach(moduleId => {
+          if (localProgress[userId][moduleId]) {
             completedCount++;
           }
         });
         
-        return courseModules.length ? Math.round((completedCount / courseModules.length) * 100) : 0;
+        // Check string format IDs, but avoid double counting
+        stringModuleIds.forEach((stringId, index) => {
+          if (localProgress[userId][stringId] && !localProgress[userId][numericModuleIds[index]]) {
+            completedCount++;
+          }
+        });
+        
+        // Calculate progress percentage
+        const totalModules = numericModuleIds.length;
+        return totalModules ? Math.round((completedCount / totalModules) * 100) : 0;
       } catch (error) {
         console.error('Error calculating course progress:', error);
         return 0;
