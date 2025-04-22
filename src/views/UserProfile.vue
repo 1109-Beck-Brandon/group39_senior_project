@@ -503,8 +503,17 @@ export default {
       // Map course IDs to their respective modules
       const courseModulesMap = {
         '1': ['1', '2', '3', '4', '5', '6', '7', '8'], // Intro to Cybersecurity modules
-        '2': ['11', '12', '13', '14', '15', '16'],     // NIST Framework modules
-        '3': ['21', '22', '23']                       // Reserved for future courses
+        '2': [
+          'nist-framework-introModule', 
+          'nist-framework-governModule', 
+          'nist-framework-identifyModule', 
+          'nist-framework-protectModule', 
+          'nist-framework-detectModule', 
+          'nist-framework-respondModule', 
+          'nist-framework-recoverModule',
+          'nist-framework-finalModule'
+        ], // NIST Framework modules
+        '3': ['21', '22', '23'] // Reserved for future courses
       };
       
       return courseModulesMap[courseId] || [];

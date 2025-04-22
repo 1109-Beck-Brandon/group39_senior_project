@@ -221,13 +221,25 @@ export default {
         
         if (!localProgress[userId]) return 0;
         
-        // Get modules for this course
-        const courseModules = ['11', '12', '13', '14', '15', '16']; // NIST Framework modules
+        // Get modules for this course - use the proper module IDs for NIST Framework
+        // These need to match the moduleId values used when storing quiz completions
+        const courseModules = [
+          'introModule', 
+          'governModule', 
+          'identifyModule', 
+          'protectModule', 
+          'detectModule', 
+          'respondModule', 
+          'recoverModule',
+          'finalModule'
+        ];
         
         // Count completed modules
         let completedCount = 0;
         courseModules.forEach(moduleId => {
-          if (localProgress[userId][moduleId]) {
+          // Check if the module is completed in local storage
+          const fullModuleId = `nist-framework-${moduleId}`;
+          if (localProgress[userId][fullModuleId]) {
             completedCount++;
           }
         });
