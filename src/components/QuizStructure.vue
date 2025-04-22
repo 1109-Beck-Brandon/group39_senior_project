@@ -173,20 +173,31 @@ export default {
 
       // Calculate results
       this.correctAnswers = 0;
+      this.feedback = {};
       this.quizQuestions.forEach((question, index) => {
         if (question.type === 'fill-in-the-blank-multiple') {
           const userAnswers = this.userAnswers[index].map(answer => answer.trim().toLowerCase());
           const correctAnswers = question.answers.map(answer => answer.toLowerCase());
           const uniqueUserAnswers = [...new Set(userAnswers)];
           const correctCount = uniqueUserAnswers.filter(answer => correctAnswers.includes(answer)).length;
-          if (correctCount === correctAnswers.length) {
+          const isCorrect = correctCount === correctAnswers.length;
+
+          if (isCorrect) {
             this.correctAnswers++;
+            this.feedback[index] = { correct: true, message: "Correct!" };
+          } else {
+            this.feedback[index] = { correct: false, message: "Incorrect" };
           }
         } else {
           const userAnswer = this.userAnswers[index]?.trim()?.toLowerCase();
           const correctAnswer = question.answer.toLowerCase();
-          if (userAnswer === correctAnswer) {
+          const isCorrect = userAnswer === correctAnswer;
+
+          if (isCorrect) {
             this.correctAnswers++;
+            this.feedback[index] = { correct: true, message: "Correct!" };
+          } else {
+            this.feedback[index] = { correct: false, message: "Incorrect" };
           }
         }
       });
