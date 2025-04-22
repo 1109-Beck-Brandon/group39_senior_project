@@ -207,6 +207,9 @@ export default {
       // Save Quiz Attempt
       this.saveQuizAttempt(score);
 
+      // Update module progress in localStorage
+      this.updateModuleProgress(score);
+
       // Emit quiz-completed event
       this.$emit('quiz-completed', {
         correctAnswers: this.correctAnswers,
@@ -238,6 +241,110 @@ export default {
 
       // Update local past attempts
       this.pastAttempts = attempts;
+    },
+    updateModuleProgress(score) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.user_id) {
+        console.error("User not logged in. Cannot update module progress.");
+        return;
+      }
+
+      // Extract module ID from route path
+      const path = this.$route.path;
+      let moduleId = null;
+      
+      // Parse module ID from route path
+      if (path.includes('intro-to-cybersecurity')) {
+        // Map intro-to-cybersecurity module paths to IDs
+        if (path.includes('moduleOne')) moduleId = '1';
+        else if (path.includes('AttacksDefensemodule')) moduleId = '2';
+        else if (path.includes('SEmodule')) moduleId = '3';
+        else if (path.includes('OSImodule')) moduleId = '4';
+        else if (path.includes('labModule') && !path.includes('labModule2')) moduleId = '5';
+        else if (path.includes('labModule2')) moduleId = '6';
+        else if (path.includes('Jobsmodule')) moduleId = '7';
+        else if (path.includes('FinalQuiz')) moduleId = '8';
+      } else if (path.includes('nist-framework')) {
+        // Map NIST modules to IDs
+        if (path.includes('governModule')) moduleId = '11';
+        else if (path.includes('identifyModule')) moduleId = '12';
+        else if (path.includes('protectModule')) moduleId = '13';
+        else if (path.includes('detectModule')) moduleId = '14';
+        else if (path.includes('respondModule')) moduleId = '15';
+        else if (path.includes('recoverModule')) moduleId = '16';
+      }
+      
+      if (!moduleId) {
+        console.error('Could not determine module ID from route:', path);
+        return;
+      }
+
+      // Update module progress in localStorage
+      const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+      if (!localProgress[user.user_id]) {
+        localProgress[user.user_id] = {};
+      }
+      
+      localProgress[user.user_id][moduleId] = {
+        score,
+        completedAt: new Date().toISOString(),
+        status: 'completed'
+      };
+      
+      localStorage.setItem('moduleProgress', JSON.stringify(localProgress));
+      console.log(`Module ${moduleId} progress saved locally with score ${score}%`);
+
+      // Update enrolled courses progress
+      this.updateCourseProgress(moduleId);
+    },
+    updateCourseProgress(moduleId) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.user_id) return;
+
+      // Determine course ID based on module ID
+      let courseId = null;
+      if (['1', '2', '3', '4', '5', '6', '7', '8'].includes(moduleId)) {
+        courseId = '1'; // Intro to Cybersecurity
+      } else if (['11', '12', '13', '14', '15', '16'].includes(moduleId)) {
+        courseId = '2'; // NIST Framework
+      }
+
+      if (!courseId) return;
+
+      const enrolledCourses = JSON.parse(localStorage.getItem('enrolledCourses') || '{}');
+      if (!enrolledCourses[user.user_id]) return;
+
+      const userCourses = enrolledCourses[user.user_id];
+      const courseIndex = userCourses.findIndex(course => course.id === courseId);
+      
+      if (courseIndex === -1) return;
+      
+      // Calculate new progress
+      const moduleProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+      if (!moduleProgress[user.user_id]) return;
+      
+      const moduleMap = {
+        '1': ['1', '2', '3', '4', '5', '6', '7', '8'], // Intro to Cybersecurity modules
+        '2': ['11', '12', '13', '14', '15', '16'], // NIST Framework modules
+      };
+      
+      const courseModules = moduleMap[courseId] || [];
+      let completedCount = 0;
+      
+      courseModules.forEach(modId => {
+        if (moduleProgress[user.user_id][modId]) {
+          completedCount++;
+        }
+      });
+      
+      // Update progress percentage
+      const progressPercentage = Math.round((completedCount / courseModules.length) * 100);
+      userCourses[courseIndex].progress = progressPercentage;
+      
+      // Save back to localStorage
+      enrolledCourses[user.user_id] = userCourses;
+      localStorage.setItem('enrolledCourses', JSON.stringify(enrolledCourses));
+      console.log(`Course ${courseId} progress updated to ${progressPercentage}%`);
     },
     loadPastAttempts() {
       const user = JSON.parse(localStorage.getItem("user"));
