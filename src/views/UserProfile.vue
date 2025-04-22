@@ -371,7 +371,7 @@ export default {
             return;
           }
         } catch (apiError) {
-          console.warn('Could not fetch progress from API, falling back to local data', apiError);
+          console.warn('Could not fetch progress from API, falling back to local data');
         }
         
         // Fall back to localStorage if API fails or returns no data
@@ -389,26 +389,19 @@ export default {
               module_title: `Module ${moduleId}`,
               score: data.score,
               status: data.status || 'completed',
-              last_accessed: new Date(data.completedAt).toLocaleDateString()
+              last_accessed: new Date(data.completedAt || Date.now()).toLocaleDateString()
             });
           }
           
           this.user.progress = progressData;
           console.log('Using locally stored progress data', progressData);
         } else {
-          // Try getting progress from user profile data
-          if (this.user.progress_data && Array.isArray(this.user.progress_data)) {
-            this.user.progress = this.user.progress_data;
-          }
+          console.log('No progress data found locally');
+          this.user.progress = [];
         }
       } catch (error) {
         console.error('Error retrieving progress data:', error);
-        // Try one more approach - if progress was directly included in user data
-        if (this.user.progress && Array.isArray(this.user.progress)) {
-          console.log('Using progress data from user profile');
-        } else {
-          this.user.progress = []; // Initialize with empty array if all fails
-        }
+        this.user.progress = []; // Initialize with empty array if all fails
       }
     },
 
@@ -424,35 +417,122 @@ export default {
 
     async updateCoursesProgress() {
       try {
-        const response = await getUserProfile(this.user.user_id);
-        if (response.data && response.data.courses_enrolled && Array.isArray(response.data.courses_enrolled)) {
-          this.courses = response.data.courses_enrolled.map(course => ({
-            id: course.course_id,
-            name: course.title,
-            progress: course.progress || 0,
-          }));
-        } else {
-          // Handle case where courses_enrolled doesn't exist or isn't an array
-          this.courses = [];
-          console.log('No courses enrolled data available');
+        // Try to get enrolled courses from API first
+        try {
+          const response = await getUserProfile(this.user.user_id);
+          
+          if (response.data && response.data.courses_enrolled && Array.isArray(response.data.courses_enrolled)) {
+            this.courses = response.data.courses_enrolled.map(course => ({
+              id: course.course_id,
+              name: course.title,
+              progress: course.progress || 0,
+            }));
+            
+            if (this.courses.length > 0) {
+              console.log('Loaded courses from API:', this.courses);
+              this.createChart(); // Refresh chart with new data
+              return;
+            }
+          }
+        } catch (apiError) {
+          console.warn('Could not fetch courses from API, falling back to local data');
         }
+        
+        // Fallback: Check localStorage for enrolled courses
+        const localCourses = JSON.parse(localStorage.getItem('enrolledCourses') || '{}');
+        const userCourses = localCourses[this.user.user_id] || [];
+        
+        if (userCourses.length > 0) {
+          this.courses = userCourses;
+          console.log('Using locally stored courses data', userCourses);
+        } else {
+          // Default fallback: Add intro course if no courses found
+          this.courses = [
+            { 
+              id: '1', 
+              name: 'Intro to Cybersecurity', 
+              progress: this.calculateCourseProgress('1') 
+            }
+          ];
+          console.log('No courses found, defaulting to intro course');
+          
+          // Store in localStorage for future reference
+          this.saveCourseLocally('1', 'Intro to Cybersecurity');
+        }
+        
+        // Refresh the chart with newly loaded courses
+        this.$nextTick(() => {
+          this.createChart();
+        });
       } catch (error) {
-        console.error('Error fetching courses:', error);
-        this.courses = []; // Initialize with empty array
+        console.error('Error updating courses progress:', error);
+        this.courses = []; // Initialize with empty array if all fails
       }
     },
-
-    async enrollCourse(courseId) {
+    
+    // Helper method to calculate course progress based on module completions
+    calculateCourseProgress(courseId) {
       try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.user_id) {
-          console.error("User not logged in.");
-          return;
-        }
-        await enrollCourse(user.user_id, courseId);
-        console.log('Enrolled successfully');
+        // Get local progress data
+        const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+        const userId = this.user.user_id;
+        
+        if (!localProgress[userId]) return 0;
+        
+        // Get modules for this course
+        const courseModules = this.getModulesForCourse(courseId);
+        if (!courseModules.length) return 0;
+        
+        // Count completed modules
+        let completedCount = 0;
+        courseModules.forEach(moduleId => {
+          if (localProgress[userId][moduleId]) {
+            completedCount++;
+          }
+        });
+        
+        return Math.round((completedCount / courseModules.length) * 100);
       } catch (error) {
-        console.error('Error enrolling in course:', error);
+        console.error('Error calculating course progress:', error);
+        return 0;
+      }
+    },
+    
+    // Helper to get module IDs for a course
+    getModulesForCourse(courseId) {
+      // This is a simple mapping - in a real app, you'd get this from an API
+      const courseModulesMap = {
+        '1': ['1', '2', '3', '4'], // Intro to Cybersecurity modules
+        '2': ['5', '6', '7'],      // Advanced Cybersecurity modules (if you have them)
+      };
+      
+      return courseModulesMap[courseId] || [];
+    },
+    
+    // Save course enrollment locally
+    saveCourseLocally(courseId, courseName) {
+      try {
+        const userId = this.user.user_id;
+        const localCourses = JSON.parse(localStorage.getItem('enrolledCourses') || '{}');
+        
+        if (!localCourses[userId]) {
+          localCourses[userId] = [];
+        }
+        
+        // Check if course already exists
+        const existingCourse = localCourses[userId].find(c => c.id === courseId);
+        if (!existingCourse) {
+          localCourses[userId].push({
+            id: courseId,
+            name: courseName,
+            progress: this.calculateCourseProgress(courseId)
+          });
+          
+          localStorage.setItem('enrolledCourses', JSON.stringify(localCourses));
+          console.log(`Course ${courseName} saved locally`);
+        }
+      } catch (error) {
+        console.error('Error saving course locally:', error);
       }
     },
 
@@ -569,7 +649,63 @@ export default {
       if (score >= 75) return 'blue';
       if (score >= 50) return 'orange';
       return 'red';
-    }
+    },
+    async enrollCourse(courseId) {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.user_id) {
+          console.error("User not logged in.");
+          return;
+        }
+
+        // Try to enroll via API
+        try {
+          await enrollCourse(user.user_id, courseId);
+          console.log('Course enrollment successful via API');
+        } catch (apiError) {
+          console.warn('API enrollment failed, saving locally only', apiError);
+        }
+
+        // Always save enrollment locally regardless of API success
+        // This ensures the course appears in the UI immediately
+        const courseInfo = await this.getCourseInfo(courseId);
+        this.saveCourseLocally(courseId, courseInfo.name);
+        
+        // Refresh the courses list
+        await this.updateCoursesProgress();
+        this.createChart();
+      } catch (error) {
+        console.error('Error enrolling in course:', error);
+      }
+    },
+    
+    // Helper method to get course info
+    async getCourseInfo(courseId) {
+      // Default course info if we can't get it from an API
+      const defaultCourses = {
+        '1': { name: 'Intro to Cybersecurity' },
+        '2': { name: 'Advanced Cybersecurity' },
+        '3': { name: 'Network Security' },
+      };
+      
+      try {
+        // Try to get from API first (if you have a getCourse API)
+        const { getCourse } = await import('@/services/api');
+        const response = await getCourse(courseId);
+        
+        if (response && response.data) {
+          return {
+            id: courseId,
+            name: response.data.title || response.data.name,
+          };
+        }
+      } catch (error) {
+        console.warn(`Could not retrieve course info for ${courseId} from API`);
+      }
+      
+      // Fallback to default data
+      return defaultCourses[courseId] || { name: `Course ${courseId}` };
+    },
   },
   // Listen for route changes
   created() {
