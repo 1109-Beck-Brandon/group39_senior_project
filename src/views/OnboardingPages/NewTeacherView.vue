@@ -392,6 +392,12 @@ export default {
     };
   },
   created() {
+    // Check if the user is logged in, if not redirect to login page
+    if (!localStorage.getItem('user')) {
+      this.$router.push('/login');
+      return;
+    }
+    
     // retrieving teacher's email
     const email = this.$route.query.email;
     console.log('Teacher email on dashboard:', email);

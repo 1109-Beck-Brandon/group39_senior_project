@@ -108,14 +108,14 @@ export default {
             console.log('API logout failed, but local logout successful:', error);
           })
           .finally(() => {
-            this.$router.push('/login');
+            this.$router.push('/'); // Redirect to home page instead of login page
           });
       } catch (error) {
         // Ensure we can still log out if something unexpected happens
         console.error('Error during logout:', error);
         localStorage.removeItem('user');
         updateLoginState();
-        this.$router.push('/login');
+        this.$router.push('/'); // Redirect to home page instead of login page
       }
     },
     navigate(route) {
