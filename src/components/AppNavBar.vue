@@ -92,18 +92,31 @@ export default {
     },
     logout() {
       this.showLogoutDialog = false;
-      apiLogout()
-        .then(() => {
-          localStorage.removeItem('user');
-          updateLoginState();
-          this.$router.push('/login');
-        })
-        .catch(error => {
-          console.error('Logout error:', error);
-          localStorage.removeItem('user');
-          updateLoginState();
-          this.$router.push('/login');
-        });
+      
+      try {
+        // Always clear local storage first to ensure UI updates immediately
+        localStorage.removeItem('user');
+        updateLoginState();
+        
+        // Then try to perform API logout (but don't wait for it)
+        apiLogout()
+          .then(() => {
+            console.log('Logged out successfully via API');
+          })
+          .catch(error => {
+            // Just log the error but don't block the logout process
+            console.log('API logout failed, but local logout successful:', error);
+          })
+          .finally(() => {
+            this.$router.push('/login');
+          });
+      } catch (error) {
+        // Ensure we can still log out if something unexpected happens
+        console.error('Error during logout:', error);
+        localStorage.removeItem('user');
+        updateLoginState();
+        this.$router.push('/login');
+      }
     },
     navigate(route) {
       this.drawer = false;
