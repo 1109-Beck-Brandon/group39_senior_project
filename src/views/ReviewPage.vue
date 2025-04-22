@@ -30,15 +30,19 @@
               ]"
             ></v-textarea>
             
-            <v-rating
-              v-model="rating"
-              background-color="gray"
-              color="#64ffda"
-              hover
-              length="5"
-              size="36"
-              class="my-4"
-            ></v-rating>
+            <div class="d-flex align-center">
+              <span class="mr-2">Your Rating:</span>
+              <v-rating
+                v-model="userRating"
+                background-color="gray"
+                color="#64ffda"
+                hover
+                length="5"
+                size="36"
+                class="my-4"
+              ></v-rating>
+              <span class="ml-2">{{ formatStarRating(userRating) }}</span>
+            </div>
             
             <v-btn 
               type="submit" 
@@ -73,16 +77,18 @@
                   <div class="review-content">
                     <div class="d-flex align-center">
                       <span class="font-weight-bold text-white">Anonymous User</span>
-                      <v-rating
-                        :value="review.rating || 5"
-                        readonly
-                        dense
-                        size="16"
-                        color="#64ffda"
-                        class="ml-2"
-                      ></v-rating>
+                      <div class="ml-2 d-flex align-center">
+                        <v-rating
+                          :value="Number(review.rating)"
+                          readonly
+                          dense
+                          size="16"
+                          color="#64ffda"
+                        ></v-rating>
+                        <span class="ml-1 text-caption">({{ formatStarRating(review.rating) }})</span>
+                      </div>
                       <v-spacer></v-spacer>
-                      <span class="text-caption">{{ review.date || "Just now" }}</span>
+                      <span class="text-caption">{{ review.date }}</span>
                     </div>
                     
                     <p class="review-text mt-2">{{ review.text }}</p>
@@ -128,7 +134,7 @@ export default {
       reviews: [
         { 
           text: "Yooooooooo I finally can hack thanks guys.", 
-          rating: 5, 
+          rating: 3, 
           date: "Mar 10, 2025",
           likes: 12,
           liked: false
@@ -142,14 +148,14 @@ export default {
         },
         { 
           text: "The security analyst module was excellent! Looking forward to more content.", 
-          rating: 5, 
+          rating: 2, 
           date: "Mar 5, 2025",
           likes: 15,
           liked: false
         }
       ],
       newReview: '',
-      rating: 5,
+      userRating: 3,
       userAvatars: [avatar1],
       errorMessage: '',
     };
@@ -165,6 +171,12 @@ export default {
   },
   
   methods: {
+    // Format star rating as text (1 star, 2 stars, etc.)
+    formatStarRating(rating) {
+      const numRating = Number(rating);
+      return numRating === 1 ? "1 star" : numRating + " stars";
+    },
+    
     goBack() {
       this.$router.go(-1);
     },
@@ -176,23 +188,31 @@ export default {
         return;
       }
       
-      // Add the validated review to the list
-      this.reviews.unshift({
+      // Get the current date
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      
+      // Create a new review object with the user's rating
+      const newReviewObj = {
         text: review,
-        rating: this.rating,
-        date: "Just now",
+        rating: Number(this.userRating), // Ensure it's a number
+        date: formattedDate,
         likes: 0,
         liked: false
-      });
+      };
       
-      // Reset form
+      // Add the new review to the beginning of the list
+      this.reviews.unshift(newReviewObj);
+      
+      // Reset form fields
       this.newReview = '';
-      this.rating = 5;
+      this.userRating = 3; // Reset to default rating
       
       // Success message
       this.$nextTick(() => {
         // Here you would normally trigger a snackbar or toast message
         console.log("Review submitted successfully");
+        console.log("New review with rating:", newReviewObj.rating);
       });
     },
     
