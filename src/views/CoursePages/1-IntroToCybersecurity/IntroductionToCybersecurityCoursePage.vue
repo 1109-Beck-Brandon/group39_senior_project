@@ -132,7 +132,8 @@ export default {
     
     userId() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.user_id;
+      // Check for both user_id and id fields to ensure compatibility
+      return user.user_id || user.id;
     }
   },
 
@@ -150,9 +151,11 @@ export default {
 
     async enrollInCourse() {
       if (!this.userId) {
+        console.log('User ID not found. Redirecting to login page...');
         this.$router.push('/login?redirect=' + encodeURIComponent(this.$route.fullPath));
         return;
       }
+      
       try {
         this.isEnrolling = true;
         
@@ -194,12 +197,16 @@ export default {
         }
         
         // Check if already enrolled
-        const existingCourse = localCourses[this.userId].find(c => c.id === this.courseId.toString());
+        const existingCourse = localCourses[this.userId].find(c => 
+          c.id === this.courseId.toString() || c.course_id === this.courseId
+        );
+        
         if (!existingCourse) {
           // Add course to enrolled list
           localCourses[this.userId].push({
             id: this.courseId.toString(),
-            name: 'Introduction to Cybersecurity',
+            course_id: this.courseId, // Add both id formats for compatibility
+            name: this.courseName || 'Introduction to Cybersecurity',
             progress: 0
           });
           
@@ -210,12 +217,20 @@ export default {
           // Also save to user.courses_enrolled for backward compatibility
           const user = JSON.parse(localStorage.getItem('user') || '{}');
           user.courses_enrolled = user.courses_enrolled || [];
-          if (!user.courses_enrolled.some(c => c.course_id === this.courseId)) {
+          
+          // Check if the course is already in the enrolled list
+          const alreadyEnrolled = user.courses_enrolled.some(c => 
+            c.course_id === this.courseId || c.id === this.courseId
+          );
+          
+          if (!alreadyEnrolled) {
             user.courses_enrolled.push({
               course_id: this.courseId,
-              title: 'Introduction to Cybersecurity'
+              id: this.courseId.toString(),
+              title: this.courseName || 'Introduction to Cybersecurity'
             });
             localStorage.setItem('user', JSON.stringify(user));
+            console.log('Course enrollment added to user object');
           }
         }
       } catch (error) {
@@ -239,7 +254,11 @@ export default {
         try {
           const user = JSON.parse(localStorage.getItem('user') || '{}');
           const enrolledCourses = user.courses_enrolled || [];
-          this.isEnrolled = enrolledCourses.some(course => course.course_id === this.courseId);
+          
+          // Check course_id against this.courseId
+          this.isEnrolled = enrolledCourses.some(course => 
+            course.course_id === this.courseId || course.id === this.courseId
+          );
           
           // If no enrollment info found, set to false but don't show error
           if (!user.courses_enrolled) {
