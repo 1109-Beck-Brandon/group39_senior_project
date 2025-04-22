@@ -34,3 +34,27 @@ def enroll_course(user_id):
     db.session.commit()
 
     return jsonify({'message': 'Enrollment successful'}), 201
+
+@enrollment_bp.route('/users/<int:user_id>/courses', methods=['GET'])
+@login_required
+def get_user_courses(user_id):
+    # Check if the user exists
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+        
+    # Get all enrollments for the user
+    enrollments = Enrollment.query.filter_by(user_id=user_id).all()
+    course_ids = [enrollment.course_id for enrollment in enrollments]
+    
+    # Get course details for each enrollment
+    courses = Course.query.filter(Course.id.in_(course_ids)).all()
+    courses_data = [
+        {
+            'id': course.id,
+            'title': course.title,
+            'description': course.description
+        } for course in courses
+    ]
+    
+    return jsonify({'courses': courses_data}), 200
