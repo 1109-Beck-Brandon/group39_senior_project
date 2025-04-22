@@ -446,18 +446,9 @@ export default {
           this.courses = userCourses;
           console.log('Using locally stored courses data', userCourses);
         } else {
-          // Default fallback: Add intro course if no courses found
-          this.courses = [
-            { 
-              id: '1', 
-              name: 'Intro to Cybersecurity', 
-              progress: this.calculateCourseProgress('1') 
-            }
-          ];
-          console.log('No courses found, defaulting to intro course');
-          
-          // Store in localStorage for future reference
-          this.saveCourseLocally('1', 'Intro to Cybersecurity');
+          // Show empty courses array if no courses are found
+          this.courses = [];
+          console.log('No enrolled courses found');
         }
         
         // Refresh the chart with newly loaded courses
