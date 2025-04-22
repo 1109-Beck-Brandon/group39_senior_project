@@ -109,10 +109,15 @@
         const email = this.email;
         const userInfo = JSON.parse(localStorage.getItem(email)) || {};
         
+        // Make sure we have a user_id by either using existing one or generating a temporary one
+        const user_id = userInfo.user_id || userInfo.id || Math.floor(Math.random() * 10000);
+        
         const updatedUser = {
           ...userInfo,
           contentType: this.contentType,
-          academicStatus: this.academicStatus
+          academicStatus: this.academicStatus,
+          user_id: user_id,
+          id: user_id // Including both id and user_id for compatibility
         };
         
         // Save updated user info under their email key
