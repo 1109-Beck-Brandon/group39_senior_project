@@ -160,7 +160,8 @@ export function saveModuleProgress(userId, moduleId, score) {
  * @returns {Promise} - API response with progress history
  */
 export function getUserProgressHistory(userId) {
-  return apiClient.get(`/users/${userId}/progress`);
+  // Use api/users/userId/progress to match the backend route structure
+  return apiClient.get(`/api/users/${userId}/progress`);
 }
 
 export { apiClient };
