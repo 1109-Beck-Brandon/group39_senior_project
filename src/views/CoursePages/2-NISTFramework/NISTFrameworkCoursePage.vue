@@ -201,7 +201,7 @@ export default {
           enrolledCourses[userId].push({
             id: courseId,
             name: courseName,
-            progress: this.calculateCourseProgress(courseId)
+            progress: this.calculateCourseProgress()
           });
           
           localStorage.setItem("enrolledCourses", JSON.stringify(enrolledCourses));
@@ -213,7 +213,7 @@ export default {
     },
     
     // Calculate course progress based on completed modules
-    calculateCourseProgress(courseId) {
+    calculateCourseProgress() {
       try {
         // Get local progress data
         const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
