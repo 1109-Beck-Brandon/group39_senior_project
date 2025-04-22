@@ -151,20 +151,11 @@ export default {
       }
       try {
         this.isEnrolling = true;
-        
-        // Try to enroll via API
-        try {
-          await enrollCourse(this.userId, this.courseId);
-          console.log('Course enrollment successful via API');
-        } catch (apiError) {
-          console.warn('API enrollment failed, saving locally only', apiError);
-        }
-        
-        // Always save enrollment locally regardless of API success
-        // This ensures the course appears in the profile immediately
-        this.saveCourseLocally(this.courseId.toString(), "NIST Cybersecurity Framework");
-        
+        await enrollCourse(this.userId, this.courseId);
         this.isEnrolled = true;
+        
+        // Save course locally after successful API call
+        this.saveCourseLocally(this.courseId.toString(), "NIST Cybersecurity Framework");
         this.$emit('show-snackbar', 'Successfully enrolled in the course');
         
         // Refresh the user profile page if we're coming back to it
@@ -242,8 +233,26 @@ export default {
     
     async checkEnrollmentStatus() {
       if (!this.userId) return;
+      
       try {
-        // Check local storage for enrollment status
+        // Try to get enrollment status from API first
+        try {
+          const response = await fetch(`${process.env.VUE_APP_API_URL || 'https://cybersecurity-learning-platform.onrender.com/api'}/users/${this.userId}/courses`, {
+            headers: {
+              'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user') || '{}').token}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            const enrolledCourses = data.courses || [];
+            this.isEnrolled = enrolledCourses.some(course => course.id === this.courseId);
+            return;
+          }
+        } catch (apiError) {
+          console.warn('API enrollment check failed, falling back to local storage', apiError);
+        }
+        
+        // Fallback to local storage if API fails
         const enrolledCourses = JSON.parse(localStorage.getItem("enrolledCourses") || "{}");
         const userCourses = enrolledCourses[this.userId] || [];
         
