@@ -154,6 +154,15 @@ export function saveModuleProgress(userId, moduleId, score) {
   });
 }
 
+/**
+ * Get user progress history
+ * @param {number} userId - User ID
+ * @returns {Promise} - API response with progress history
+ */
+export function getUserProgressHistory(userId) {
+  return apiClient.get(`/users/${userId}/progress`);
+}
+
 export { apiClient };
 
 export default {
@@ -179,5 +188,6 @@ export default {
   getTeacherDashboard,
   addStudentToClassroom,
   getData,
-  saveModuleProgress
+  saveModuleProgress,
+  getUserProgressHistory
 };

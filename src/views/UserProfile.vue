@@ -265,7 +265,7 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
-import { logout, getUserProfile, updateUserProfile, enrollCourse, apiClient } from '@/services/api';
+import { logout, getUserProfile, updateUserProfile, enrollCourse, apiClient, getUserProgressHistory } from '@/services/api';
 Chart.register(...registerables);
 
 export default {
@@ -352,24 +352,57 @@ export default {
     
     async fetchUserProgress() {
       try {
-        // Get user progress data from API
-        const response = await apiClient.get(`/users/${this.user.user_id}/progress`);
-        if (response.data && Array.isArray(response.data)) {
-          this.user.progress = response.data.map(item => ({
-            module_id: item.module_id,
-            score: item.score,
-            status: item.status,
-            last_accessed: new Date(item.last_accessed).toLocaleDateString()
-          }));
+        const userId = this.user.user_id;
+        
+        // Try to get progress from API first
+        try {
+          const apiResponse = await getUserProgressHistory(userId);
+          
+          if (apiResponse.data && apiResponse.data.progress) {
+            // Format API response data for the UI
+            this.user.progress = apiResponse.data.progress.map(item => ({
+              module_id: item.module_id,
+              module_title: item.module_title,
+              score: item.score,
+              status: item.status,
+              last_accessed: new Date(item.last_accessed).toLocaleDateString()
+            }));
+            console.log('Using progress data from API', this.user.progress);
+            return;
+          }
+        } catch (apiError) {
+          console.warn('Could not fetch progress from API, falling back to local data', apiError);
+        }
+        
+        // Fall back to localStorage if API fails or returns no data
+        // Check if we have locally stored progress
+        const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+        
+        // If we have local progress data for this user
+        if (localProgress[userId]) {
+          const progressData = [];
+          
+          // Convert local storage format to the format expected by the UI
+          for (const [moduleId, data] of Object.entries(localProgress[userId])) {
+            progressData.push({
+              module_id: moduleId,
+              module_title: `Module ${moduleId}`,
+              score: data.score,
+              status: data.status || 'completed',
+              last_accessed: new Date(data.completedAt).toLocaleDateString()
+            });
+          }
+          
+          this.user.progress = progressData;
+          console.log('Using locally stored progress data', progressData);
         } else {
-          // Alternative: if endpoint doesn't exist or returns different format
           // Try getting progress from user profile data
           if (this.user.progress_data && Array.isArray(this.user.progress_data)) {
             this.user.progress = this.user.progress_data;
           }
         }
       } catch (error) {
-        console.error('Error fetching user progress:', error);
+        console.error('Error retrieving progress data:', error);
         // Try one more approach - if progress was directly included in user data
         if (this.user.progress && Array.isArray(this.user.progress)) {
           console.log('Using progress data from user profile');
