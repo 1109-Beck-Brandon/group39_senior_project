@@ -13,13 +13,7 @@
             <h3>{{ course.name }}</h3>
             <p>{{ course.description }}</p>
             <div class="progress-container">
-              <p class="progress-text">Progress: {{ course.progress || 0 }}%</p>
-              <v-progress-linear
-                :value="course.progress || 0"
-                color="blue"
-                height="20"
-              ></v-progress-linear>
-              <v-btn color="primary" @click="goToCoursePage(course.name)">
+              <v-btn color="primary" @click="goToCoursePage(course.name)" :disabled="course.name === 'Digital Forensics Fundamentals'">
                 Go to Course
               </v-btn>
             </div>
@@ -122,23 +116,5 @@ export default {
   overflow: hidden;
   flex-grow: 1;
   text-align: left;
-}
-
-.progress-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: auto;
-}
-
-.progress-text {
-  margin-top: 10px;
-  font-size: 1em;
-  color: #000;
-}
-
-.v-progress-linear {
-  width: 80%;
-  margin-top: 5px;
 }
 </style>
