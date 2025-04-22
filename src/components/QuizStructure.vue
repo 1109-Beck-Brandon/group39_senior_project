@@ -261,6 +261,7 @@ export default {
       // Extract module ID from route path
       const path = this.$route.path;
       let moduleId = null;
+      let nistModuleId = null;
       
       // Parse module ID from route path
       if (path.includes('intro-to-cybersecurity')) {
@@ -274,47 +275,38 @@ export default {
         else if (path.includes('Jobsmodule')) moduleId = '7';
         else if (path.includes('FinalQuiz')) moduleId = '8';
       } else if (path.includes('nist-framework')) {
-        // For NIST framework, store both numeric IDs and the actual module name pattern
-        // This ensures compatibility with both methods of tracking progress
+        // For NIST framework, store progress with both numeric IDs and string IDs
         if (path.includes('introModule')) {
           moduleId = '11';
-          const nistModuleId = 'nist-framework-introModule';
-          this.saveNistModuleProgress(user.user_id, nistModuleId, score);
+          nistModuleId = 'nist-framework-introModule';
         }
         else if (path.includes('governModule')) {
           moduleId = '12';
-          const nistModuleId = 'nist-framework-governModule';
-          this.saveNistModuleProgress(user.user_id, nistModuleId, score);
+          nistModuleId = 'nist-framework-governModule';
         }
         else if (path.includes('identifyModule')) {
           moduleId = '13';
-          const nistModuleId = 'nist-framework-identifyModule';
-          this.saveNistModuleProgress(user.user_id, nistModuleId, score);
+          nistModuleId = 'nist-framework-identifyModule';
         }
         else if (path.includes('protectModule')) {
           moduleId = '14';
-          const nistModuleId = 'nist-framework-protectModule';
-          this.saveNistModuleProgress(user.user_id, nistModuleId, score);
+          nistModuleId = 'nist-framework-protectModule';
         }
         else if (path.includes('detectModule')) {
           moduleId = '15';
-          const nistModuleId = 'nist-framework-detectModule';
-          this.saveNistModuleProgress(user.user_id, nistModuleId, score);
+          nistModuleId = 'nist-framework-detectModule';
         }
         else if (path.includes('respondModule')) {
           moduleId = '16';
-          const nistModuleId = 'nist-framework-respondModule';
-          this.saveNistModuleProgress(user.user_id, nistModuleId, score);
+          nistModuleId = 'nist-framework-respondModule';
         }
         else if (path.includes('recoverModule')) {
           moduleId = '17';
-          const nistModuleId = 'nist-framework-recoverModule';
-          this.saveNistModuleProgress(user.user_id, nistModuleId, score);
+          nistModuleId = 'nist-framework-recoverModule';
         }
         else if (path.includes('finalModule')) {
           moduleId = '18';
-          const nistModuleId = 'nist-framework-finalModule';
-          this.saveNistModuleProgress(user.user_id, nistModuleId, score);
+          nistModuleId = 'nist-framework-finalModule';
         }
       }
       
@@ -329,34 +321,25 @@ export default {
         localProgress[user.user_id] = {};
       }
       
-      localProgress[user.user_id][moduleId] = {
+      const progressData = {
         score,
         completedAt: new Date().toISOString(),
         status: 'completed'
       };
+      
+      // Save with numeric moduleId
+      localProgress[user.user_id][moduleId] = progressData;
+      
+      // Also save with string nistModuleId if it exists (for NIST Framework course)
+      if (nistModuleId) {
+        localProgress[user.user_id][nistModuleId] = progressData;
+      }
       
       localStorage.setItem('moduleProgress', JSON.stringify(localProgress));
       console.log(`Module ${moduleId} progress saved locally with score ${score}%`);
 
       // Update enrolled courses progress
       this.updateCourseProgress(moduleId);
-    },
-    
-    // Add new helper method to save NIST module progress with the format expected by NISTFrameworkCoursePage
-    saveNistModuleProgress(userId, moduleId, score) {
-      const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
-      if (!localProgress[userId]) {
-        localProgress[userId] = {};
-      }
-      
-      localProgress[userId][moduleId] = {
-        score,
-        completedAt: new Date().toISOString(),
-        status: 'completed'
-      };
-      
-      localStorage.setItem('moduleProgress', JSON.stringify(localProgress));
-      console.log(`NIST module ${moduleId} progress saved with score ${score}%`);
     },
     updateCourseProgress(moduleId) {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -439,6 +422,22 @@ export default {
       console.log(`Course ${courseId} progress updated to ${progressPercentage}%`);
     },
     
+    // Add new helper method to save NIST module progress with the format expected by NISTFrameworkCoursePage
+    saveNistModuleProgress(userId, moduleId, score) {
+      const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+      if (!localProgress[userId]) {
+        localProgress[userId] = {};
+      }
+      
+      localProgress[userId][moduleId] = {
+        score,
+        completedAt: new Date().toISOString(),
+        status: 'completed'
+      };
+      
+      localStorage.setItem('moduleProgress', JSON.stringify(localProgress));
+      console.log(`NIST module ${moduleId} progress saved with score ${score}%`);
+    },
     // Helper to convert NIST module string ID to numeric ID
     getNistNumericId(stringId) {
       const idMap = {
