@@ -132,7 +132,8 @@ export default {
     
     userId() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.user_id;
+      // Check for both user_id and id fields to ensure compatibility
+      return user.user_id || user.id;
     }
   },
 
@@ -150,19 +151,32 @@ export default {
 
     async enrollInCourse() {
       if (!this.userId) {
+        console.log('User ID not found. Redirecting to login page...');
         this.$router.push('/login?redirect=' + encodeURIComponent(this.$route.fullPath));
         return;
       }
+      
       try {
         this.isEnrolling = true;
-        await enrollCourse(this.userId, this.courseId);
+        
+        // Try API enrollment
+        try {
+          await enrollCourse(this.userId, this.courseId);
+          console.log('Course enrollment successful via API');
+        } catch (apiError) {
+          console.warn('API enrollment failed, saving locally only', apiError);
+        }
+        
+        // Always save course locally for offline support
+        this.saveCourseLocally();
+        
+        // Update UI state
         this.isEnrolled = true;
         this.$emit('show-snackbar', 'Successfully enrolled in the course');
         
-        if (typeof this.updateCoursesProgress === 'function') {
-          await this.updateCoursesProgress();
+        if (typeof window.refreshUserProfile === 'function') {
+          window.refreshUserProfile();
         }
-
       } catch (error) {
         console.error('Error enrolling in course:', error);
         this.$emit('show-snackbar', 'Failed to enroll in course: ' + (error.response?.data?.error || 'Unknown error'));
@@ -171,6 +185,59 @@ export default {
       }
     },
     
+    // Save course enrollment to localStorage
+    saveCourseLocally() {
+      try {
+        // Get existing enrolled courses
+        const localCourses = JSON.parse(localStorage.getItem('enrolledCourses') || '{}');
+        
+        // Initialize user's courses if needed
+        if (!localCourses[this.userId]) {
+          localCourses[this.userId] = [];
+        }
+        
+        // Check if already enrolled
+        const existingCourse = localCourses[this.userId].find(c => 
+          c.id === this.courseId.toString() || c.course_id === this.courseId
+        );
+        
+        if (!existingCourse) {
+          // Add course to enrolled list
+          localCourses[this.userId].push({
+            id: this.courseId.toString(),
+            course_id: this.courseId, // Add both id formats for compatibility
+            name: this.courseName || 'Introduction to Cybersecurity',
+            progress: 0
+          });
+          
+          // Save back to localStorage
+          localStorage.setItem('enrolledCourses', JSON.stringify(localCourses));
+          console.log('Course enrollment saved locally');
+          
+          // Also save to user.courses_enrolled for backward compatibility
+          const user = JSON.parse(localStorage.getItem('user') || '{}');
+          user.courses_enrolled = user.courses_enrolled || [];
+          
+          // Check if the course is already in the enrolled list
+          const alreadyEnrolled = user.courses_enrolled.some(c => 
+            c.course_id === this.courseId || c.id === this.courseId
+          );
+          
+          if (!alreadyEnrolled) {
+            user.courses_enrolled.push({
+              course_id: this.courseId,
+              id: this.courseId.toString(),
+              title: this.courseName || 'Introduction to Cybersecurity'
+            });
+            localStorage.setItem('user', JSON.stringify(user));
+            console.log('Course enrollment added to user object');
+          }
+        }
+      } catch (error) {
+        console.error('Error saving course enrollment locally:', error);
+      }
+    },
+
     // Check if user is already enrolled
     async checkEnrollmentStatus() {
       if (!this.userId) return;
@@ -187,7 +254,11 @@ export default {
         try {
           const user = JSON.parse(localStorage.getItem('user') || '{}');
           const enrolledCourses = user.courses_enrolled || [];
-          this.isEnrolled = enrolledCourses.some(course => course.course_id === this.courseId);
+          
+          // Check course_id against this.courseId
+          this.isEnrolled = enrolledCourses.some(course => 
+            course.course_id === this.courseId || course.id === this.courseId
+          );
           
           // If no enrollment info found, set to false but don't show error
           if (!user.courses_enrolled) {

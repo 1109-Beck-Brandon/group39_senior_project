@@ -60,6 +60,7 @@
   
   <script>
   import CyberPicture from './CyberPicture.png';  // dynamic image import
+  import { updateLoginState } from '@/eventBus';
   
   export default {
     name: 'NewUserOnboarding',
@@ -104,16 +105,34 @@
           alert('Please fill in all required fields correctly.');
           return;
         }
+        
         const email = this.email;
         const userInfo = JSON.parse(localStorage.getItem(email)) || {};
+        
+        // Make sure we have a user_id by either using existing one or generating a temporary one
+        const user_id = userInfo.user_id || userInfo.id || Math.floor(Math.random() * 10000);
+        
         const updatedUser = {
           ...userInfo,
           contentType: this.contentType,
           academicStatus: this.academicStatus,
+          user_id: user_id,
+          id: user_id // Including both id and user_id for compatibility
         };
+        
+        // Save updated user info under their email key
         localStorage.setItem(email, JSON.stringify(updatedUser));
+        
+        // Also save as current logged-in user to maintain login state
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        
+        // Update login state if eventBus is available
+        if (typeof updateLoginState === 'function') {
+          updateLoginState();
+        }
+        
         console.log('Updated individual info saved:', updatedUser);
-    
+        
         this.$router.push({ path: '/profileView', query: { email: email } });
       },
     },
@@ -206,4 +225,3 @@ color: #ff9393 !important;
 
 </style>
 
-   

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from ..models import db, User, Progress
+from ..models import db, User, Progress, Module
 from datetime import datetime
 
 profile_bp = Blueprint('profile', __name__)
@@ -74,3 +74,35 @@ def save_progress():
     
     db.session.commit()
     return jsonify({'message': 'Progress saved successfully'}), 200
+
+@progress_bp.route('/users/<int:user_id>/progress', methods=['GET'])
+@login_required
+def get_user_progress(user_id):
+    """Retrieve progress history for a specific user."""
+    # Check authorization - only allow users to access their own progress
+    if current_user.id != user_id and current_user.role != 'teacher':
+        return jsonify({"error": "Unauthorized access"}), 403
+    
+    # Get all progress records for this user
+    progress_records = Progress.query.filter_by(user_id=user_id).all()
+    
+    # Format the response with module details
+    progress_data = []
+    for record in progress_records:
+        # Get module information
+        module = Module.query.get(record.module_id)
+        module_title = module.title if module else f"Module {record.module_id}"
+        
+        progress_data.append({
+            'id': record.id,
+            'module_id': record.module_id,
+            'module_title': module_title,
+            'status': record.status,
+            'score': record.score,
+            'last_accessed': record.last_accessed.isoformat() if record.last_accessed else None
+        })
+    
+    return jsonify({
+        'user_id': user_id,
+        'progress': progress_data
+    }), 200

@@ -67,8 +67,8 @@
         <!-- Academic Info Panel (ONLY FOR STUDENT ROLE USERS, doesn't appear for individual users) -->
         <v-card v-if="user.role === 'Student'" class="pa-3 mb-4">
           <h3>Academic Info</h3>
-          <p class="academic-info-text"><strong>Grade Level:</strong> {{ user.gradeLevel || "N/A" }}</p>
-          <p class="academic-info-text"><strong>School Name:</strong> {{ user.schoolName || "N/A" }}</p>
+          <p class="academic-info-text"><strong>Grade Level:</strong> {{ user.grade_level || "N/A" }}</p>
+          <p class="academic-info-text"><strong>School Name:</strong> {{ user.school_name || "N/A" }}</p>
           <v-btn color="secondary" block small @click="showEditProfileDialog = true">
             Edit Academic Info
           </v-btn>
@@ -86,9 +86,9 @@
                   <v-row>
                     <v-col cols="3" v-for="grade in grades" :key="grade">
                       <v-btn
-                        :color="editProfileData.gradeLevel === grade ? 'primary' : 'secondary'"
+                        :color="editProfileData.grade_level === grade ? 'primary' : 'secondary'"
                         block
-                        @click="editProfileData.gradeLevel = grade"
+                        @click="editProfileData.grade_level = grade"
                       >
                         {{ grade }}
                       </v-btn>
@@ -96,7 +96,7 @@
                   </v-row>
                 </div>
                 <v-text-field
-                  v-model="editProfileData.schoolName"
+                  v-model="editProfileData.school_name"
                   label="School Name"
                   outlined
                 />
@@ -265,7 +265,7 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
-import { logout, getUserProfile, updateUserProfile, enrollCourse, apiClient } from '@/services/api';
+import { logout, getUserProfile, updateUserProfile, enrollCourse, apiClient, getUserProgressHistory } from '@/services/api';
 Chart.register(...registerables);
 
 export default {
@@ -292,8 +292,8 @@ export default {
         progress: [], // Initialize empty progress array to store quiz scores
       },
       editProfileData: {
-        gradeLevel: user.gradeLevel || "",
-        schoolName: user.schoolName || "",
+        grade_level: user.grade_level || "",
+        school_name: user.school_name || "",
       },
       grades: ["9th grade", "10th grade", "11th grade", "12th grade"],
       coursesList: ["Intro to Cybersecurity"], // updated later
@@ -352,30 +352,56 @@ export default {
     
     async fetchUserProgress() {
       try {
-        // Get user progress data from API
-        const response = await apiClient.get(`/users/${this.user.user_id}/progress`);
-        if (response.data && Array.isArray(response.data)) {
-          this.user.progress = response.data.map(item => ({
-            module_id: item.module_id,
-            score: item.score,
-            status: item.status,
-            last_accessed: new Date(item.last_accessed).toLocaleDateString()
-          }));
-        } else {
-          // Alternative: if endpoint doesn't exist or returns different format
-          // Try getting progress from user profile data
-          if (this.user.progress_data && Array.isArray(this.user.progress_data)) {
-            this.user.progress = this.user.progress_data;
+        const userId = this.user.user_id;
+        
+        // Try to get progress from API first
+        try {
+          const apiResponse = await getUserProgressHistory(userId);
+          
+          if (apiResponse.data && apiResponse.data.progress) {
+            // Format API response data for the UI
+            this.user.progress = apiResponse.data.progress.map(item => ({
+              module_id: item.module_id,
+              module_title: item.module_title,
+              score: item.score,
+              status: item.status,
+              last_accessed: new Date(item.last_accessed).toLocaleDateString()
+            }));
+            console.log('Using progress data from API', this.user.progress);
+            return;
           }
+        } catch (apiError) {
+          console.warn('Could not fetch progress from API, falling back to local data');
+        }
+        
+        // Fall back to localStorage if API fails or returns no data
+        // Check if we have locally stored progress
+        const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+        
+        // If we have local progress data for this user
+        if (localProgress[userId]) {
+          const progressData = [];
+          
+          // Convert local storage format to the format expected by the UI
+          for (const [moduleId, data] of Object.entries(localProgress[userId])) {
+            progressData.push({
+              module_id: moduleId,
+              module_title: `Module ${moduleId}`,
+              score: data.score,
+              status: data.status || 'completed',
+              last_accessed: new Date(data.completedAt || Date.now()).toLocaleDateString()
+            });
+          }
+          
+          this.user.progress = progressData;
+          console.log('Using locally stored progress data', progressData);
+        } else {
+          console.log('No progress data found locally');
+          this.user.progress = [];
         }
       } catch (error) {
-        console.error('Error fetching user progress:', error);
-        // Try one more approach - if progress was directly included in user data
-        if (this.user.progress && Array.isArray(this.user.progress)) {
-          console.log('Using progress data from user profile');
-        } else {
-          this.user.progress = []; // Initialize with empty array if all fails
-        }
+        console.error('Error retrieving progress data:', error);
+        this.user.progress = []; // Initialize with empty array if all fails
       }
     },
 
@@ -391,35 +417,123 @@ export default {
 
     async updateCoursesProgress() {
       try {
-        const response = await getUserProfile(this.user.user_id);
-        if (response.data && response.data.courses_enrolled && Array.isArray(response.data.courses_enrolled)) {
-          this.courses = response.data.courses_enrolled.map(course => ({
-            id: course.course_id,
-            name: course.title,
-            progress: course.progress || 0,
-          }));
-        } else {
-          // Handle case where courses_enrolled doesn't exist or isn't an array
-          this.courses = [];
-          console.log('No courses enrolled data available');
+        // Try to get enrolled courses from API first
+        try {
+          const response = await getUserProfile(this.user.user_id);
+          
+          if (response.data && response.data.courses_enrolled && Array.isArray(response.data.courses_enrolled)) {
+            this.courses = response.data.courses_enrolled.map(course => ({
+              id: course.course_id,
+              name: course.title,
+              progress: course.progress || 0,
+            }));
+            
+            if (this.courses.length > 0) {
+              console.log('Loaded courses from API:', this.courses);
+              this.createChart(); // Refresh chart with new data
+              return;
+            }
+          }
+        } catch (apiError) {
+          console.warn('Could not fetch courses from API, falling back to local data');
         }
+        
+        // Fallback: Check localStorage for enrolled courses
+        const localCourses = JSON.parse(localStorage.getItem('enrolledCourses') || '{}');
+        const userCourses = localCourses[this.user.user_id] || [];
+        
+        if (userCourses.length > 0) {
+          this.courses = userCourses;
+          console.log('Using locally stored courses data', userCourses);
+        } else {
+          // Show empty courses array if no courses are found
+          this.courses = [];
+          console.log('No enrolled courses found');
+        }
+        
+        // Refresh the chart with newly loaded courses
+        this.$nextTick(() => {
+          this.createChart();
+        });
       } catch (error) {
-        console.error('Error fetching courses:', error);
-        this.courses = []; // Initialize with empty array
+        console.error('Error updating courses progress:', error);
+        this.courses = []; // Initialize with empty array if all fails
       }
     },
-
-    async enrollCourse(courseId) {
+    
+    // Helper method to calculate course progress based on module completions
+    calculateCourseProgress(courseId) {
       try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.user_id) {
-          console.error("User not logged in.");
-          return;
-        }
-        await enrollCourse(user.user_id, courseId);
-        console.log('Enrolled successfully');
+        // Get local progress data
+        const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+        const userId = this.user.user_id;
+        
+        if (!localProgress[userId]) return 0;
+        
+        // Get modules for this course
+        const courseModules = this.getModulesForCourse(courseId);
+        if (!courseModules.length) return 0;
+        
+        // Count completed modules
+        let completedCount = 0;
+        courseModules.forEach(moduleId => {
+          if (localProgress[userId][moduleId]) {
+            completedCount++;
+          }
+        });
+        
+        return Math.round((completedCount / courseModules.length) * 100);
       } catch (error) {
-        console.error('Error enrolling in course:', error);
+        console.error('Error calculating course progress:', error);
+        return 0;
+      }
+    },
+    
+    // Helper to get module IDs for a course
+    getModulesForCourse(courseId) {
+      // Map course IDs to their respective modules
+      const courseModulesMap = {
+        '1': ['1', '2', '3', '4', '5', '6', '7', '8'], // Intro to Cybersecurity modules
+        '2': [
+          'nist-framework-introModule', 
+          'nist-framework-governModule', 
+          'nist-framework-identifyModule', 
+          'nist-framework-protectModule', 
+          'nist-framework-detectModule', 
+          'nist-framework-respondModule', 
+          'nist-framework-recoverModule',
+          'nist-framework-finalModule'
+        ], // NIST Framework modules
+        '3': ['21', '22', '23'] // Reserved for future courses
+      };
+      
+      return courseModulesMap[courseId] || [];
+    },
+    
+    // Save course enrollment locally
+    saveCourseLocally(courseId, courseName) {
+      try {
+        const userId = this.user.user_id;
+        const localCourses = JSON.parse(localStorage.getItem('enrolledCourses') || '{}');
+        
+        if (!localCourses[userId]) {
+          localCourses[userId] = [];
+        }
+        
+        // Check if course already exists
+        const existingCourse = localCourses[userId].find(c => c.id === courseId);
+        if (!existingCourse) {
+          localCourses[userId].push({
+            id: courseId,
+            name: courseName,
+            progress: this.calculateCourseProgress(courseId)
+          });
+          
+          localStorage.setItem('enrolledCourses', JSON.stringify(localCourses));
+          console.log(`Course ${courseName} saved locally`);
+        }
+      } catch (error) {
+        console.error('Error saving course locally:', error);
       }
     },
 
@@ -506,12 +620,12 @@ export default {
     async saveProfileInfo() {
       try {
         await updateUserProfile(this.user.user_id, {
-          grade_level: this.editProfileData.gradeLevel,
-          school_name: this.editProfileData.schoolName,
+          grade_level: this.editProfileData.grade_level,
+          school_name: this.editProfileData.school_name,
         });
         // Update local user data after saving
-        this.user.grade_level = this.editProfileData.gradeLevel;
-        this.user.school_name = this.editProfileData.schoolName;
+        this.user.grade_level = this.editProfileData.grade_level;
+        this.user.school_name = this.editProfileData.school_name;
         localStorage.setItem('user', JSON.stringify(this.user));
       } catch (error) {
         console.error('Error saving profile info:', error);
@@ -536,13 +650,76 @@ export default {
       if (score >= 75) return 'blue';
       if (score >= 50) return 'orange';
       return 'red';
-    }
+    },
+    async enrollCourse(courseId) {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.user_id) {
+          console.error("User not logged in.");
+          return;
+        }
+
+        // Try to enroll via API
+        try {
+          await enrollCourse(user.user_id, courseId);
+          console.log('Course enrollment successful via API');
+        } catch (apiError) {
+          console.warn('API enrollment failed, saving locally only', apiError);
+        }
+
+        // Always save enrollment locally regardless of API success
+        // This ensures the course appears in the UI immediately
+        const courseInfo = await this.getCourseInfo(courseId);
+        this.saveCourseLocally(courseId, courseInfo.name);
+        
+        // Refresh the courses list
+        await this.updateCoursesProgress();
+        this.createChart();
+      } catch (error) {
+        console.error('Error enrolling in course:', error);
+      }
+    },
+    
+    // Helper method to get course info
+    async getCourseInfo(courseId) {
+      // Default course info if we can't get it from an API
+      const defaultCourses = {
+        '1': { name: 'Intro to Cybersecurity' },
+        '2': { name: 'Advanced Cybersecurity' },
+        '3': { name: 'Network Security' },
+      };
+      
+      try {
+        // Try to get from API first (if you have a getCourse API)
+        const { getCourse } = await import('@/services/api');
+        const response = await getCourse(courseId);
+        
+        if (response && response.data) {
+          return {
+            id: courseId,
+            name: response.data.title || response.data.name,
+          };
+        }
+      } catch (error) {
+        console.warn(`Could not retrieve course info for ${courseId} from API`);
+      }
+      
+      // Fallback to default data
+      return defaultCourses[courseId] || { name: `Course ${courseId}` };
+    },
   },
   // Listen for route changes
   created() {
+    // Add global refresh function for other components to call
+    window.refreshUserProfile = () => {
+      this.fetchUserData();
+      this.updateCoursesProgress();
+      this.createChart();
+    };
+    
     this.$router.beforeEach((to, from, next) => {
       // If returning to profile from a course module
-      if (from.path.includes('/course/') && to.path === '/dashboard') {
+      if (from.path.includes('/course/') && (to.path === '/dashboard' || to.path === '/profileView')) {
         this.refreshProgress();
       }
       next();

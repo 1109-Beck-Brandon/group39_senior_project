@@ -153,7 +153,23 @@ export default {
         this.isEnrolling = true;
         await enrollCourse(this.userId, this.courseId);
         this.isEnrolled = true;
+        
+        // Add to user's courses_enrolled in localStorage
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        user.courses_enrolled = user.courses_enrolled || [];
+        if (!user.courses_enrolled.some(c => c.course_id === this.courseId)) {
+          user.courses_enrolled.push({ course_id: this.courseId, title: this.courseName || 'NIST Cybersecurity Framework' });
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+
+        // Save course locally after successful API call
+        this.saveCourseLocally(this.courseId, this.courseName || 'NIST Cybersecurity Framework');
         this.$emit('show-snackbar', 'Successfully enrolled in the course');
+        
+        // Refresh the user profile page if we're coming back to it
+        if (window.refreshUserProfile) {
+          window.refreshUserProfile();
+        }
       } catch (error) {
         console.error('Error enrolling in course:', error);
         this.$emit('show-snackbar', 'Failed to enroll in course: ' + (error.response?.data?.error || 'Unknown error'));
@@ -161,11 +177,109 @@ export default {
         this.isEnrolling = false;
       }
     },
+    
+    // Save course to local storage
+    saveCourseLocally(courseId, courseName) {
+      try {
+        const userId = this.userId;
+        if (!userId) {
+          console.error("User not logged in. Cannot save course locally.");
+          return;
+        }
+        
+        const enrolledCourses = JSON.parse(localStorage.getItem("enrolledCourses") || "{}");
+        
+        // Initialize user's courses array if it doesn't exist
+        if (!enrolledCourses[userId]) {
+          enrolledCourses[userId] = [];
+        }
+        
+        // Check if course is already enrolled
+        const existingCourse = enrolledCourses[userId].find(course => course.id === courseId);
+        if (!existingCourse) {
+          // Add course to user's enrolled courses
+          enrolledCourses[userId].push({
+            id: courseId,
+            name: courseName,
+            progress: this.calculateCourseProgress()
+          });
+          
+          localStorage.setItem("enrolledCourses", JSON.stringify(enrolledCourses));
+          console.log(`Course ${courseName} saved locally`);
+        }
+      } catch (error) {
+        console.error("Error saving course locally:", error);
+      }
+    },
+    
+    // Calculate course progress based on completed modules
+    calculateCourseProgress() {
+      try {
+        // Get local progress data
+        const localProgress = JSON.parse(localStorage.getItem('moduleProgress') || '{}');
+        const userId = this.userId;
+        
+        if (!localProgress[userId]) return 0;
+        
+        // Get modules for this course - use the proper module IDs for NIST Framework
+        // These need to match the moduleId values used when storing quiz completions
+        const courseModules = [
+          'introModule', 
+          'governModule', 
+          'identifyModule', 
+          'protectModule', 
+          'detectModule', 
+          'respondModule', 
+          'recoverModule',
+          'finalModule'
+        ];
+        
+        // Count completed modules
+        let completedCount = 0;
+        courseModules.forEach(moduleId => {
+          // Check if the module is completed in local storage
+          const fullModuleId = `nist-framework-${moduleId}`;
+          if (localProgress[userId][fullModuleId]) {
+            completedCount++;
+          }
+        });
+        
+        return courseModules.length ? Math.round((completedCount / courseModules.length) * 100) : 0;
+      } catch (error) {
+        console.error('Error calculating course progress:', error);
+        return 0;
+      }
+    },
+    
     async checkEnrollmentStatus() {
       if (!this.userId) return;
+      
       try {
-        this.isEnrolled = false; // Default to not enrolled
+        // Try to get enrollment status from API first
+        try {
+          const response = await fetch(`${process.env.VUE_APP_API_URL || 'https://cybersecurity-learning-platform.onrender.com/api'}/users/${this.userId}/courses`, {
+            headers: {
+              'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user') || '{}').token}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            const enrolledCourses = data.courses || [];
+            this.isEnrolled = enrolledCourses.some(course => course.id === this.courseId);
+            return;
+          }
+        } catch (apiError) {
+          console.warn('API enrollment check failed, falling back to local storage', apiError);
+        }
+        
+        // Fallback to local storage if API fails
+        const enrolledCourses = JSON.parse(localStorage.getItem("enrolledCourses") || "{}");
+        const userCourses = enrolledCourses[this.userId] || [];
+        
+        // Check if this course is in the enrolled courses
+        this.isEnrolled = userCourses.some(course => course.id === this.courseId);
       } catch (error) {
+        console.error('Error checking enrollment status:', error);
         this.isEnrolled = false;
       }
     },
