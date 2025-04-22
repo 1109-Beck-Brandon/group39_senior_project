@@ -133,7 +133,7 @@ export default {
 
 .nav-list {
   background-color: rgb(9, 32, 68);
-  padding-top: 60px;
+  padding-top: 10px;
 }
 
 .nav-list-item {
