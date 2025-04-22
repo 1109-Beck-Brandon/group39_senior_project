@@ -162,10 +162,15 @@ export default {
         
         // Always save enrollment locally regardless of API success
         // This ensures the course appears in the profile immediately
-        this.saveCourseLocally(this.courseId, "NIST Cybersecurity Framework");
+        this.saveCourseLocally(this.courseId.toString(), "NIST Cybersecurity Framework");
         
         this.isEnrolled = true;
         this.$emit('show-snackbar', 'Successfully enrolled in the course');
+        
+        // Refresh the user profile page if we're coming back to it
+        if (window.refreshUserProfile) {
+          window.refreshUserProfile();
+        }
       } catch (error) {
         console.error('Error enrolling in course:', error);
         this.$emit('show-snackbar', 'Failed to enroll in course: ' + (error.response?.data?.error || 'Unknown error'));
@@ -217,8 +222,18 @@ export default {
         
         if (!localProgress[userId]) return 0;
         
-        // Default to 0% progress for new enrollments
-        return 0;
+        // Get modules for this course
+        const courseModules = ['11', '12', '13', '14', '15', '16']; // NIST Framework modules
+        
+        // Count completed modules
+        let completedCount = 0;
+        courseModules.forEach(moduleId => {
+          if (localProgress[userId][moduleId]) {
+            completedCount++;
+          }
+        });
+        
+        return courseModules.length ? Math.round((completedCount / courseModules.length) * 100) : 0;
       } catch (error) {
         console.error('Error calculating course progress:', error);
         return 0;

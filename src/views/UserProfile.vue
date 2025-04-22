@@ -500,10 +500,11 @@ export default {
     
     // Helper to get module IDs for a course
     getModulesForCourse(courseId) {
-      // This is a simple mapping - in a real app, you'd get this from an API
+      // Map course IDs to their respective modules
       const courseModulesMap = {
-        '1': ['1', '2', '3', '4'], // Intro to Cybersecurity modules
-        '2': ['5', '6', '7'],      // Advanced Cybersecurity modules (if you have them)
+        '1': ['1', '2', '3', '4', '5', '6', '7', '8'], // Intro to Cybersecurity modules
+        '2': ['11', '12', '13', '14', '15', '16'],     // NIST Framework modules
+        '3': ['21', '22', '23']                       // Reserved for future courses
       };
       
       return courseModulesMap[courseId] || [];
