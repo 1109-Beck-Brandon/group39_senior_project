@@ -101,13 +101,13 @@ export default {
       ],
       moduleDetails: [
         "An brief introduction to NIST and to the core cybersecurity framework.",
-        "Explore the Govern function of the framework.",
-        "Explore the Identify function of the framework.",
-        "Explore the Protect function of the framework.",
-        "Explore the Detect function of the framework.",
+        "Explore the Govern function of the framework. Govern is a newly added function to the framework as of NIST CSF 2.0., and focuses on leadership and strategic alignment.",
+        "Explore the Identify function of the framework. The Identify function focuses on helping organizations understand the cybersecurity risks of their systems.",
+        "Explore the Protect function of the framework. The Protect function focuses on implementing safeguards to make sure critical services are deleivered and that potential cybersecurity events are limited or contained as they occur.",
+        "Explore the Detect function of the framework. ",
         "Explore the Respond function of the framework.",
         "Explore the Recover function of the framework.",
-        "A comprehensive final quiz that combines all module quiz questions from this course. This WILL count toward your final grade for this course."
+        "A comprehensive final exam that combines all module quiz questions from this course. This WILL count toward your final grade for this course."
       ],
       moduleRoutes: [
         "/course/nist-framework/introModule", 
