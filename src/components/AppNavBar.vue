@@ -145,7 +145,7 @@ export default {
 }
 
 .nav-list {
-  background-color: rgb(9, 32, 68);
+  background-color: rgba(22, 22, 112, 0);
   padding-top: 10px;
 }
 
