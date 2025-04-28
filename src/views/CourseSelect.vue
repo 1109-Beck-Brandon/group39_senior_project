@@ -29,8 +29,8 @@ export default {
   data() {
     return {
       courses: [
-        { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity, more to come soon.", progress: 0 },
-        { name: "NIST Cybersecurity Framework", description: "Learn about the National Institute for Science and Technology's Cybersecurity Framework", progress: 0 },
+        { name: "Introduction to Cybersecurity", description: "This is the introduction course to cybersecurity. Learn more about the field and learn the basic essential concepts.", progress: 0 },
+        { name: "NIST Cybersecurity Framework", description: "Learn about the National Institute for Science and Technology's Cybersecurity Framework.", progress: 0 },
         { name: "Digital Forensics Fundamentals", description: "Coming Soon!", progress: 0 },
         // Add more courses as needed
       ],
@@ -60,7 +60,7 @@ export default {
 .page-title {
   text-align: center;
   font-size: 2em;
-  margin-top: -30px;
+  margin-top: 70px;
   margin-bottom: 10px;
 }
 
@@ -100,6 +100,8 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .course-square h3 {
