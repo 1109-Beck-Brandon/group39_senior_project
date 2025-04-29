@@ -41,7 +41,6 @@
                 size="36"
                 class="my-4"
               ></v-rating>
-              <span class="ml-2">{{ formatStarRating(userRating) }}</span>
             </div>
             
             <v-btn 
@@ -69,48 +68,147 @@
           <v-list v-else class="reviews-list">
             <v-list-item v-for="(review, index) in reviews" :key="index" class="review-item mb-3">
               <v-card class="review-card pa-3" outlined width="100%">
-                <div class="d-flex align-center">
-                  <v-avatar class="mr-3" size="50">
-                    <v-img :src="userAvatars[index % userAvatars.length]" alt="Anonymous User"></v-img>
-                  </v-avatar>
-                  
-                  <div class="review-content">
-                    <div class="d-flex align-center">
+                <div class="d-flex flex-column">
+                  <div class="d-flex align-center">
+                    <v-avatar class="mr-3" size="50">
+                      <v-img :src="userAvatars[index % userAvatars.length]" alt="Anonymous User"></v-img>
+                    </v-avatar>
+                    
+                    <div class="review-header flex-grow-1 d-flex justify-space-between">
                       <span class="font-weight-bold text-white">Anonymous User</span>
-                      <div class="ml-2 d-flex align-center">
-                        <v-rating
-                          :value="Number(review.rating)"
-                          readonly
-                          dense
-                          size="16"
-                          color="#64ffda"
-                        ></v-rating>
-                        <span class="ml-1 text-caption">({{ formatStarRating(review.rating) }})</span>
-                      </div>
-                      <v-spacer></v-spacer>
                       <span class="text-caption">{{ review.date }}</span>
                     </div>
-                    
-                    <p class="review-text mt-2">{{ review.text }}</p>
-                    
-                    <!-- Like Button and Count -->
-                    <div class="d-flex align-center mt-2">
-                      <v-btn 
-                        icon 
-                        x-small 
-                        @click="toggleLike(index)" 
-                        :color="review.liked ? '#64ffda' : 'white'"
-                        class="mr-1"
+                  </div>
+                  
+                  <!-- Star rating below username -->
+                  <div class="ml-12 mt-1">
+                    <div class="d-flex">
+                      <v-icon
+                        v-for="n in 5"
+                        :key="n"
+                        :color="n <= review.rating ? '#64ffda' : 'gray'"
+                        size="16"
                       >
-                        <v-icon>{{ review.liked ? 'mdi-thumb-up' : 'mdi-thumb-up-outline' }}</v-icon>
+                        mdi-star
+                      </v-icon>
+                    </div>
+                  </div>
+                  
+                  <p class="review-text mt-2 ml-12">{{ review.text }}</p>
+                  
+                  <!-- Action buttons aligned to the right -->
+                  <div class="d-flex justify-end mt-2">
+                    <v-btn 
+                      icon 
+                      x-small 
+                      @click="toggleLike(index)" 
+                      :color="review.liked ? '#64ffda' : 'white'"
+                      class="mr-1"
+                    >
+                      <v-icon>{{ review.liked ? 'mdi-thumb-up' : 'mdi-thumb-up-outline' }}</v-icon>
+                    </v-btn>
+                    <span class="text-caption mr-4">{{ review.likes }} likes</span>
+                    
+                    <v-btn icon x-small class="white--text mr-1" @click="toggleReplyForm(index)">
+                      <v-icon>mdi-reply-outline</v-icon>
+                    </v-btn>
+                    <span class="text-caption">Reply</span>
+                  </div>
+                  
+                  <!-- Reply form (conditionally shown) -->
+                  <div v-if="review.showReplyForm" class="reply-form ml-12 mt-3">
+                    <v-textarea
+                      v-model="review.newReply"
+                      outlined
+                      dense
+                      hide-details
+                      placeholder="Write your reply..."
+                      rows="2"
+                      class="mb-2"
+                    ></v-textarea>
+                    <div class="d-flex justify-end">
+                      <v-btn 
+                        small 
+                        text 
+                        @click="toggleReplyForm(index)"
+                        class="mr-2"
+                      >
+                        Cancel
                       </v-btn>
-                      <span class="text-caption mr-4">{{ review.likes }} likes</span>
+                      <v-btn 
+                        small 
+                        color="primary" 
+                        @click="submitReply(index)"
+                        :disabled="!review.newReply || review.newReply.trim() === ''"
+                      >
+                        Reply
+                      </v-btn>
+                    </div>
+                  </div>
+                  
+                  <!-- Replies section -->
+                  <div v-if="review.replies && review.replies.length > 0" class="replies-section ml-12 mt-3">
+                    <div v-for="(reply, replyIndex) in review.replies" :key="`reply-${index}-${replyIndex}`" class="reply-item pa-2 mb-2">
+                      <div class="d-flex align-center justify-space-between">
+                        <div class="d-flex align-center">
+                          <v-avatar size="30" class="mr-2">
+                            <v-img :src="userAvatars[(index + replyIndex + 1) % userAvatars.length]" alt="Reply User"></v-img>
+                          </v-avatar>
+                          <span class="font-weight-medium text-white">Anonymous User</span>
+                        </div>
+                        <span class="text-caption">{{ reply.date }}</span>
+                      </div>
+                      <p class="ml-9 my-1 reply-text">{{ reply.text }}</p>
                       
-                      <!-- Reply Button (can be implemented later) -->
-                      <v-btn icon x-small class="white--text">
-                        <v-icon>mdi-reply-outline</v-icon>
-                      </v-btn>
-                      <span class="text-caption">Reply</span>
+                      <!-- Reply action buttons -->
+                      <div class="d-flex justify-end ml-9">
+                        <v-btn 
+                          icon 
+                          x-small 
+                          @click="toggleReplyLike(index, replyIndex)" 
+                          :color="reply.liked ? '#64ffda' : 'white'"
+                          class="mr-1"
+                        >
+                          <v-icon small>{{ reply.liked ? 'mdi-thumb-up' : 'mdi-thumb-up-outline' }}</v-icon>
+                        </v-btn>
+                        <span class="text-caption mr-4">{{ reply.likes }} likes</span>
+                        
+                        <v-btn icon x-small class="white--text mr-1" @click="toggleNestedReplyForm(index, replyIndex)">
+                          <v-icon small>mdi-reply-outline</v-icon>
+                        </v-btn>
+                        <span class="text-caption">Reply</span>
+                      </div>
+                      
+                      <!-- Nested reply form -->
+                      <div v-if="reply.showNestedReplyForm" class="nested-reply-form ml-9 mt-2">
+                        <v-textarea
+                          v-model="reply.newNestedReply"
+                          outlined
+                          dense
+                          hide-details
+                          placeholder="Write your reply..."
+                          rows="2"
+                          class="mb-2"
+                        ></v-textarea>
+                        <div class="d-flex justify-end">
+                          <v-btn 
+                            small 
+                            text 
+                            @click="toggleNestedReplyForm(index, replyIndex)"
+                            class="mr-2"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn 
+                            small 
+                            color="primary" 
+                            @click="submitNestedReply(index, replyIndex)"
+                            :disabled="!reply.newNestedReply || reply.newNestedReply.trim() === ''"
+                          >
+                            Reply
+                          </v-btn>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -137,21 +235,56 @@ export default {
           rating: 3, 
           date: "Mar 10, 2025",
           likes: 12,
-          liked: false
+          liked: false,
+          showReplyForm: false,
+          newReply: '',
+          replies: [
+            {
+              text: "Glad you're enjoying the platform! What modules helped you the most?",
+              date: "Mar 11, 2025",
+              likes: 3,
+              liked: false,
+              showNestedReplyForm: false,
+              newNestedReply: ''
+            },
+            {
+              text: "Remember to use these skills ethically! The platform is for educational purposes.",
+              date: "Mar 12, 2025",
+              likes: 8,
+              liked: false,
+              showNestedReplyForm: false,
+              newNestedReply: ''
+            }
+          ]
         },
         { 
           text: "Great content on penetration testing. Very helpful for beginners.", 
           rating: 4, 
           date: "Mar 8, 2025",
           likes: 8,
-          liked: false
+          liked: false,
+          showReplyForm: false,
+          newReply: '',
+          replies: [
+            {
+              text: "I agree! The step-by-step approach really helped me understand the concepts.",
+              date: "Mar 9, 2025",
+              likes: 2,
+              liked: false,
+              showNestedReplyForm: false,
+              newNestedReply: ''
+            }
+          ]
         },
         { 
           text: "The security analyst module was excellent! Looking forward to more content.", 
           rating: 2, 
           date: "Mar 5, 2025",
           likes: 15,
-          liked: false
+          liked: false,
+          showReplyForm: false,
+          newReply: '',
+          replies: []
         }
       ],
       newReview: '',
@@ -198,7 +331,10 @@ export default {
         rating: Number(this.userRating), // Ensure it's a number
         date: formattedDate,
         likes: 0,
-        liked: false
+        liked: false,
+        showReplyForm: false,
+        newReply: '',
+        replies: []
       };
       
       // Add the new review to the beginning of the list
@@ -225,6 +361,84 @@ export default {
       }
       this.reviews[index].liked = !this.reviews[index].liked;
     },
+
+    // Toggle like status for a reply
+    toggleReplyLike(reviewIndex, replyIndex) {
+      const reply = this.reviews[reviewIndex].replies[replyIndex];
+      if (reply.liked) {
+        reply.likes--;
+      } else {
+        reply.likes++;
+      }
+      reply.liked = !reply.liked;
+    },
+    
+    // Toggle reply form visibility
+    toggleReplyForm(index) {
+      this.reviews[index].showReplyForm = !this.reviews[index].showReplyForm;
+      if (!this.reviews[index].showReplyForm) {
+        this.reviews[index].newReply = '';
+      }
+    },
+    
+    // Toggle nested reply form visibility
+    toggleNestedReplyForm(reviewIndex, replyIndex) {
+      const reply = this.reviews[reviewIndex].replies[replyIndex];
+      reply.showNestedReplyForm = !reply.showNestedReplyForm;
+      if (!reply.showNestedReplyForm) {
+        reply.newNestedReply = '';
+      }
+    },
+    
+    // Submit a reply to a review
+    submitReply(index) {
+      const replyText = this.reviews[index].newReply.trim();
+      if (!replyText) return;
+      
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      
+      const newReply = {
+        text: replyText,
+        date: formattedDate,
+        likes: 0,
+        liked: false,
+        showNestedReplyForm: false,
+        newNestedReply: ''
+      };
+      
+      if (!this.reviews[index].replies) {
+        this.$set(this.reviews[index], 'replies', []);
+      }
+      
+      this.reviews[index].replies.push(newReply);
+      this.reviews[index].showReplyForm = false;
+      this.reviews[index].newReply = '';
+    },
+    
+    // Submit a nested reply
+    submitNestedReply(reviewIndex, replyIndex) {
+      const reply = this.reviews[reviewIndex].replies[replyIndex];
+      const nestedReplyText = reply.newNestedReply.trim();
+      
+      if (!nestedReplyText) return;
+      
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      
+      const newNestedReply = {
+        text: nestedReplyText,
+        date: formattedDate,
+        likes: 0,
+        liked: false,
+        showNestedReplyForm: false,
+        newNestedReply: ''
+      };
+      
+      this.reviews[reviewIndex].replies.splice(replyIndex + 1, 0, newNestedReply);
+      reply.showNestedReplyForm = false;
+      reply.newNestedReply = '';
+    },
     
     // Unit test
     validateReview(review) {
@@ -247,7 +461,6 @@ export default {
 </script>
 
 <style scoped>
-
 .text-caption {
   color: white !important;
 }
@@ -317,13 +530,21 @@ export default {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-.review-content {
-  flex-grow: 1;
-}
-
 .review-text {
   color: #ffffff;
   line-height: 1.5;
+}
+
+.reply-text {
+  color: #e6f1ff;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+.reply-item {
+  background-color: #1c2e47;
+  border-radius: 8px;
+  border-left: 3px solid #64ffda;
 }
 
 .empty-reviews-text {
@@ -347,5 +568,11 @@ export default {
 
 .v-textarea >>> textarea {
   color: #ffffff !important;
+}
+
+/* Reply form styles */
+.reply-form .v-input__slot,
+.nested-reply-form .v-input__slot {
+  background-color: #1c2e47 !important;
 }
 </style>
