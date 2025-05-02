@@ -317,18 +317,69 @@ export default {
   },
 
   mounted() {
-    // Check if the user is logged in, if not redirect to login page
-    if (!localStorage.getItem('user')) {
-      this.$router.push('/login');
-      return;
-    }
-    
-    this.fetchUserData();
-    this.updateCoursesProgress();
-    this.createChart();
+    this.checkUserAuthentication();
   },
 
   methods: {
+    // New method to check authentication with retry mechanism
+    checkUserAuthentication() {
+      // Get user from localStorage
+      let userData = localStorage.getItem('user');
+      
+      if (userData) {
+        // User exists in localStorage, proceed normally
+        try {
+          // Parse the user data to ensure it's valid JSON
+          const user = JSON.parse(userData);
+          if (user && user.user_id) {
+            // Valid user with ID found, proceed with data loading
+            this.fetchUserData();
+            this.updateCoursesProgress();
+            this.createChart();
+            return;
+          }
+        } catch (e) {
+          console.error("Error parsing user data:", e);
+        }
+      }
+
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      if (token) {
+        this.getUserProfileWithToken(token);
+      } else {
+        this.$router.push('/login');
+      }
+    },
+
+    async getUserProfileWithToken(token) {
+      try {
+
+        const response = await apiClient.get('/users/current', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (response.data && response.data.user_id) {
+          // Success! Update localStorage and continue
+          localStorage.setItem('user', JSON.stringify(response.data));
+          this.user = {
+            ...this.user,
+            ...response.data
+          };
+          
+          this.fetchUserData();
+          this.updateCoursesProgress();
+          this.createChart();
+        } else {
+          // No valid user data returned
+          this.$router.push('/login');
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        this.$router.push('/login');
+      }
+    },
+    
     async fetchUserData() {
       try {
         const response = await getUserProfile(this.user.user_id);
@@ -642,8 +693,17 @@ export default {
       this.$router.push({ path: "/courseSelect" });
     },
     navigateToCourse(courseName) {
-      const courseRoute = courseName.toLowerCase().replace(/\s+/g, '-');
-      this.$router.push(`/course/${courseRoute}`);
+      // Map course names to their correct routes
+      const courseRoutes = {
+        "Introduction to Cybersecurity": "/course/intro-to-cybersecurity",
+        "Intro to Cybersecurity": "/course/intro-to-cybersecurity", 
+        "NIST Cybersecurity Framework": "/course/nist-framework",
+        "Digital Forensics Fundamentals": "/course/digital-forensics-fund"
+      };
+      
+      // Use the mapping if available, fallback to lowercase hyphenated version
+      const route = courseRoutes[courseName] || `/course/${courseName.toLowerCase().replace(/\s+/g, '-')}`;
+      this.$router.push(route);
     },
     // Add this method
     async refreshProgress() {
