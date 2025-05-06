@@ -7,31 +7,44 @@
       <v-row>
         <!-- Academic Info Column -->
         <v-col cols="12" md="4">
+          <v-card>
+            Avatar picture here
+            <v-divider></v-divider>
+            <v-btn>
+              Edit picture              
+            </v-btn>
+          </v-card>
+          
+
           <v-card class="pa-4">
             <h3 class="section-title">Academic Info</h3>
             <v-divider class="my-2"/>
             <p><strong>Grade Level:</strong> {{ gradeLevel || 'N/A' }}</p>
             <p><strong>School Name:</strong> {{ schoolName || 'N/A' }}</p>
           </v-card>
+
+          <v-card>
+            <h3 class="section-title"> first name and Last Name</h3>
+            Basic name and email information goes here
+          </v-card>
+
+          <v-card>
+            <v-btn>
+              GO TO CLASSROOM
+            </v-btn>
+          </v-card>
+
         </v-col>
   
         <!-- Courses Placeholder Column -->
-        <v-col cols="12" md="4">
+        <v-col cols="12" md ="8">
           <v-card class="pa-4">
             <h3 class="section-title">Courses</h3>
             <v-divider class="my-2"/>
             <p>[Your enrolled courses will show here]</p>
           </v-card>
         </v-col>
-  
-        <!-- Progress Placeholder Column -->
-        <v-col cols="12" md="4">
-          <v-card class="pa-4">
-            <h3 class="section-title">Progress</h3>
-            <v-divider class="my-2"/>
-            <p>[Your overall progress will show here]</p>
-          </v-card>
-        </v-col>
+
       </v-row>
     </v-container>
   </template>
@@ -73,7 +86,8 @@
   }
 
   .cybersecurity-title {
-  color: #2e5387d9;
+    /* transparent for now */
+  color: #2e538700;
   font-weight: bolder;
   justify-self: left;
   margin-bottom: -5px;
@@ -82,11 +96,11 @@
 }
 
 .page-title-row {
-  background-color: #e7e7e7;
+  /* im using this because it gets rid of the white space on toplol */
+  background-color: #0a192f;
   padding: 20px;
-  margin-top: -30px;
+  margin-top: -70px;
   margin-bottom: -24px;
-  border-bottom: 3px solid rgba(19, 55, 118, 0.715);
   margin-right: -20px;
   margin-left: -20px;
 }
